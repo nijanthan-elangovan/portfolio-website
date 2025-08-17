@@ -1,0 +1,7 @@
+<script>
+  // If we were redirected from 404, restore the intended URL.
+  if (sessionStorage.redirect) {
+    history.replaceState(null, null, sessionStorage.redirect);
+    sessionStorage.removeItem("redirect");
+  }
+</script>
