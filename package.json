@@ -8,9 +8,10 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist -b gh-pages -r https://github.com/nijanthan-elangovan/Portfolio-Landing-Page.git -m \"deploy\""
+    "build:gh": "vite build --base=/portfolio-website/",
+    "predeploy": "npm run build:gh",
+    "deploy": "gh-pages -d dist -b gh-pages -r https://github.com/nijanthan-elangovan/portfolio-website.git -m \"deploy\"",
+    "preview": "vite preview --strictPort"
   },
   "dependencies": {
     "framer-motion": "^12.23.12",
