@@ -1,13 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8" />
+    <title>Redirecting…</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script>
-      // Preserve the path and send the browser to the SPA entry.
+      // Save intended route, then go to SPA entry at root
       sessionStorage.redirect =
         location.pathname + location.search + location.hash;
-      location.replace("/Portfolio-Landing-Page/");
+      location.replace("/");
     </script>
   </head>
-  <body></body>
+  <body>
+    <p>Redirecting…</p>
+  </body>
 </html>

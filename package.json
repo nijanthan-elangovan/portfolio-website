@@ -2,16 +2,17 @@
   "name": "portfolio",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://nijanthan-elangovan.github.io/Portfolio-Landing-Page",
   "type": "module",
+  "description": "Nijanthan — Portfolio (Vite + React SWC)",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
-    "build:gh": "vite build --base=/portfolio-website/",
-    "predeploy": "npm run build:gh",
-    "deploy": "gh-pages -d dist -b gh-pages -r https://github.com/nijanthan-elangovan/portfolio-website.git -m \"deploy\"",
-    "preview": "vite preview --strictPort"
+    "build:repo": "vite build --base=/portfolio-website/",
+    "build:domain": "vite build --base=/",
+    "deploy:gh": "npm run build:repo && gh-pages -d dist -b gh-pages -r https://github.com/nijanthan-elangovan/portfolio-website.git -m \"deploy (repo path)\"",
+    "deploy:domain": "npm run build:domain && gh-pages -d dist -b gh-pages -r https://github.com/nijanthan-elangovan/portfolio-website.git -m \"deploy (custom domain)\" -c njthnelvgn.com",
+    "preview": "vite preview --strictPort",
+    "clean": "rimraf dist"
   },
   "dependencies": {
     "framer-motion": "^12.23.12",
@@ -33,11 +34,7 @@
     "globals": "^16.3.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.12",
-    "vite": "^7.1.2"
-  },
-  "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
-  "main": "eslint.config.js",
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+    "vite": "^7.1.2",
+    "rimraf": "^6.0.1"
+  }
 }
