@@ -20,6 +20,7 @@ import {
   Moon,
   MousePointerClick,
 } from "lucide-react";
+import { fetchAllContent, isStrapiConfigured } from "./services/strapi";
 
 /* ----------------------------------------------------------------------------
    Inline CSS needed for hue CTA, glass, typing, and small helpers
@@ -47,21 +48,33 @@ function useInlineStyles() {
 }
 
 /* ----------------------------------------------------------------------------
-   STRAPI Cloud integration (URL normalization + optional token)
+   CMS Content Hook - Fetch data from Strapi if configured
 ---------------------------------------------------------------------------- */
-const RAW_STRAPI_URL = (typeof window !== "undefined" && window.__STRAPI_URL__) || "";
-const STRAPI_URL = RAW_STRAPI_URL ? (/^https?:\/\//.test(RAW_STRAPI_URL) ? RAW_STRAPI_URL : `https://${RAW_STRAPI_URL}`) : "";
-const STRAPI_TOKEN = "";
+function useCMSContent() {
+  const [cmsData, setCmsData] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
-/* Fetch helper */
-async function strapiGet(path) {
-  if (!STRAPI_URL) throw new Error("STRAPI_URL not set");
-  const url = `${STRAPI_URL}${path}${path.includes("?") ? "&" : "?"}populate=*`;
-  const headers = { "Content-Type": "application/json" };
-  if (STRAPI_TOKEN) headers.Authorization = `Bearer ${STRAPI_TOKEN}`;
-  const res = await fetch(url, { headers });
-  if (!res.ok) throw new Error(`Strapi request failed: ${res.status}`);
-  return res.json();
+  useEffect(() => {
+    async function loadContent() {
+      if (!isStrapiConfigured()) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const data = await fetchAllContent();
+        setCmsData(data);
+      } catch (error) {
+        console.error("Failed to load CMS content:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadContent();
+  }, []);
+
+  return { cmsData, isLoading };
 }
 
 /* ----------------------------------------------------------------------------
@@ -563,6 +576,7 @@ function Header({ theme, setTheme }) {
 export default function Portfolio() {
   useInlineStyles();
   const { theme, setTheme } = useTheme();
+  const { cmsData, isLoading } = useCMSContent();
 
   useLayoutEffect(() => {
     // FIX: Removed the dynamic font <link> creation from here as it's now handled in useInlineStyles.
@@ -579,8 +593,102 @@ export default function Portfolio() {
 
   }, []);
 
-  const cms = {};
+  // Transform CMS data to match existing format
+  const transformCMSData = (data) => {
+    if (!data) return {};
+
+    const transformed = {};
+
+    // Profile (single type)
+    if (data.profile?.attributes) {
+      transformed.PROFILE = data.profile.attributes;
+    }
+
+    // Social Links (single type)
+    if (data.socialLinks?.attributes) {
+      const attrs = data.socialLinks.attributes;
+      transformed.SOCIALS = {
+        linkedin: attrs.linkedin || "",
+        website: attrs.website || "",
+        github: attrs.github || "",
+      };
+      transformed.LINKS = {
+        resume: attrs.resumeUrl || "#",
+      };
+    }
+
+    // Experience (collection type)
+    if (data.experience && Array.isArray(data.experience)) {
+      transformed.EXPERIENCE = data.experience.map(item => ({
+        company: item.attributes.company,
+        title: item.attributes.title,
+        range: item.attributes.dateRange,
+        bullets: item.attributes.bullets || [],
+      }));
+    }
+
+    // Projects (collection type)
+    if (data.projects && Array.isArray(data.projects)) {
+      transformed.PROJECTS = data.projects.map(item => ({
+        title: item.attributes.title,
+        blurb: item.attributes.blurb,
+        meta: item.attributes.meta || [],
+      }));
+    }
+
+    // Skills (collection type)
+    if (data.skills && Array.isArray(data.skills)) {
+      transformed.SKILLS = data.skills.map(item => item.attributes.name);
+    }
+
+    // Education (collection type)
+    if (data.education && Array.isArray(data.education)) {
+      transformed.EDUCATION = data.education.map(item => ({
+        school: item.attributes.school,
+        degree: item.attributes.degree,
+        year: item.attributes.year,
+      }));
+    }
+
+    // Certifications (collection type)
+    if (data.certifications && Array.isArray(data.certifications)) {
+      transformed.CERTS = data.certifications.map(item => ({
+        issuer: item.attributes.issuer,
+        name: item.attributes.name,
+      }));
+    }
+
+    // Clients (collection type)
+    if (data.clients && Array.isArray(data.clients)) {
+      transformed.CLIENTS = data.clients.map(item => ({
+        name: item.attributes.name,
+        href: item.attributes.href,
+        blurb: item.attributes.blurb,
+      }));
+    }
+
+    // Latest Work (collection type)
+    if (data.latestWork && Array.isArray(data.latestWork)) {
+      transformed.LATEST = data.latestWork.map(item => ({
+        kind: item.attributes.kind,
+        title: item.attributes.title,
+        href: item.attributes.href,
+        meta: item.attributes.meta,
+      }));
+    }
+
+    // Community (single type)
+    if (data.community?.attributes) {
+      transformed.COMMUNITY = data.community.attributes;
+    }
+
+    return transformed;
+  };
+
+  const cms = transformCMSData(cmsData);
   const PROFILE_V = cms.PROFILE || PROFILE;
+  const SOCIALS_V = cms.SOCIALS || SOCIALS;
+  const LINKS_V = cms.LINKS || LINKS;
   const EXPERIENCE_V = cms.EXPERIENCE || EXPERIENCE;
   const PROJECTS_V = (cms.PROJECTS || PROJECTS).filter(p => p.title.trim() !== "Help Center Systems for Google Ads / YouTube / DV360");
   const LATEST_V = cms.LATEST || LATEST;
@@ -613,9 +721,9 @@ export default function Portfolio() {
                 >
                   <Mail className="h-4 w-4" /> Contact me <ArrowRight className="h-4 w-4" />
                 </MagneticButton>
-                {LINKS.resume !== "#" && (
+                {LINKS_V.resume !== "#" && (
                   <motion.a
-                    href={LINKS.resume}
+                    href={LINKS_V.resume}
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center gap-2 rounded-full border border-zinc-300/70 dark:border-zinc-700/70 px-5 py-3 text-sm font-medium text-zinc-900 dark:text-zinc-50 hover:bg-zinc-900/5 dark:hover:bg-white/10"
@@ -626,7 +734,7 @@ export default function Portfolio() {
                   </motion.a>
                 )}
                 <motion.a
-                  href={SOCIALS.linkedin}
+                  href={SOCIALS_V.linkedin}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-2 rounded-full border border-zinc-300/70 dark:border-zinc-700/70 px-5 py-3 text-sm font-medium text-zinc-900 dark:text-zinc-50 hover:bg-zinc-900/5 dark:hover:bg-white/10"
@@ -823,7 +931,7 @@ export default function Portfolio() {
                 <div className="text-sm text-zinc-600 dark:text-zinc-400">Preferred</div>
                 <a href={`mailto:${PROFILE_V.email}`} className="mt-1 inline-flex items-center gap-2 text-lg font-medium hover:underline"><Mail className="h-5 w-5" /> {PROFILE_V.email}</a>
                 <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-zinc-600 dark:text-zinc-400">
-                  <span className="inline-flex items-center gap-2"><Linkedin className="h-4 w-4" /> <a className="hover:underline" target="_blank" rel="noreferrer" href={SOCIALS.linkedin}>LinkedIn</a></span>
+                  <span className="inline-flex items-center gap-2"><Linkedin className="h-4 w-4" /> <a className="hover:underline" target="_blank" rel="noreferrer" href={SOCIALS_V.linkedin}>LinkedIn</a></span>
                   <span className="inline-flex items-center gap-2"><MapPin className="h-4 w-4" /> {PROFILE_V.location}</span>
                   <span className="inline-flex items-center gap-2"><Phone className="h-4 w-4" /> {PROFILE_V.phone}</span>
                 </div>
