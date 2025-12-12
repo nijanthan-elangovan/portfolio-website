@@ -18,6 +18,46 @@
       "Click"
     ]
   },
+  "UI": {
+    "hero": {
+      "line1": "Creating Strategic",
+      "line2_prefix": "Impact, One",
+      "line3": "at a time."
+    },
+    "latest": {
+      "eyebrow": "Fresh",
+      "title": "Latest Published Work"
+    },
+    "work": {
+      "eyebrow": "Experience",
+      "title": "Selected Work"
+    },
+    "projects": {
+      "eyebrow": "Case Studies",
+      "title": "Projects & Impact"
+    },
+    "clients": {
+      "eyebrow": "Trusted by",
+      "title": "Clients & Collaborations"
+    },
+    "skills": {
+      "eyebrow": "Toolbox",
+      "title": "Skills & Superpowers"
+    },
+    "about": {
+      "eyebrow": "Story",
+      "title": "About Nijanthan"
+    },
+    "community": {
+      "eyebrow": "Shoutout",
+      "title": "Community & Causes"
+    },
+    "contact": {
+      "eyebrow": "Say hello",
+      "title": "Let’s build something clear & beautiful"
+    },
+    "footer": "Built with care."
+  },
   "SOCIALS": {
     "linkedin": "https://www.linkedin.com/in/nijanthane/",
     "website": "http://rebrand.ly/nijanthan",

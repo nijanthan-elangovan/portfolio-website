@@ -440,6 +440,18 @@ export default function Portfolio() {
     const COMMUNITY_V = contentData.COMMUNITY;
 
     const HERO_V = contentData.HERO || { words: ["Design", "Word", "Click"] };
+    const UI_V = contentData.UI || {
+        hero: { line1: "Creating Strategic", line2_prefix: "Impact, One", line3: "at a time." },
+        latest: { eyebrow: "Fresh", title: "Latest Published Work" },
+        work: { eyebrow: "Experience", title: "Selected Work" },
+        projects: { eyebrow: "Case Studies", title: "Projects & Impact" },
+        clients: { eyebrow: "Trusted by", "title": "Clients & Collaborations" },
+        skills: { eyebrow: "Toolbox", title: "Skills & Superpowers" },
+        about: { eyebrow: "Story", title: "About Nijanthan" },
+        community: { eyebrow: "Shoutout", title: "Community & Causes" },
+        contact: { eyebrow: "Say hello", title: "Let’s build something clear & beautiful" },
+        footer: "Built with care."
+    };
 
     return (
         <div className="min-h-screen w-full overflow-x-clip bg-transparent text-zinc-900 dark:text-zinc-50 antialiased" style={{ fontFamily: '"Host Grotesk", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial' }}>
@@ -453,9 +465,9 @@ export default function Portfolio() {
                         <div className="lg:col-span-7 min-w-0">
                             {/* FIX: Restructured h1 with <span>s and "block" class to force three lines */}
                             <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: "easeOut" }} className="text-4xl sm:text-6xl font-semibold tracking-tight leading-[1.05] text-zinc-900 dark:text-zinc-50">
-                                <span className="block">Creating Strategic</span>
-                                <span className="block">Impact, One <RotatingWord items={HERO_V.words} /></span>
-                                <span className="block">at a time.</span>
+                                <span className="block">{UI_V.hero.line1}</span>
+                                <span className="block">{UI_V.hero.line2_prefix} <RotatingWord items={HERO_V.words} /></span>
+                                <span className="block">{UI_V.hero.line3}</span>
                             </motion.h1>
                             <p className="mt-6 max-w-2xl text-zinc-700 dark:text-zinc-300">{PROFILE_V.summary}</p>
                             <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -519,7 +531,7 @@ export default function Portfolio() {
                 </section>
 
                 {/* Latest Published Work */}
-                <Section id="latest" eyebrow="Fresh" title="Latest Published Work">
+                <Section id="latest" eyebrow={UI_V.latest.eyebrow} title={UI_V.latest.title}>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(0,1fr)]">
                         {LATEST_V.map((item, i) => {
                             const yt = item.kind === "Video" ? getYouTubeId(item.href) : null;
@@ -566,7 +578,7 @@ export default function Portfolio() {
                     </div>
                 </Section>
                 {/* Work Experience */}
-                <Section id="work" eyebrow="Experience" title="Selected Work">
+                <Section id="work" eyebrow={UI_V.work.eyebrow} title={UI_V.work.title}>
                     <div className="grid grid-cols-1 gap-6">
                         {EXPERIENCE_V.map((job, i) => (
                             <motion.div key={job.company + job.title} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-20%" }} transition={{ duration: 0.5, delay: i * 0.04 }} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
@@ -589,7 +601,7 @@ export default function Portfolio() {
                     </div>
                 </Section>
                 {/* Projects */}
-                <Section id="projects" eyebrow="Case Studies" title="Projects & Impact">
+                <Section id="projects" eyebrow={UI_V.projects.eyebrow} title={UI_V.projects.title}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 auto-rows-[minmax(0,1fr)]">
                         {PROJECTS_V.map((p, i) => (
                             <motion.div key={p.title} className="h-full" initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-20%" }} transition={{ duration: 0.5, delay: i * 0.06 }} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
@@ -608,7 +620,7 @@ export default function Portfolio() {
                     </div>
                 </Section>
                 {/* Clients */}
-                <Section id="clients" eyebrow="Trusted by" title="Clients & Collaborations">
+                <Section id="clients" eyebrow={UI_V.clients.eyebrow} title={UI_V.clients.title}>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[minmax(0,1fr)]">
                         {CLIENTS_V.map((c) => (
                             <motion.div key={c.name} className="h-full" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
@@ -625,7 +637,7 @@ export default function Portfolio() {
                     </div>
                 </Section>
                 {/* Skills */}
-                <Section id="skills" eyebrow="Toolbox" title="Skills & Superpowers">
+                <Section id="skills" eyebrow={UI_V.skills.eyebrow} title={UI_V.skills.title}>
                     <Card>
                         <motion.div
                             className="p-6 sm:p-8"
@@ -645,7 +657,7 @@ export default function Portfolio() {
                     </Card>
                 </Section>
                 {/* About */}
-                <Section id="about" eyebrow="Story" title="About Nijanthan">
+                <Section id="about" eyebrow={UI_V.about.eyebrow} title={UI_V.about.title}>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(0,1fr)]">
                         <Card><div className="p-6 sm:p-8"><div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400"><GraduationCap className="h-4 w-4" /> Education</div><ul className="mt-4 space-y-3 text-sm">{EDUCATION_V.map((e) => (<li key={e.school} className="text-zinc-800 dark:text-zinc-200"><div className="font-medium">{e.school}</div><div className="text-zinc-600 dark:text-zinc-400">{e.degree}</div><div className="text-zinc-500 dark:text-zinc-500">{e.year}</div></li>))}</ul></div></Card>
                         <Card><div className="p-6 sm:p-8"><div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400"><BadgeCheck className="h-4 w-4" /> Certification</div><ul className="mt-4 space-y-3 text-sm">{CERTS_V.map((c) => (<li key={c.name} className="text-zinc-800 dark:text-zinc-200"><div className="font-medium">{c.name}</div><div className="text-zinc-600 dark:text-zinc-400">{c.issuer}</div></li>))}</ul></div></Card>
@@ -653,7 +665,7 @@ export default function Portfolio() {
                     </div>
                 </Section>
                 {/* Community */}
-                <Section id="community" eyebrow="Shoutout" title="Community & Causes">
+                <Section id="community" eyebrow={UI_V.community.eyebrow} title={UI_V.community.title}>
                     <Card>
                         <a href={COMMUNITY_V.href} target="_blank" rel="noopener noreferrer" className="block">
                             <div className="p-6 sm:p-8 flex items-start gap-4">
@@ -668,7 +680,7 @@ export default function Portfolio() {
                     </Card>
                 </Section>
                 {/* Contact */}
-                <Section id="contact" eyebrow="Say hello" title="Let’s build something clear & beautiful">
+                <Section id="contact" eyebrow={UI_V.contact.eyebrow} title={UI_V.contact.title}>
                     <Card>
                         <div className="p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                             <div>
@@ -705,7 +717,7 @@ export default function Portfolio() {
                 </Section>
                 <footer className="w-full relative py-2 border-t border-zinc-200/60 dark:border-zinc-800/60">
                     <div className="mx-auto max-w-6xl px-4 sm:px-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
-                        © {new Date().getFullYear()} Nijanthan Elangovan · Built with care.
+                        © {new Date().getFullYear()} Nijanthan Elangovan · {UI_V.footer}
                     </div>
                 </footer>
             </main>

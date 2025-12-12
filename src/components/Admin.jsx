@@ -179,6 +179,41 @@ export default function Admin() {
             {/* Content Form */}
             <main className="max-w-5xl mx-auto px-4 py-8 space-y-8">
 
+                {/* Page UI Section */}
+                <section className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-sm">
+                    <h2 className="text-lg font-semibold mb-4 pb-2 border-b border-zinc-100 dark:border-zinc-800">Page UI Text</h2>
+
+                    <div className="space-y-6">
+                        {/* Hero Static Text */}
+                        <div className="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800">
+                            <h3 className="text-sm font-medium text-zinc-900 dark:text-zinc-100 mb-3">Hero Heading</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <Field label="Line 1" value={content.UI?.hero?.line1} onChange={(v) => handleChange('UI', 'hero', v, null, 'line1')} />
+                                <Field label="Line 2 Prefix" value={content.UI?.hero?.line2_prefix} onChange={(v) => handleChange('UI', 'hero', v, null, 'line2_prefix')} />
+                                <Field label="Line 3" value={content.UI?.hero?.line3} onChange={(v) => handleChange('UI', 'hero', v, null, 'line3')} />
+                            </div>
+                        </div>
+
+                        {/* Sections */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {['latest', 'work', 'projects', 'clients', 'skills', 'about', 'community', 'contact'].map((section) => (
+                                <div key={section} className="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800">
+                                    <h3 className="text-sm font-medium text-zinc-900 dark:text-zinc-100 mb-3 capitalize">{section} Section</h3>
+                                    <div className="space-y-3">
+                                        <Field label="Eyebrow" value={content.UI?.[section]?.eyebrow} onChange={(v) => handleChange('UI', section, v, null, 'eyebrow')} />
+                                        <Field label="Title" value={content.UI?.[section]?.title} onChange={(v) => handleChange('UI', section, v, null, 'title')} />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Footer */}
+                        <div className="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800">
+                            <Field label="Footer Text" value={content.UI?.footer} onChange={(v) => handleChange('UI', null, v, null, 'footer')} />
+                        </div>
+                    </div>
+                </section>
+
                 {/* Hero Section */}
                 <section className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-sm">
                     <h2 className="text-lg font-semibold mb-4 pb-2 border-b border-zinc-100 dark:border-zinc-800">Hero Text</h2>
