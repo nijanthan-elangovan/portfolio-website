@@ -18,46 +18,7 @@
       "Click"
     ]
   },
-  "UI": {
-    "hero": {
-      "line1": "Creating Strategic",
-      "line2_prefix": "Impact, One",
-      "line3": "at a time."
-    },
-    "latest": {
-      "eyebrow": "Fresh",
-      "title": "Latest Published Work"
-    },
-    "work": {
-      "eyebrow": "Experience",
-      "title": "Selected Work"
-    },
-    "projects": {
-      "eyebrow": "Case Studies",
-      "title": "Projects & Impact"
-    },
-    "clients": {
-      "eyebrow": "Trusted by",
-      "title": "Clients & Collaborations"
-    },
-    "skills": {
-      "eyebrow": "Toolbox",
-      "title": "Skills & Superpowers"
-    },
-    "about": {
-      "eyebrow": "Story",
-      "title": "About Nijanthan"
-    },
-    "community": {
-      "eyebrow": "Shoutout",
-      "title": "Community & Causes"
-    },
-    "contact": {
-      "eyebrow": "Say hello",
-      "title": "Let’s build something clear & beautiful"
-    },
-    "footer": "Built with care."
-  },
+  "UI": "Built with Antigravity.",
   "SOCIALS": {
     "linkedin": "https://www.linkedin.com/in/nijanthane/",
     "website": "http://rebrand.ly/nijanthan",
@@ -126,11 +87,7 @@
         "WordPress",
         "SEO",
         "Analytics"
-      ],
-      "featured": true,
-      "thumbnail": "",
-      "category": "Web Development",
-      "href": "#"
+      ]
     },
     {
       "title": "Design Systems & UI Prototypes",
@@ -139,11 +96,7 @@
         "Figma",
         "Prototyping",
         "Design System"
-      ],
-      "featured": true,
-      "thumbnail": "",
-      "category": "UI/UX Design",
-      "href": "#"
+      ]
     },
     {
       "title": "OTT App Concept (University)",
@@ -152,11 +105,7 @@
         "Product Thinking",
         "Interaction",
         "TV UX"
-      ],
-      "featured": true,
-      "thumbnail": "",
-      "category": "Product Design",
-      "href": "#"
+      ]
     }
   ],
   "SKILLS": [
@@ -193,63 +142,51 @@
       "kind": "Article",
       "title": "About ads and AI Overviews",
       "href": "https://support.google.com/google-ads/answer/16297775",
-      "meta": "Google Ads Help",
-      "featured": true,
-      "thumbnail": ""
+      "meta": "Google Ads Help"
     },
     {
       "kind": "Video",
       "title": "How to Add Google Maps in WordPress",
       "href": "https://www.youtube.com/watch?v=bT0cZOQbztI",
-      "meta": "YouTube",
-      "featured": true,
-      "thumbnail": ""
+      "meta": "YouTube"
     },
     {
       "kind": "Video",
       "title": "How To Make A Logo in 5 Minutes — for Free",
       "href": "https://youtu.be/wVrEeImyg_E?si=Iz8r8AHQI-8QWwxO",
-      "meta": "YouTube",
-      "featured": true,
-      "thumbnail": ""
+      "meta": "YouTube"
     }
   ],
   "CLIENTS": [
     {
       "name": "Euclid Innovations",
       "href": "https://euclidinnovations.com/",
-      "blurb": "Staffing • Cloud Enablement • Digital Transformation",
-      "featured": true
+      "blurb": "Staffing • Cloud Enablement • Digital Transformation"
     },
     {
       "name": "GetKitch",
       "href": "https://getkitch.in/",
-      "blurb": "Kitchen solutions & e-commerce",
-      "featured": true
+      "blurb": "Kitchen solutions & e-commerce"
     },
     {
       "name": "Yaamohaideen Briyani",
       "href": "https://yaamohaideenbriyani.com/",
-      "blurb": "F&B • Restaurant brand",
-      "featured": true
+      "blurb": "F&B • Restaurant brand"
     },
     {
       "name": "Yorafitness",
       "href": "https://yorafitness.com/",
-      "blurb": "Fitness & lifestyle",
-      "featured": true
+      "blurb": "Fitness & lifestyle"
     },
     {
       "name": "VivaFit",
       "href": "https://vivafit.life/",
-      "blurb": "Wellness & nutrition",
-      "featured": true
+      "blurb": "Wellness & nutrition"
     },
     {
       "name": "SLAM Fitness Studio",
       "href": "https://slamfitnessstudio.in/",
-      "blurb": "Gyms & training",
-      "featured": true
+      "blurb": "Gyms & training"
     }
   ],
   "COMMUNITY": {
