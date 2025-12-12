@@ -179,6 +179,20 @@ export default function Admin() {
             {/* Content Form */}
             <main className="max-w-5xl mx-auto px-4 py-8 space-y-8">
 
+                {/* Hero Section */}
+                <section className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-sm">
+                    <h2 className="text-lg font-semibold mb-4 pb-2 border-b border-zinc-100 dark:border-zinc-800">Hero Text</h2>
+                    <div>
+                        <label className="block text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-1">Rotating Words (comma separated)</label>
+                        <input
+                            type="text"
+                            value={content.HERO?.words?.join(', ') || ''}
+                            onChange={(e) => handleChange('HERO', 'words', e.target.value.split(',').map(w => w.trim()))}
+                            className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 focus:ring-2 focus:ring-emerald-500 outline-none transition"
+                        />
+                    </div>
+                </section>
+
                 {/* Profile Section */}
                 <section className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-sm">
                     <h2 className="text-lg font-semibold mb-4 pb-2 border-b border-zinc-100 dark:border-zinc-800">Profile</h2>

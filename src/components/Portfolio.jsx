@@ -439,6 +439,8 @@ export default function Portfolio() {
     const SKILLS_V = contentData.SKILLS;
     const COMMUNITY_V = contentData.COMMUNITY;
 
+    const HERO_V = contentData.HERO || { words: ["Design", "Word", "Click"] };
+
     return (
         <div className="min-h-screen w-full overflow-x-clip bg-transparent text-zinc-900 dark:text-zinc-50 antialiased" style={{ fontFamily: '"Host Grotesk", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial' }}>
             <CustomCursor />
@@ -452,7 +454,7 @@ export default function Portfolio() {
                             {/* FIX: Restructured h1 with <span>s and "block" class to force three lines */}
                             <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: "easeOut" }} className="text-4xl sm:text-6xl font-semibold tracking-tight leading-[1.05] text-zinc-900 dark:text-zinc-50">
                                 <span className="block">Creating Strategic</span>
-                                <span className="block">Impact, One <RotatingWord items={["Design", "Word", "Click"]} /></span>
+                                <span className="block">Impact, One <RotatingWord items={HERO_V.words} /></span>
                                 <span className="block">at a time.</span>
                             </motion.h1>
                             <p className="mt-6 max-w-2xl text-zinc-700 dark:text-zinc-300">{PROFILE_V.summary}</p>
