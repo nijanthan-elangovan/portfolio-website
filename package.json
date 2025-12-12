@@ -8,7 +8,7 @@
     "build": "vite build",
     "build:domain": "vite build --base=/",
     "build:repo": "vite build --base=/portfolio-website/",
-    "deploy": "npm run build:domain && echo 'njthnelvgn.com' > dist/CNAME && gh-pages -d dist -b gh-pages -r https://github.com/nijanthan-elangovan/portfolio-website.git -m \"deploy (custom domain)\"",
+    "deploy": "npm run build:domain && echo 'njthnelvgn.com' > dist/CNAME && cp dist/index.html dist/404.html && gh-pages -d dist -b gh-pages -r https://github.com/nijanthan-elangovan/portfolio-website.git -m \"deploy (custom domain)\"",
     "deploy:repo": "npm run build:repo && gh-pages -d dist -b gh-pages -r https://github.com/nijanthan-elangovan/portfolio-website.git -m \"deploy (repo path)\"",
     "preview": "vite preview --strictPort",
     "clean": "rimraf dist"
