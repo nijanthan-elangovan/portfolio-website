@@ -1,189 +1,189 @@
 {
-    "PROFILE": {
-        "name": "Nijanthan Elangovan",
-        "roles": [
-            "Technical Writer",
-            "Creative Designer"
-        ],
-        "summary": "Multidisciplinary Technical & Conversational Writer with 5+ years crafting clear, user-focused content and elegant interfaces for global tech products (Google Ads, YouTube, DV360). Blends precise documentation with thoughtful design to create friction-free experiences.",
-        "location": "Chennai, India",
-        "email": "nijanthan.work@gmail.com",
-        "phone": "+91 8681828144",
-        "availability": "Open to select freelance & consulting"
+  "PROFILE": {
+    "name": "Nijanthan Elangovan",
+    "roles": [
+      "Technical Writer",
+      "Creative Designer"
+    ],
+    "summary": "Multidisciplinary Technical & Conversational Writer with 5+ years crafting clear, user-focused content and elegant interfaces for global tech products (Google Ads, YouTube, DV360). Blends precise documentation with thoughtful design to create friction-free experiences.",
+    "location": "Hyderbad, India",
+    "email": "nijanthan.work@gmail.com",
+    "phone": "+91 8681828144",
+    "availability": "Open to select freelance & consulting"
+  },
+  "SOCIALS": {
+    "linkedin": "https://www.linkedin.com/in/nijanthane/",
+    "website": "http://rebrand.ly/nijanthan",
+    "github": ""
+  },
+  "LINKS": {
+    "resume": "#"
+  },
+  "EXPERIENCE": [
+    {
+      "company": "Google Operations Center",
+      "title": "Senior Tech Writer Associate",
+      "range": "Jul 2024 — Present",
+      "bullets": [
+        "Create user-facing Help Center articles for Google Ads with global clarity and accessibility.",
+        "Develop internal documentation enabling fast, accurate troubleshooting for support teams.",
+        "Write/optimize conversational content for AI-powered chatbots within the Google Help Center.",
+        "Collaborate on launch comms for YouTube, DV360, Google Ads, and Policy & Billing."
+      ]
     },
-    "SOCIALS": {
-        "linkedin": "https://www.linkedin.com/in/nijanthane/",
-        "website": "http://rebrand.ly/nijanthan",
-        "github": ""
+    {
+      "company": "Euclid Innovations",
+      "title": "UI Designer & Content",
+      "range": "Dec 2022 — Jul 2024",
+      "bullets": [
+        "Produced employee handbooks, project docs, and marketing copy to elevate org clarity.",
+        "Designed & migrated web content (blogs, case studies) with accessibility best practices.",
+        "Conceptualised social creatives + marketing materials; implemented analytics for performance.",
+        "Managed multiple websites, optimizing UX and engagement."
+      ]
     },
-    "LINKS": {
-        "resume": "#"
+    {
+      "company": "AdsHi5",
+      "title": "WordPress Developer",
+      "range": "Nov 2021 — Dec 2022",
+      "bullets": [
+        "Directed compliant, performant web experiences across a 40+ site portfolio.",
+        "Shipped e-commerce & landing pages—several properties reached 500k+ monthly visits.",
+        "Ensured uptime, accessibility, analytics, and SEO discipline."
+      ]
     },
-    "EXPERIENCE": [
-        {
-            "company": "Google Operations Center",
-            "title": "Senior Tech Writer Associate",
-            "range": "Jul 2024 — Present",
-            "bullets": [
-                "Create user-facing Help Center articles for Google Ads with global clarity and accessibility.",
-                "Develop internal documentation enabling fast, accurate troubleshooting for support teams.",
-                "Write/optimize conversational content for AI-powered chatbots within the Google Help Center.",
-                "Collaborate on launch comms for YouTube, DV360, Google Ads, and Policy & Billing."
-            ]
-        },
-        {
-            "company": "Euclid Innovations",
-            "title": "UI Designer & Content",
-            "range": "Dec 2022 — Jul 2024",
-            "bullets": [
-                "Produced employee handbooks, project docs, and marketing copy to elevate org clarity.",
-                "Designed & migrated web content (blogs, case studies) with accessibility best practices.",
-                "Conceptualised social creatives + marketing materials; implemented analytics for performance.",
-                "Managed multiple websites, optimizing UX and engagement."
-            ]
-        },
-        {
-            "company": "AdsHi5",
-            "title": "WordPress Developer",
-            "range": "Nov 2021 — Dec 2022",
-            "bullets": [
-                "Directed compliant, performant web experiences across a 40+ site portfolio.",
-                "Shipped e-commerce & landing pages—several properties reached 500k+ monthly visits.",
-                "Ensured uptime, accessibility, analytics, and SEO discipline."
-            ]
-        },
-        {
-            "company": "Yorafitness (PG Internship)",
-            "title": "Graphic Designer / DM Associate",
-            "range": "Apr 2021 — Oct 2021",
-            "bullets": [
-                "Designed branding assets and video content; managed targeted ad promotions.",
-                "Refined strategy via analytics and audience insights."
-            ]
-        },
-        {
-            "company": "Website Learners",
-            "title": "Technical Content Writer",
-            "range": "Jun 2018 — Dec 2018",
-            "bullets": [
-                "Built technical content strategy and end-to-end e-learning materials.",
-                "Coordinated content pipeline and analyzed performance for continuous improvement."
-            ]
-        }
-    ],
-    "PROJECTS": [
-        {
-            "title": "Multi-site WordPress Suite (40+ sites)",
-            "blurb": "Delivered e-commerce & content sites with robust SEO and analytics; several properties crossed 500k+ monthly visits.",
-            "meta": [
-                "WordPress",
-                "SEO",
-                "Analytics"
-            ]
-        },
-        {
-            "title": "Design Systems & UI Prototypes",
-            "blurb": "Built consistent, minimalist component libraries and interactive flows in Figma for faster iteration and handoffs.",
-            "meta": [
-                "Figma",
-                "Prototyping",
-                "Design System"
-            ]
-        },
-        {
-            "title": "OTT App Concept (University)",
-            "blurb": "Structured a clean, content-first OTT interface with typographic hierarchy and focus states for TV remote UX.",
-            "meta": [
-                "Product Thinking",
-                "Interaction",
-                "TV UX"
-            ]
-        }
-    ],
-    "SKILLS": [
-        "Technical & Conversational Writing",
-        "Help Center IA & Governance",
-        "Chatbot / CX Writing",
-        "UX Writing",
-        "HTML • CSS • JS • Bootstrap",
-        "WordPress",
-        "SEO & Web Performance",
-        "Figma • Adobe XD • PS • AI",
-        "Docs: Word • Excel • PowerPoint"
-    ],
-    "EDUCATION": [
-        {
-            "school": "Pondicherry University",
-            "degree": "Masters in Electronic Media (Writing, Design & Production)",
-            "year": "2019 – 2021"
-        },
-        {
-            "school": "St. Thomas College of Arts & Science — University of Madras",
-            "degree": "Bachelors in Electronic Media",
-            "year": "2015 – 2018"
-        }
-    ],
-    "CERTS": [
-        {
-            "issuer": "NFDC (National Film Development Corporation of India)",
-            "name": "Graphic Design Certification"
-        }
-    ],
-    "LATEST": [
-        {
-            "kind": "Article",
-            "title": "About ads and AI Overviews",
-            "href": "https://support.google.com/google-ads/answer/16297775",
-            "meta": "Google Ads Help"
-        },
-        {
-            "kind": "Video",
-            "title": "How to Add Google Maps in WordPress",
-            "href": "https://www.youtube.com/watch?v=bT0cZOQbztI",
-            "meta": "YouTube"
-        },
-        {
-            "kind": "Video",
-            "title": "How To Make A Logo in 5 Minutes — for Free",
-            "href": "https://youtu.be/wVrEeImyg_E?si=Iz8r8AHQI-8QWwxO",
-            "meta": "YouTube"
-        }
-    ],
-    "CLIENTS": [
-        {
-            "name": "Euclid Innovations",
-            "href": "https://euclidinnovations.com/",
-            "blurb": "Staffing • Cloud Enablement • Digital Transformation"
-        },
-        {
-            "name": "GetKitch",
-            "href": "https://getkitch.in/",
-            "blurb": "Kitchen solutions & e-commerce"
-        },
-        {
-            "name": "Yaamohaideen Briyani",
-            "href": "https://yaamohaideenbriyani.com/",
-            "blurb": "F&B • Restaurant brand"
-        },
-        {
-            "name": "Yorafitness",
-            "href": "https://yorafitness.com/",
-            "blurb": "Fitness & lifestyle"
-        },
-        {
-            "name": "VivaFit",
-            "href": "https://vivafit.life/",
-            "blurb": "Wellness & nutrition"
-        },
-        {
-            "name": "SLAM Fitness Studio",
-            "href": "https://slamfitnessstudio.in/",
-            "blurb": "Gyms & training"
-        }
-    ],
-    "COMMUNITY": {
-        "name": "U&I – Non-profit",
-        "href": "https://uandi.org.in/",
-        "note": "Proud volunteer — Chapter Lead. Grateful for the impact they create in education and mentorship."
+    {
+      "company": "Yorafitness (PG Internship)",
+      "title": "Graphic Designer / DM Associate",
+      "range": "Apr 2021 — Oct 2021",
+      "bullets": [
+        "Designed branding assets and video content; managed targeted ad promotions.",
+        "Refined strategy via analytics and audience insights."
+      ]
+    },
+    {
+      "company": "Website Learners",
+      "title": "Technical Content Writer",
+      "range": "Jun 2018 — Dec 2018",
+      "bullets": [
+        "Built technical content strategy and end-to-end e-learning materials.",
+        "Coordinated content pipeline and analyzed performance for continuous improvement."
+      ]
     }
+  ],
+  "PROJECTS": [
+    {
+      "title": "Multi-site WordPress Suite (40+ sites)",
+      "blurb": "Delivered e-commerce & content sites with robust SEO and analytics; several properties crossed 500k+ monthly visits.",
+      "meta": [
+        "WordPress",
+        "SEO",
+        "Analytics"
+      ]
+    },
+    {
+      "title": "Design Systems & UI Prototypes",
+      "blurb": "Built consistent, minimalist component libraries and interactive flows in Figma for faster iteration and handoffs.",
+      "meta": [
+        "Figma",
+        "Prototyping",
+        "Design System"
+      ]
+    },
+    {
+      "title": "OTT App Concept (University)",
+      "blurb": "Structured a clean, content-first OTT interface with typographic hierarchy and focus states for TV remote UX.",
+      "meta": [
+        "Product Thinking",
+        "Interaction",
+        "TV UX"
+      ]
+    }
+  ],
+  "SKILLS": [
+    "Technical & Conversational Writing",
+    "Help Center IA & Governance",
+    "Chatbot / CX Writing",
+    "UX Writing",
+    "HTML • CSS • JS • Bootstrap",
+    "WordPress",
+    "SEO & Web Performance",
+    "Figma • Adobe XD • PS • AI",
+    "Docs: Word • Excel • PowerPoint"
+  ],
+  "EDUCATION": [
+    {
+      "school": "Pondicherry University",
+      "degree": "Masters in Electronic Media (Writing, Design & Production)",
+      "year": "2019 – 2021"
+    },
+    {
+      "school": "St. Thomas College of Arts & Science — University of Madras",
+      "degree": "Bachelors in Electronic Media",
+      "year": "2015 – 2018"
+    }
+  ],
+  "CERTS": [
+    {
+      "issuer": "NFDC (National Film Development Corporation of India)",
+      "name": "Graphic Design Certification"
+    }
+  ],
+  "LATEST": [
+    {
+      "kind": "Article",
+      "title": "About ads and AI Overviews",
+      "href": "https://support.google.com/google-ads/answer/16297775",
+      "meta": "Google Ads Help"
+    },
+    {
+      "kind": "Video",
+      "title": "How to Add Google Maps in WordPress",
+      "href": "https://www.youtube.com/watch?v=bT0cZOQbztI",
+      "meta": "YouTube"
+    },
+    {
+      "kind": "Video",
+      "title": "How To Make A Logo in 5 Minutes — for Free",
+      "href": "https://youtu.be/wVrEeImyg_E?si=Iz8r8AHQI-8QWwxO",
+      "meta": "YouTube"
+    }
+  ],
+  "CLIENTS": [
+    {
+      "name": "Euclid Innovations",
+      "href": "https://euclidinnovations.com/",
+      "blurb": "Staffing • Cloud Enablement • Digital Transformation"
+    },
+    {
+      "name": "GetKitch",
+      "href": "https://getkitch.in/",
+      "blurb": "Kitchen solutions & e-commerce"
+    },
+    {
+      "name": "Yaamohaideen Briyani",
+      "href": "https://yaamohaideenbriyani.com/",
+      "blurb": "F&B • Restaurant brand"
+    },
+    {
+      "name": "Yorafitness",
+      "href": "https://yorafitness.com/",
+      "blurb": "Fitness & lifestyle"
+    },
+    {
+      "name": "VivaFit",
+      "href": "https://vivafit.life/",
+      "blurb": "Wellness & nutrition"
+    },
+    {
+      "name": "SLAM Fitness Studio",
+      "href": "https://slamfitnessstudio.in/",
+      "blurb": "Gyms & training"
+    }
+  ],
+  "COMMUNITY": {
+    "name": "U&I – Non-profit",
+    "href": "https://uandi.org.in/",
+    "note": "Proud volunteer — Chapter Lead. Grateful for the impact they create in education and mentorship."
+  }
 }
