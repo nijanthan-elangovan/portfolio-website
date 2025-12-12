@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Octokit } from '@octokit/rest';
 import { motion } from 'framer-motion';
-import { Lock, Save, LogOut, Github, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { Lock, Save, LogOut, Github, Loader2, CheckCircle, AlertCircle, Trash2, Plus } from 'lucide-react';
 import contentData from '../data/content.json';
 
 export default function Admin() {
@@ -50,6 +50,20 @@ export default function Admin() {
         }
 
         setContent(newContent);
+    };
+
+    const handleAddItem = (section, template) => {
+        const newContent = { ...content };
+        newContent[section] = [...newContent[section], template];
+        setContent(newContent);
+    };
+
+    const handleRemoveItem = (section, index) => {
+        if (window.confirm('Are you sure you want to delete this item?')) {
+            const newContent = { ...content };
+            newContent[section] = newContent[section].filter((_, i) => i !== index);
+            setContent(newContent);
+        }
     };
 
     const handleSave = async () => {
@@ -251,11 +265,15 @@ export default function Admin() {
 
                 {/* Experience Section */}
                 <section className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-sm">
-                    <h2 className="text-lg font-semibold mb-4 pb-2 border-b border-zinc-100 dark:border-zinc-800">Experience</h2>
+                    <div className="flex items-center justify-between mb-4 pb-2 border-b border-zinc-100 dark:border-zinc-800">
+                        <h2 className="text-lg font-semibold">Experience</h2>
+                        <button onClick={() => handleAddItem('EXPERIENCE', { company: '', title: '', range: '', bullets: [] })} className="text-sm flex items-center gap-1 text-emerald-600 hover:text-emerald-700 font-medium"><Plus className="w-4 h-4" /> Add Role</button>
+                    </div>
                     <div className="space-y-6">
                         {content.EXPERIENCE.map((exp, index) => (
-                            <div key={index} className="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div key={index} className="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800 relative group">
+                                <button onClick={() => handleRemoveItem('EXPERIENCE', index)} className="absolute top-4 right-4 text-zinc-400 hover:text-red-500 transition opacity-0 group-hover:opacity-100"><Trash2 className="w-4 h-4" /></button>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 pr-8">
                                     <Field label="Company" value={exp.company} onChange={(v) => handleChange('EXPERIENCE', null, v, index, 'company')} />
                                     <Field label="Title" value={exp.title} onChange={(v) => handleChange('EXPERIENCE', null, v, index, 'title')} />
                                     <Field label="Date Range" value={exp.range} onChange={(v) => handleChange('EXPERIENCE', null, v, index, 'range')} />
@@ -276,12 +294,25 @@ export default function Admin() {
 
                 {/* Projects Section */}
                 <section className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-sm">
-                    <h2 className="text-lg font-semibold mb-4 pb-2 border-b border-zinc-100 dark:border-zinc-800">Projects</h2>
+                    <div className="flex items-center justify-between mb-4 pb-2 border-b border-zinc-100 dark:border-zinc-800">
+                        <h2 className="text-lg font-semibold">Projects</h2>
+                        <button onClick={() => handleAddItem('PROJECTS', { title: '', blurb: '', meta: [], featured: false, thumbnail: '', category: '', href: '#' })} className="text-sm flex items-center gap-1 text-emerald-600 hover:text-emerald-700 font-medium"><Plus className="w-4 h-4" /> Add Project</button>
+                    </div>
                     <div className="space-y-6">
                         {content.PROJECTS.map((proj, index) => (
-                            <div key={index} className="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800">
-                                <div className="mb-4">
+                            <div key={index} className="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800 relative group">
+                                <button onClick={() => handleRemoveItem('PROJECTS', index)} className="absolute top-4 right-4 text-zinc-400 hover:text-red-500 transition opacity-0 group-hover:opacity-100"><Trash2 className="w-4 h-4" /></button>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 pr-8">
                                     <Field label="Title" value={proj.title} onChange={(v) => handleChange('PROJECTS', null, v, index, 'title')} />
+                                    <Field label="Category" value={proj.category || ''} onChange={(v) => handleChange('PROJECTS', null, v, index, 'category')} />
+                                    <Field label="Link" value={proj.href || '#'} onChange={(v) => handleChange('PROJECTS', null, v, index, 'href')} />
+                                    <Field label="Thumbnail URL" value={proj.thumbnail || ''} onChange={(v) => handleChange('PROJECTS', null, v, index, 'thumbnail')} />
+                                </div>
+                                <div className="mb-4">
+                                    <label className="flex items-center gap-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 cursor-pointer">
+                                        <input type="checkbox" checked={proj.featured || false} onChange={(e) => handleChange('PROJECTS', null, e.target.checked, index, 'featured')} className="rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500" />
+                                        Featured Project
+                                    </label>
                                 </div>
                                 <div className="mb-4">
                                     <label className="block text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-1">Blurb</label>
@@ -291,6 +322,69 @@ export default function Admin() {
                                         rows={2}
                                         className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:ring-2 focus:ring-emerald-500 outline-none transition"
                                     />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-1">Tags (comma separated)</label>
+                                    <input
+                                        type="text"
+                                        value={proj.meta.join(', ')}
+                                        onChange={(e) => handleChange('PROJECTS', null, e.target.value.split(',').map(s => s.trim()), index, 'meta')}
+                                        className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:ring-2 focus:ring-emerald-500 outline-none transition"
+                                    />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                {/* Latest Work Section */}
+                <section className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-sm">
+                    <div className="flex items-center justify-between mb-4 pb-2 border-b border-zinc-100 dark:border-zinc-800">
+                        <h2 className="text-lg font-semibold">Latest Work</h2>
+                        <button onClick={() => handleAddItem('LATEST', { kind: 'Article', title: '', href: '', meta: '', featured: false, thumbnail: '' })} className="text-sm flex items-center gap-1 text-emerald-600 hover:text-emerald-700 font-medium"><Plus className="w-4 h-4" /> Add Item</button>
+                    </div>
+                    <div className="space-y-6">
+                        {content.LATEST.map((item, index) => (
+                            <div key={index} className="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800 relative group">
+                                <button onClick={() => handleRemoveItem('LATEST', index)} className="absolute top-4 right-4 text-zinc-400 hover:text-red-500 transition opacity-0 group-hover:opacity-100"><Trash2 className="w-4 h-4" /></button>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 pr-8">
+                                    <Field label="Title" value={item.title} onChange={(v) => handleChange('LATEST', null, v, index, 'title')} />
+                                    <Field label="Link" value={item.href} onChange={(v) => handleChange('LATEST', null, v, index, 'href')} />
+                                    <Field label="Type (Article/Video)" value={item.kind} onChange={(v) => handleChange('LATEST', null, v, index, 'kind')} />
+                                    <Field label="Source (e.g. YouTube)" value={item.meta} onChange={(v) => handleChange('LATEST', null, v, index, 'meta')} />
+                                    <Field label="Thumbnail URL" value={item.thumbnail || ''} onChange={(v) => handleChange('LATEST', null, v, index, 'thumbnail')} />
+                                </div>
+                                <div>
+                                    <label className="flex items-center gap-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 cursor-pointer">
+                                        <input type="checkbox" checked={item.featured || false} onChange={(e) => handleChange('LATEST', null, e.target.checked, index, 'featured')} className="rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500" />
+                                        Featured Item
+                                    </label>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                {/* Clients Section */}
+                <section className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-sm">
+                    <div className="flex items-center justify-between mb-4 pb-2 border-b border-zinc-100 dark:border-zinc-800">
+                        <h2 className="text-lg font-semibold">Clients</h2>
+                        <button onClick={() => handleAddItem('CLIENTS', { name: '', href: '', blurb: '', featured: false })} className="text-sm flex items-center gap-1 text-emerald-600 hover:text-emerald-700 font-medium"><Plus className="w-4 h-4" /> Add Client</button>
+                    </div>
+                    <div className="space-y-6">
+                        {content.CLIENTS.map((client, index) => (
+                            <div key={index} className="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800 relative group">
+                                <button onClick={() => handleRemoveItem('CLIENTS', index)} className="absolute top-4 right-4 text-zinc-400 hover:text-red-500 transition opacity-0 group-hover:opacity-100"><Trash2 className="w-4 h-4" /></button>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 pr-8">
+                                    <Field label="Name" value={client.name} onChange={(v) => handleChange('CLIENTS', null, v, index, 'name')} />
+                                    <Field label="Link" value={client.href} onChange={(v) => handleChange('CLIENTS', null, v, index, 'href')} />
+                                    <Field label="Description" value={client.blurb} onChange={(v) => handleChange('CLIENTS', null, v, index, 'blurb')} />
+                                </div>
+                                <div>
+                                    <label className="flex items-center gap-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 cursor-pointer">
+                                        <input type="checkbox" checked={client.featured || false} onChange={(e) => handleChange('CLIENTS', null, e.target.checked, index, 'featured')} className="rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500" />
+                                        Featured Client
+                                    </label>
                                 </div>
                             </div>
                         ))}

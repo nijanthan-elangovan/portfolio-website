@@ -19,6 +19,10 @@ import {
     Sun,
     Moon,
     MousePointerClick,
+    ArrowUpRight,
+    Play,
+    Video,
+    Newspaper,
 } from "lucide-react";
 import contentData from "../data/content.json";
 import InteractiveBackground from "./InteractiveBackground";
@@ -533,49 +537,50 @@ export default function Portfolio() {
                 {/* Latest Published Work */}
                 <Section id="latest" eyebrow={UI_V.latest.eyebrow} title={UI_V.latest.title}>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(0,1fr)]">
-                        {LATEST_V.map((item, i) => {
+                        {LATEST_V.filter(item => item.featured !== false).map((item, i) => {
                             const yt = item.kind === "Video" ? getYouTubeId(item.href) : null;
-                            const thumb = yt ? `https://img.youtube.com/vi/${yt}/hqdefault.jpg` : null;
                             return (
-                                <motion.div key={item.href} className="h-full" initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-20%" }} transition={{ duration: 0.5, delay: i * 0.05 }}>
-                                    <a href={item.href} target="_blank" rel="noopener noreferrer" className="block h-full">
-                                        <Card className="h-full" tilt={true}>
-                                            <div className="relative aspect-video w-full overflow-hidden">
-                                                {thumb ? (
-                                                    <motion.img
-                                                        src={thumb}
-                                                        alt={item.title}
-                                                        className="h-full w-full object-cover"
-                                                        loading="lazy"
-                                                        whileHover={{ scale: 1.05 }}
-                                                        transition={{ duration: 0.3 }}
-                                                    />
-                                                ) : (
-                                                    <div className="h-full w-full bg-[conic-gradient(at_20%_20%,_#34d399_0deg,_#22d3ee_90deg,_#a78bfa_180deg,_#10b981_270deg,_#34d399_360deg)]" />
-                                                )}
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
-                                                <div className="absolute bottom-2 left-2 flex items-center gap-2 rounded-full bg-black/55 px-3 py-1 text-xs text-white backdrop-blur-sm">
-                                                    <motion.div whileHover={{ rotate: 360 }} transition={{ duration: 0.5 }}>
-                                                        {yt ? <Youtube className="h-3.5 w-3.5" /> : <Globe className="h-3.5 w-3.5" />}
-                                                    </motion.div>
-                                                    <span>{item.kind}</span>
+                                <Card key={item.title}>
+                                    <a href={item.href} target="_blank" rel="noopener noreferrer" className="block h-full group">
+                                        <div className="relative aspect-video w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
+                                            {yt ? (
+                                                <img src={`https://img.youtube.com/vi/${yt}/maxresdefault.jpg`} alt="" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                                            ) : item.thumbnail ? (
+                                                <img src={item.thumbnail} alt="" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                                            ) : (
+                                                <div className="flex h-full items-center justify-center text-zinc-400"><ArrowUpRight className="h-8 w-8 opacity-50" /></div>
+                                            )}
+                                            {item.kind === "Video" && <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/10 transition"><div className="rounded-full bg-white/90 p-3 shadow-lg backdrop-blur-sm"><Play className="h-5 w-5 fill-black text-black ml-0.5" /></div></div>}
+                                        </div>
+                                        <div className="p-6">
+                                            <div className="flex items-center justify-between gap-4">
+                                                <div className="flex items-center gap-2 text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                                                    {item.kind === "Video" ? <Video className="h-3 w-3" /> : <Newspaper className="h-3 w-3" />}
+                                                    {item.meta}
                                                 </div>
+                                                <ArrowUpRight className="h-4 w-4 text-zinc-400 transition group-hover:text-emerald-500 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                                             </div>
-                                            <div className="p-6 sm:p-8">
-                                                <div className="flex items-center justify-between gap-4">
-                                                    <h3 className="text-lg font-semibold leading-tight">{item.title}</h3>
-                                                    <motion.div whileHover={{ x: 3, y: -3 }} transition={{ type: "spring", stiffness: 400, damping: 10 }}>
-                                                        <ExternalLink className="h-4 w-4 text-zinc-500" />
-                                                    </motion.div>
-                                                </div>
-                                                <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">{item.meta}</p>
-                                            </div>
-                                        </Card>
+                                            <h3 className="mt-3 text-lg font-semibold leading-tight text-zinc-900 dark:text-zinc-50 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition">{item.title}</h3>
+                                        </div>
                                     </a>
-                                </motion.div>
+                                </Card>
                             );
                         })}
                     </div>
+                    {/* Scrollable Non-Featured Items */}
+                    {LATEST_V.filter(item => item.featured === false).length > 0 && (
+                        <div className="mt-6 flex gap-4 overflow-x-auto pb-4 snap-x">
+                            {LATEST_V.filter(item => item.featured === false).map((item, i) => (
+                                <a key={i} href={item.href} target="_blank" rel="noopener noreferrer" className="snap-start shrink-0 w-64 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4 hover:border-emerald-500/50 transition group">
+                                    <div className="flex items-start justify-between gap-2">
+                                        <h4 className="font-medium text-sm text-zinc-900 dark:text-zinc-100 line-clamp-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">{item.title}</h4>
+                                        <ArrowUpRight className="h-3 w-3 text-zinc-400 shrink-0" />
+                                    </div>
+                                    <div className="mt-2 text-xs text-zinc-500">{item.meta}</div>
+                                </a>
+                            ))}
+                        </div>
+                    )}
                 </Section>
                 {/* Work Experience */}
                 <Section id="work" eyebrow={UI_V.work.eyebrow} title={UI_V.work.title}>
@@ -603,38 +608,78 @@ export default function Portfolio() {
                 {/* Projects */}
                 <Section id="projects" eyebrow={UI_V.projects.eyebrow} title={UI_V.projects.title}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 auto-rows-[minmax(0,1fr)]">
-                        {PROJECTS_V.map((p, i) => (
+                        {PROJECTS_V.filter(p => p.featured !== false).map((p, i) => (
                             <motion.div key={p.title} className="h-full" initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-20%" }} transition={{ duration: 0.5, delay: i * 0.06 }} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                                <Card className="h-full">
-                                    <div className="p-6 sm:p-8">
-                                        <div className="flex items-center justify-between gap-4">
-                                            <h3 className="text-lg font-semibold leading-tight">{p.title}</h3>
-                                            <ExternalLink className="h-4 w-4 text-zinc-500" />
+                                <Card>
+                                    <a href={p.href || '#'} className="block h-full p-6 sm:p-8">
+                                        <div className="flex items-start justify-between gap-4">
+                                            <div className="flex flex-wrap gap-2">
+                                                {p.meta.map((m) => (
+                                                    <span key={m} className="inline-flex items-center rounded-full bg-zinc-100 dark:bg-zinc-800 px-2.5 py-0.5 text-xs font-medium text-zinc-600 dark:text-zinc-400">{m}</span>
+                                                ))}
+                                            </div>
+                                            {p.href && p.href !== '#' && <ArrowUpRight className="h-5 w-5 text-zinc-400" />}
                                         </div>
-                                        <p className="mt-2 text-sm text-zinc-700 dark:text-zinc-300">{p.blurb}</p>
-                                        <div className="mt-4 flex flex-wrap gap-2">{p.meta.map((m) => (<Chip key={m}>{m}</Chip>))}</div>
-                                    </div>
-                                </Card>
-                            </motion.div>
-                        ))}
-                    </div>
-                </Section>
-                {/* Clients */}
-                <Section id="clients" eyebrow={UI_V.clients.eyebrow} title={UI_V.clients.title}>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[minmax(0,1fr)]">
-                        {CLIENTS_V.map((c) => (
-                            <motion.div key={c.name} className="h-full" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                                <Card className="h-full">
-                                    <a href={c.href} target="_blank" rel="noopener noreferrer" className="block">
-                                        <div className="p-6 sm:p-8">
-                                            <div className="flex items-center justify-between"><h3 className="text-lg font-semibold">{c.name}</h3><ExternalLink className="h-4 w-4 text-zinc-500" /></div>
-                                            <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">{c.blurb}</p>
-                                        </div>
+                                        <h3 className="mt-4 text-xl font-bold text-zinc-900 dark:text-zinc-50">{p.title}</h3>
+                                        <p className="mt-2 text-zinc-600 dark:text-zinc-400 leading-relaxed">{p.blurb}</p>
+                                        {p.thumbnail && <img src={p.thumbnail} alt="" className="mt-4 w-full h-48 object-cover rounded-lg" />}
                                     </a>
                                 </Card>
                             </motion.div>
                         ))}
                     </div>
+                    {/* Scrollable Non-Featured Projects */}
+                    {PROJECTS_V.filter(p => p.featured === false).length > 0 && (
+                        <div className="mt-6 flex gap-4 overflow-x-auto pb-4 snap-x">
+                            {PROJECTS_V.filter(p => p.featured === false).map((p, i) => (
+                                <a key={i} href={p.href || '#'} className="snap-start shrink-0 w-72 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-5 hover:border-emerald-500/50 transition group">
+                                    <div className="flex items-start justify-between gap-2">
+                                        <h4 className="font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">{p.title}</h4>
+                                        {p.href && p.href !== '#' && <ArrowUpRight className="h-4 w-4 text-zinc-400 shrink-0" />}
+                                    </div>
+                                    <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2">{p.blurb}</p>
+                                    <div className="mt-3 flex flex-wrap gap-1">
+                                        {p.meta.slice(0, 2).map(m => <span key={m} className="text-[10px] bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded text-zinc-500">{m}</span>)}
+                                    </div>
+                                </a>
+                            ))}
+                        </div>
+                    )}
+                </Section>
+                {/* Clients */}
+                <Section id="clients" eyebrow={UI_V.clients.eyebrow} title={UI_V.clients.title}>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[minmax(0,1fr)]">
+                        {CLIENTS_V.filter(c => c.featured !== false).map((c) => (
+                            <motion.div key={c.name} className="h-full" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                                <Card>
+                                    <a href={c.href} target="_blank" rel="noopener noreferrer" className="block p-6 sm:p-8 h-full">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div className="h-10 w-10 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-lg font-bold text-zinc-400">{c.name[0]}</div>
+                                            <ArrowUpRight className="h-4 w-4 text-zinc-400" />
+                                        </div>
+                                        <h3 className="font-semibold text-zinc-900 dark:text-zinc-50">{c.name}</h3>
+                                        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{c.blurb}</p>
+                                    </a>
+                                </Card>
+                            </motion.div>
+                        ))}
+                    </div>
+                    {/* Scrollable Non-Featured Clients */}
+                    {CLIENTS_V.filter(c => c.featured === false).length > 0 && (
+                        <div className="mt-6 flex gap-4 overflow-x-auto pb-4 snap-x">
+                            {CLIENTS_V.filter(c => c.featured === false).map((c, i) => (
+                                <a key={i} href={c.href} target="_blank" rel="noopener noreferrer" className="snap-start shrink-0 w-60 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4 hover:border-emerald-500/50 transition">
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-8 w-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-sm font-bold text-zinc-400 shrink-0">{c.name[0]}</div>
+                                        <div>
+                                            <h4 className="font-medium text-sm text-zinc-900 dark:text-zinc-100">{c.name}</h4>
+                                            <p className="text-xs text-zinc-500 truncate w-32">{c.blurb}</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            ))}
+                        </div>
+                    )}
                 </Section>
                 {/* Skills */}
                 <Section id="skills" eyebrow={UI_V.skills.eyebrow} title={UI_V.skills.title}>

@@ -126,7 +126,11 @@
         "WordPress",
         "SEO",
         "Analytics"
-      ]
+      ],
+      "featured": true,
+      "thumbnail": "",
+      "category": "Web Development",
+      "href": "#"
     },
     {
       "title": "Design Systems & UI Prototypes",
@@ -135,7 +139,11 @@
         "Figma",
         "Prototyping",
         "Design System"
-      ]
+      ],
+      "featured": true,
+      "thumbnail": "",
+      "category": "UI/UX Design",
+      "href": "#"
     },
     {
       "title": "OTT App Concept (University)",
@@ -144,7 +152,11 @@
         "Product Thinking",
         "Interaction",
         "TV UX"
-      ]
+      ],
+      "featured": true,
+      "thumbnail": "",
+      "category": "Product Design",
+      "href": "#"
     }
   ],
   "SKILLS": [
@@ -181,51 +193,63 @@
       "kind": "Article",
       "title": "About ads and AI Overviews",
       "href": "https://support.google.com/google-ads/answer/16297775",
-      "meta": "Google Ads Help"
+      "meta": "Google Ads Help",
+      "featured": true,
+      "thumbnail": ""
     },
     {
       "kind": "Video",
       "title": "How to Add Google Maps in WordPress",
       "href": "https://www.youtube.com/watch?v=bT0cZOQbztI",
-      "meta": "YouTube"
+      "meta": "YouTube",
+      "featured": true,
+      "thumbnail": ""
     },
     {
       "kind": "Video",
       "title": "How To Make A Logo in 5 Minutes — for Free",
       "href": "https://youtu.be/wVrEeImyg_E?si=Iz8r8AHQI-8QWwxO",
-      "meta": "YouTube"
+      "meta": "YouTube",
+      "featured": true,
+      "thumbnail": ""
     }
   ],
   "CLIENTS": [
     {
       "name": "Euclid Innovations",
       "href": "https://euclidinnovations.com/",
-      "blurb": "Staffing • Cloud Enablement • Digital Transformation"
+      "blurb": "Staffing • Cloud Enablement • Digital Transformation",
+      "featured": true
     },
     {
       "name": "GetKitch",
       "href": "https://getkitch.in/",
-      "blurb": "Kitchen solutions & e-commerce"
+      "blurb": "Kitchen solutions & e-commerce",
+      "featured": true
     },
     {
       "name": "Yaamohaideen Briyani",
       "href": "https://yaamohaideenbriyani.com/",
-      "blurb": "F&B • Restaurant brand"
+      "blurb": "F&B • Restaurant brand",
+      "featured": true
     },
     {
       "name": "Yorafitness",
       "href": "https://yorafitness.com/",
-      "blurb": "Fitness & lifestyle"
+      "blurb": "Fitness & lifestyle",
+      "featured": true
     },
     {
       "name": "VivaFit",
       "href": "https://vivafit.life/",
-      "blurb": "Wellness & nutrition"
+      "blurb": "Wellness & nutrition",
+      "featured": true
     },
     {
       "name": "SLAM Fitness Studio",
       "href": "https://slamfitnessstudio.in/",
-      "blurb": "Gyms & training"
+      "blurb": "Gyms & training",
+      "featured": true
     }
   ],
   "COMMUNITY": {
