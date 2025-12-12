@@ -73,7 +73,7 @@ export default function Admin() {
                 repo: REPO,
                 path: PATH,
                 message: 'chore: update content via CMS',
-                content: btoa(JSON.stringify(content, null, 2)),
+                content: btoa(unescape(encodeURIComponent(JSON.stringify(content, null, 2)))),
                 sha: fileData.sha,
             });
 
@@ -143,8 +143,8 @@ export default function Admin() {
                             onClick={handleSave}
                             disabled={isSaving}
                             className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition ${isSaving
-                                    ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-500 cursor-not-allowed'
-                                    : 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                                ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-500 cursor-not-allowed'
+                                : 'bg-emerald-600 hover:bg-emerald-700 text-white'
                                 }`}
                         >
                             {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
@@ -167,8 +167,8 @@ export default function Admin() {
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className={`max-w-5xl mx-auto mt-4 px-4 py-3 rounded-lg flex items-center gap-2 ${status === 'success'
-                            ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200'
-                            : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200'
+                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200'
+                        : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200'
                         }`}
                 >
                     {status === 'success' ? <CheckCircle className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
