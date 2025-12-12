@@ -32,7 +32,8 @@ export default function Admin() {
     };
 
     const handleChange = (section, field, value, index = null, subField = null) => {
-        const newContent = { ...content };
+        // Deep copy to avoid mutation issues
+        const newContent = JSON.parse(JSON.stringify(content));
 
         if (index !== null) {
             // Handle array updates
@@ -43,7 +44,11 @@ export default function Admin() {
             }
         } else if (field) {
             // Handle nested object updates
-            newContent[section][field] = value;
+            if (subField) {
+                newContent[section][field][subField] = value;
+            } else {
+                newContent[section][field] = value;
+            }
         } else {
             // Handle direct section updates (rare for this structure)
             newContent[section] = value;
@@ -223,7 +228,7 @@ export default function Admin() {
 
                         {/* Footer */}
                         <div className="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800">
-                            <Field label="Footer Text" value={content.UI?.footer} onChange={(v) => handleChange('UI', null, v, null, 'footer')} />
+                            <Field label="Footer Text" value={content.UI?.footer} onChange={(v) => handleChange('UI', 'footer', v)} />
                         </div>
                     </div>
                 </section>
