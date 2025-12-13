@@ -220,6 +220,14 @@
       "meta": "YouTube | Article",
       "featured": true,
       "thumbnail": "https://res.cloudinary.com/nijanthan/image/upload/f_auto,q_auto/v1765618132/milad-fakurian-tUF--C9oOuE-unsplash_vkgdus.jpg"
+    },
+    {
+      "kind": "Article",
+      "title": "Cloudtechnova",
+      "href": "https://cloudtechnova.com/",
+      "meta": "IT | Website",
+      "featured": true,
+      "thumbnail": "https://res.cloudinary.com/nijanthan/image/upload/f_auto,q_auto/v1765621443/sandro-katalina-k1bO_VTiZSs-unsplash_wkpxt4.jpg"
     }
   ],
   "CLIENTS": [
