@@ -26,7 +26,6 @@ import {
 } from "lucide-react";
 import contentData from "../data/content.json";
 import InteractiveBackground from "./InteractiveBackground";
-import CustomCursor from "./CustomCursor";
 
 /* ----------------------------------------------------------------------------
    Inline CSS needed for hue CTA, glass, typing, and small helpers
@@ -460,7 +459,6 @@ export default function Portfolio() {
 
     return (
         <div className="min-h-screen w-full overflow-x-clip bg-transparent text-zinc-900 dark:text-zinc-50 antialiased" style={{ fontFamily: '"Host Grotesk", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial' }}>
-            <CustomCursor />
             <ScrollProgress />
             <InteractiveBackground />
             <Header theme={theme} setTheme={setTheme} />
