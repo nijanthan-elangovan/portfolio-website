@@ -414,6 +414,7 @@ function Header({ theme, setTheme }) {
 /* --------------------------------- Layout ---------------------------------- */
 export default function Portfolio() {
     useInlineStyles();
+    useTypeform();
     const { theme, setTheme } = useTheme();
 
     useLayoutEffect(() => {
@@ -737,25 +738,8 @@ export default function Portfolio() {
                                     <span className="inline-flex items-center gap-2"><Phone className="h-4 w-4" /> {PROFILE_V.phone}</span>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-3">
-                                <MagneticButton
-                                    href={`mailto:${PROFILE_V.email}?subject=Project%20inquiry%20from%20portfolio`}
-                                    className="hue-cta inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-medium text-white shadow transition [background-size:300%_300%] animate-[gradientShift_6s_ease_infinite] bg-[linear-gradient(90deg,#10b981,#22d3ee,#a78bfa,#10b981)] hover:scale-[1.02] active:scale-[0.98]"
-                                >
-                                    <Mail className="h-4 w-4" /> Start a conversation
-                                </MagneticButton>
-                                {LINKS_V.resume !== "#" && (
-                                    <motion.a
-                                        href={LINKS_V.resume}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="inline-flex items-center gap-2 rounded-full border border-zinc-300/70 dark:border-zinc-700/70 px-5 py-3 text-sm font-medium hover:bg-zinc-900/5 dark:hover:bg-white/10"
-                                        whileHover={{ scale: 1.05, borderColor: "rgba(16, 185, 129, 0.5)" }}
-                                        whileTap={{ scale: 0.95 }}
-                                    >
-                                        <FileDown className="h-4 w-4" /> Resume
-                                    </motion.a>
-                                )}
+                            <div className="w-full mt-6 md:mt-0 md:pl-10">
+                                <div data-tf-live="01KCBQD38PG1AR5GWYSF1R69BQ"></div>
                             </div>
                         </div>
                     </Card>
@@ -768,4 +752,17 @@ export default function Portfolio() {
             </main>
         </div>
     );
+}
+
+// Load Typeform script
+function useTypeform() {
+    useEffect(() => {
+        const script = document.createElement('script');
+        script.src = "//embed.typeform.com/next/embed.js";
+        script.async = true;
+        document.body.appendChild(script);
+        return () => {
+            document.body.removeChild(script);
+        };
+    }, []);
 }
