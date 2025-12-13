@@ -193,7 +193,7 @@
       "kind": "Article",
       "title": "About ads and AI Overviews",
       "href": "https://support.google.com/google-ads/answer/16297775",
-      "meta": "Google Ads",
+      "meta": "Google Ads | Article",
       "featured": true,
       "thumbnail": "https://res.cloudinary.com/nijanthan/image/upload/f_auto,q_auto/v1765617024/anders-jilden-Sc5RKXLBjGg-unsplash_c4x4ev.jpg"
     },
@@ -201,7 +201,7 @@
       "kind": "Video",
       "title": "How to Add Google Maps in WordPress",
       "href": "https://www.youtube.com/watch?v=bT0cZOQbztI",
-      "meta": "YouTube",
+      "meta": "YouTube | Video",
       "featured": true,
       "thumbnail": ""
     },
@@ -209,7 +209,7 @@
       "kind": "Video",
       "title": "How To Make A Logo in 5 Minutes — for Free",
       "href": "https://youtu.be/wVrEeImyg_E?si=Iz8r8AHQI-8QWwxO",
-      "meta": "YouTube",
+      "meta": "YouTube | Video",
       "featured": true,
       "thumbnail": ""
     },
@@ -217,7 +217,7 @@
       "kind": "Article",
       "title": "YouTube Shorts ads",
       "href": "https://support.google.com/google-ads/answer/16042243",
-      "meta": "YouTube",
+      "meta": "YouTube | Article",
       "featured": true,
       "thumbnail": "https://res.cloudinary.com/nijanthan/image/upload/f_auto,q_auto/v1765618132/milad-fakurian-tUF--C9oOuE-unsplash_vkgdus.jpg"
     }
