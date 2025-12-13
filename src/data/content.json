@@ -56,7 +56,7 @@
       "eyebrow": "Say hello",
       "title": "Let’s build something clear & beautiful"
     },
-    "footer": "Built with care."
+    "footer": "Built with Antigravity."
   },
   "SOCIALS": {
     "linkedin": "https://www.linkedin.com/in/nijanthane/",
@@ -193,15 +193,15 @@
       "kind": "Article",
       "title": "About ads and AI Overviews",
       "href": "https://support.google.com/google-ads/answer/16297775",
-      "meta": "Google Ads Help",
+      "meta": "Google Ads | Article",
       "featured": true,
-      "thumbnail": ""
+      "thumbnail": "https://res.cloudinary.com/nijanthan/image/upload/f_auto,q_auto/v1765621787/Search_Hero.width-700.format-webp_bwve6y.webp"
     },
     {
       "kind": "Video",
       "title": "How to Add Google Maps in WordPress",
       "href": "https://www.youtube.com/watch?v=bT0cZOQbztI",
-      "meta": "YouTube",
+      "meta": "YouTube | Video",
       "featured": true,
       "thumbnail": ""
     },
@@ -209,9 +209,25 @@
       "kind": "Video",
       "title": "How To Make A Logo in 5 Minutes — for Free",
       "href": "https://youtu.be/wVrEeImyg_E?si=Iz8r8AHQI-8QWwxO",
-      "meta": "YouTube",
+      "meta": "YouTube | Video",
       "featured": true,
       "thumbnail": ""
+    },
+    {
+      "kind": "Article",
+      "title": "YouTube Shorts ads",
+      "href": "https://support.google.com/google-ads/answer/16042243",
+      "meta": "YouTube | Article",
+      "featured": true,
+      "thumbnail": "https://res.cloudinary.com/nijanthan/image/upload/f_auto,q_auto/v1765621838/youtube_shorts_beta_fnzxm4.webp"
+    },
+    {
+      "kind": "Website",
+      "title": "Cloudtechnova",
+      "href": "https://cloudtechnova.com/",
+      "meta": "IT | Website",
+      "featured": true,
+      "thumbnail": "https://res.cloudinary.com/nijanthan/image/upload/f_auto,q_auto/v1765621694/all-devices-white_fi2jmy.png"
     }
   ],
   "CLIENTS": [
