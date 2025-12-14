@@ -115,10 +115,17 @@ function useTilt(ref) {
     const y = useMotionValue(0);
     const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [5, -5]), { stiffness: 300, damping: 30 });
     const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-5, 5]), { stiffness: 300, damping: 30 });
+    const rectRef = useRef(null);
+
+    const handleMouseEnter = () => {
+        if (ref.current) {
+            rectRef.current = ref.current.getBoundingClientRect();
+        }
+    };
 
     const handleMouseMove = (e) => {
-        if (!ref.current) return;
-        const rect = ref.current.getBoundingClientRect();
+        if (!rectRef.current) return;
+        const rect = rectRef.current;
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
         x.set((e.clientX - centerX) / (rect.width / 2));
@@ -128,9 +135,10 @@ function useTilt(ref) {
     const handleMouseLeave = () => {
         x.set(0);
         y.set(0);
+        rectRef.current = null;
     };
 
-    return { rotateX, rotateY, handleMouseMove, handleMouseLeave };
+    return { rotateX, rotateY, handleMouseEnter, handleMouseMove, handleMouseLeave };
 }
 
 // Magnetic button component
@@ -140,10 +148,17 @@ function MagneticButton({ children, href, onClick, className = "" }) {
     const y = useMotionValue(0);
     const springX = useSpring(x, { stiffness: 150, damping: 15 });
     const springY = useSpring(y, { stiffness: 150, damping: 15 });
+    const rectRef = useRef(null);
+
+    const handleMouseEnter = () => {
+        if (ref.current) {
+            rectRef.current = ref.current.getBoundingClientRect();
+        }
+    };
 
     const handleMouseMove = (e) => {
-        if (!ref.current) return;
-        const rect = ref.current.getBoundingClientRect();
+        if (!rectRef.current) return;
+        const rect = rectRef.current;
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
         const distanceX = e.clientX - centerX;
@@ -159,6 +174,7 @@ function MagneticButton({ children, href, onClick, className = "" }) {
     const handleMouseLeave = () => {
         x.set(0);
         y.set(0);
+        rectRef.current = null;
     };
 
     const Component = href ? motion.a : motion.button;
@@ -170,6 +186,7 @@ function MagneticButton({ children, href, onClick, className = "" }) {
             {...props}
             className={className}
             style={{ x: springX, y: springY }}
+            onMouseEnter={handleMouseEnter}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
             whileHover={{ scale: 1.05 }}
@@ -247,7 +264,7 @@ function Section({ id, title, eyebrow, children }) {
 
 function Card({ children, className = "", tilt = false }) {
     const ref = useRef(null);
-    const { rotateX, rotateY, handleMouseMove, handleMouseLeave } = useTilt(ref);
+    const { rotateX, rotateY, handleMouseEnter, handleMouseMove, handleMouseLeave } = useTilt(ref);
     const shouldReduceMotion = useReducedMotion();
 
     if (tilt && !shouldReduceMotion) {
@@ -256,6 +273,7 @@ function Card({ children, className = "", tilt = false }) {
                 ref={ref}
                 className={`relative h-full flex flex-col overflow-hidden rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_10px_40px_rgba(0,0,0,0.10)] transition-shadow ${className}`}
                 style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+                onMouseEnter={handleMouseEnter}
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeave}
                 whileHover={{ scale: 1.02 }}
