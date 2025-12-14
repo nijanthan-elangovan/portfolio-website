@@ -37,7 +37,6 @@ function useInlineStyles() {
         el.id = "ne-inline-css";
         // FIX: Added Google Font @import here for more reliable loading.
         el.textContent = `
-@import url('https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@300..800&display=swap');
 @keyframes hue-cycle { from { filter: hue-rotate(0deg) } to { filter: hue-rotate(360deg) } }
 .hue-cta:hover { animation: hue-cycle 6s linear infinite; will-change: filter; }
 @keyframes typing { from { width: 0 } to { width: 100% } }
@@ -543,9 +542,23 @@ export default function Portfolio() {
                                     <a href={item.href} target="_blank" rel="noopener noreferrer" className="block h-full group">
                                         <div className="relative aspect-video w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
                                             {yt ? (
-                                                <img src={`https://img.youtube.com/vi/${yt}/maxresdefault.jpg`} alt="" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                                                <img
+                                                    src={`https://img.youtube.com/vi/${yt}/hqdefault.jpg`}
+                                                    alt=""
+                                                    loading="lazy"
+                                                    decoding="async"
+                                                    width="480"
+                                                    height="360"
+                                                    className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                                                />
                                             ) : item.thumbnail ? (
-                                                <img src={item.thumbnail} alt="" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                                                <img
+                                                    src={item.thumbnail}
+                                                    alt=""
+                                                    loading="lazy"
+                                                    decoding="async"
+                                                    className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                                                />
                                             ) : (
                                                 <div className="flex h-full items-center justify-center text-zinc-400"><ArrowUpRight className="h-8 w-8 opacity-50" /></div>
                                             )}
