@@ -226,7 +226,7 @@
       "title": "Cloudtechnova",
       "href": "https://cloudtechnova.com/",
       "meta": "IT | Website",
-      "featured": true,
+      "featured": false,
       "thumbnail": "https://res.cloudinary.com/nijanthan/image/upload/f_auto,q_auto/v1765621694/all-devices-white_fi2jmy.png"
     }
   ],
