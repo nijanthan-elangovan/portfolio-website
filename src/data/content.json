@@ -11,6 +11,16 @@
     "phone": "+91 8681828144",
     "availability": "Open to select freelance & consulting"
   },
+  "NOW": {
+    "title": "Senior Tech Writer Associate",
+    "company": "Google Operations Center",
+    "link": "#work",
+    "bullets": [
+      "Help Center articles & internal docs for Google Ads",
+      "AI-assisted chatbot scripts & flows",
+      "Cross-functional launch communications"
+    ]
+  },
   "HERO": {
     "words": [
       "Design",

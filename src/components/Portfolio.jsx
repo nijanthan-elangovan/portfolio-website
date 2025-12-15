@@ -27,9 +27,21 @@ import {
 import contentData from "../data/content.json";
 import InteractiveBackground from "./InteractiveBackground";
 
-/* ----------------------------------------------------------------------------
-   Inline CSS needed for hue CTA, glass, typing, and small helpers
----------------------------------------------------------------------------- */
+import { optimizeImage } from "../utils/cloudinaryHelper";
+
+// ... (existing imports)
+
+import SEO from "./SEO";
+
+// ... (existing code)
+
+// ... (existing code)
+
+// ... (imports remain) ...
+
+// ... (existing code) ...
+
+
 function useInlineStyles() {
     useLayoutEffect(() => {
         if (document.getElementById("ne-inline-css")) return;
@@ -459,6 +471,16 @@ export default function Portfolio() {
     const CERTS_V = contentData.CERTS;
     const SKILLS_V = contentData.SKILLS;
     const COMMUNITY_V = contentData.COMMUNITY;
+    const NOW_V = contentData.NOW || {
+        title: "Senior Tech Writer Associate",
+        company: "Google Operations Center",
+        link: "#work",
+        bullets: [
+            "Help Center articles & internal docs for Google Ads",
+            "AI-assisted chatbot scripts & flows",
+            "Cross-functional launch communications"
+        ]
+    };
 
     const HERO_V = contentData.HERO || { words: ["Design", "Word", "Click"] };
     const UI_V = contentData.UI || {
@@ -474,8 +496,39 @@ export default function Portfolio() {
         footer: "Built with care."
     };
 
+    // Construct Schema.org Person Data
+    const personSchema = {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": PROFILE_V.name,
+        "jobTitle": PROFILE_V.roles,
+        "description": PROFILE_V.summary,
+        "url": SOCIALS_V.website,
+        "sameAs": [
+            SOCIALS_V.linkedin,
+            SOCIALS_V.github
+        ].filter(Boolean),
+        "knowsAbout": SKILLS_V,
+        "worksFor": {
+            "@type": "Organization",
+            "name": NOW_V.company || "Google Operations Center"
+        }
+    };
+
     return (
         <div className="min-h-screen w-full overflow-x-clip bg-transparent text-zinc-900 dark:text-zinc-50 antialiased" style={{ fontFamily: '"Host Grotesk", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial' }}>
+            <SEO
+                title={`${PROFILE_V.name} | ${PROFILE_V.roles[0]}`}
+                description={PROFILE_V.summary}
+                canonical={SOCIALS_V.website}
+                openGraph={{
+                    type: 'website',
+                    image: 'https://res.cloudinary.com/nijanthan/image/upload/f_auto,q_auto/v1765621694/all-devices-white_fi2jmy.png',
+                    title: `${PROFILE_V.name} - Portfolio`,
+                    description: PROFILE_V.summary
+                }}
+                schema={personSchema}
+            />
             <ScrollProgress />
             <InteractiveBackground />
             <Header theme={theme} setTheme={setTheme} />
@@ -535,14 +588,14 @@ export default function Portfolio() {
                                             <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
                                             Now
                                         </div>
-                                        <h3 className="text-xl sm:text-2xl font-semibold">Senior Tech Writer Associate</h3>
-                                        <p className="mt-1 text-zinc-600 dark:text-zinc-400">Google Operations Center</p>
+                                        <h3 className="text-xl sm:text-2xl font-semibold">{NOW_V.title}</h3>
+                                        <p className="mt-1 text-zinc-600 dark:text-zinc-400">{NOW_V.company}</p>
                                         <ul className="mt-4 space-y-2 text-sm text-zinc-700 dark:text-zinc-300 list-disc list-inside">
-                                            <li>Help Center articles & internal docs for Google Ads</li>
-                                            <li>AI-assisted chatbot scripts & flows</li>
-                                            <li>Cross-functional launch communications</li>
+                                            {NOW_V.bullets.map((bullet, i) => (
+                                                <li key={i}>{bullet}</li>
+                                            ))}
                                         </ul>
-                                        <a href="#work" className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-emerald-700 dark:text-emerald-400 hover:underline">See experience <ArrowRight className="h-4 w-4" /></a>
+                                        <a href={NOW_V.link} className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-emerald-700 dark:text-emerald-400 hover:underline">See experience <ArrowRight className="h-4 w-4" /></a>
                                     </div>
                                 </Card>
                             </motion.div>
@@ -571,7 +624,13 @@ export default function Portfolio() {
                                                 />
                                             ) : item.thumbnail ? (
                                                 <img
-                                                    src={item.thumbnail}
+                                                    src={optimizeImage(item.thumbnail)}
+                                                    srcSet={`
+                                                        ${optimizeImage(item.thumbnail, 400)} 400w,
+                                                        ${optimizeImage(item.thumbnail, 800)} 800w,
+                                                        ${optimizeImage(item.thumbnail, 1200)} 1200w
+                                                    `}
+                                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                                     alt=""
                                                     loading="lazy"
                                                     decoding="async"
@@ -652,7 +711,20 @@ export default function Portfolio() {
                                         </div>
                                         <h3 className="mt-4 text-xl font-bold text-zinc-900 dark:text-zinc-50">{p.title}</h3>
                                         <p className="mt-2 text-zinc-600 dark:text-zinc-400 leading-relaxed">{p.blurb}</p>
-                                        {p.thumbnail && <img src={p.thumbnail} alt="" className="mt-4 w-full h-48 object-cover rounded-lg" />}
+                                        {p.thumbnail && (
+                                            <img
+                                                src={optimizeImage(p.thumbnail)}
+                                                srcSet={`
+                                                    ${optimizeImage(p.thumbnail, 400)} 400w,
+                                                    ${optimizeImage(p.thumbnail, 800)} 800w
+                                                `}
+                                                sizes="(max-width: 768px) 100vw, 50vw"
+                                                alt=""
+                                                className="mt-4 w-full h-48 object-cover rounded-lg"
+                                                loading="lazy"
+                                                decoding="async"
+                                            />
+                                        )}
                                     </a>
                                 </Card>
                             </motion.div>

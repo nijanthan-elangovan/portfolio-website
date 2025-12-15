@@ -268,6 +268,27 @@ export default function Admin() {
                     </div>
                 </section>
 
+                {/* Now Status Section */}
+                <section className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-sm">
+                    <h2 className="text-lg font-semibold mb-4 pb-2 border-b border-zinc-100 dark:border-zinc-800">Now Status</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Field label="Title" value={content.NOW?.title || ''} onChange={(v) => handleChange('NOW', 'title', v)} />
+                        <Field label="Company" value={content.NOW?.company || ''} onChange={(v) => handleChange('NOW', 'company', v)} />
+                        <div className="md:col-span-2">
+                            <Field label="Link" value={content.NOW?.link || ''} onChange={(v) => handleChange('NOW', 'link', v)} />
+                        </div>
+                        <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-1">Bullets (one per line)</label>
+                            <textarea
+                                value={content.NOW?.bullets?.join('\n') || ''}
+                                onChange={(e) => handleChange('NOW', 'bullets', e.target.value.split('\n'))}
+                                rows={3}
+                                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 focus:ring-2 focus:ring-emerald-500 outline-none transition"
+                            />
+                        </div>
+                    </div>
+                </section>
+
                 {/* Experience Section */}
                 <section className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-sm">
                     <div className="flex items-center justify-between mb-4 pb-2 border-b border-zinc-100 dark:border-zinc-800">
