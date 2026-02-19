@@ -265,7 +265,7 @@ function Section({ id, title, eyebrow, children }) {
         <section id={id} className="relative scroll-mt-28 w-full px-4 sm:px-6 py-24 sm:py-28 mx-auto">
             <div className="mx-auto max-w-6xl">
                 {eyebrow && (
-                    <div className="mb-4 text-xs uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400">{eyebrow}</div>
+                    <div className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400">{eyebrow}</div>
                 )}
                 <h2 className="mb-8 text-3xl sm:text-4xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">{title}</h2>
                 <div className="space-y-6">{children}</div>
