@@ -980,6 +980,7 @@ export default function Portfolio() {
                                 <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-zinc-600 dark:text-zinc-400">
                                     <span className="inline-flex items-center gap-2"><Linkedin className="h-4 w-4" /> <a className="hover:underline" target="_blank" rel="noreferrer" href={SOCIALS_V.linkedin}>LinkedIn</a></span>
                                     <span className="inline-flex items-center gap-2"><MapPin className="h-4 w-4" /> {PROFILE_V.location}</span>
+                                    <EmojiCaptcha phone={PROFILE_V.phone} />
                                 </div>
                             </div>
                             <div className="w-full mt-6 md:mt-0 md:pl-10">
@@ -987,9 +988,6 @@ export default function Portfolio() {
                             </div>
                         </div>
                     </Card>
-                    <div className="mt-4 flex justify-center">
-                        <EmojiCaptcha phone={PROFILE_V.phone} />
-                    </div>
                 </Section>
                 <footer className="w-full relative py-2 border-t border-zinc-200/60 dark:border-zinc-800/60">
                     <div className="mx-auto max-w-6xl px-4 sm:px-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
