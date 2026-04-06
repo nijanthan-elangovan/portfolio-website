@@ -1075,7 +1075,7 @@ export default function Portfolio() {
                 </Section>
                 <footer className="w-full relative py-2 border-t border-zinc-200/60 dark:border-zinc-800/60">
                     <div className="mx-auto max-w-6xl px-4 sm:px-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
-                        © {new Date().getFullYear()} Nijanthan Elangovan · {UI_V.footer}
+                        © {new Date().getFullYear()} Nijanthan Elangovan{UI_V.footer ? ` · ${UI_V.footer}` : ""}
                     </div>
                 </footer>
             </main>
