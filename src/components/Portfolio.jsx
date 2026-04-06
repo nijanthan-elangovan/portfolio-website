@@ -487,9 +487,9 @@ function Header({ theme, setTheme }) {
                 <div className="flex items-center justify-between px-4 sm:px-6 py-2.5">
                     <a href="#top" className="min-w-0"><LogoNE /></a>
                     <nav className="hidden md:flex items-center gap-6 text-sm text-zinc-700 dark:text-zinc-300">
-                        {["latest", "work", "projects", "clients", "skills", "about", "community", "contact"].map((id) => (
+                        {[{id:"latest",label:"Published"},{id:"work",label:"Experience"},{id:"projects",label:"Projects"},{id:"clients",label:"Clients"},{id:"skills",label:"Skills"},{id:"about",label:"About"},{id:"community",label:"Community"},{id:"contact",label:"Contact"}].map(({id, label}) => (
                             <a key={id} href={`#${id}`} className="relative hover:text-zinc-900 dark:hover:text-white after:content-[''] after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-0 hover:after:w-full after:rounded-full after:transition-all after:duration-300 after:bg-[linear-gradient(90deg,#10b981,#22d3ee,#a78bfa)]">
-                                {id[0].toUpperCase() + id.slice(1)}
+                                {label}
                             </a>
                         ))}
                     </nav>
@@ -644,7 +644,7 @@ export default function Portfolio() {
                 "@type": "WebSite",
                 "@id": "https://njthnelvgn.com/#website",
                 "url": "https://njthnelvgn.com",
-                "name": `${PROFILE_V.name} — ${PROFILE_V.roles[0]}`,
+                "name": `${PROFILE_V.name} | ${PROFILE_V.roles[0]}`,
                 "description": PROFILE_V.summary,
                 "publisher": { "@id": "https://njthnelvgn.com/#person" }
             },
@@ -667,7 +667,7 @@ export default function Portfolio() {
                 openGraph={{
                     type: 'website',
                     image: 'https://res.cloudinary.com/nijanthan/image/upload/f_auto,q_auto/v1765621694/all-devices-white_fi2jmy.png',
-                    title: `${PROFILE_V.name} — ${PROFILE_V.roles[0]}`,
+                    title: `${PROFILE_V.name} | ${PROFILE_V.roles[0]}`,
                     description: PROFILE_V.summary,
                     siteName: 'Nijanthan Elangovan'
                 }}
@@ -952,7 +952,7 @@ export default function Portfolio() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(0,1fr)]">
                         <Card><div className="p-6 sm:p-8"><div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400"><GraduationCap className="h-4 w-4" /> Education</div><ul className="mt-4 space-y-3 text-sm">{EDUCATION_V.map((e) => (<li key={e.school} className="text-zinc-800 dark:text-zinc-200"><div className="font-medium">{e.school}</div><div className="text-zinc-600 dark:text-zinc-400">{e.degree}</div><div className="text-zinc-500 dark:text-zinc-500">{e.year}</div></li>))}</ul></div></Card>
                         <Card><div className="p-6 sm:p-8"><div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400"><BadgeCheck className="h-4 w-4" /> Certification</div><ul className="mt-4 space-y-3 text-sm">{CERTS_V.map((c) => (<li key={c.name} className="text-zinc-800 dark:text-zinc-200"><div className="font-medium">{c.name}</div><div className="text-zinc-600 dark:text-zinc-400">{c.issuer}</div></li>))}</ul></div></Card>
-                        <Card><div className="p-6 sm:p-8"><div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400"><BookOpen className="h-4 w-4" /> Focus</div><p className="mt-4 text-sm text-zinc-700 dark:text-zinc-300">I write the kind of documentation people don’t have to re-read. Whether it’s a Help Center article, an SOP for escalation handling, or a chatbot script that actually resolves issues — the goal is always clarity on the first pass. My background in web development and UI design means I understand the products I document, not just the words around them.</p></div></Card>
+                        <Card><div className="p-6 sm:p-8"><div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400"><BookOpen className="h-4 w-4" /> Focus</div><p className="mt-4 text-sm text-zinc-700 dark:text-zinc-300">I write documentation that people understand on the first read. Whether it’s a Help Center article, an SOP for escalation handling, or a chatbot script, the goal is always clarity. My background in web development and UI design helps me understand the products I document, not just the words around them.</p></div></Card>
                     </div>
                 </Section>
                 {/* Community */}
@@ -980,7 +980,6 @@ export default function Portfolio() {
                                 <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-zinc-600 dark:text-zinc-400">
                                     <span className="inline-flex items-center gap-2"><Linkedin className="h-4 w-4" /> <a className="hover:underline" target="_blank" rel="noreferrer" href={SOCIALS_V.linkedin}>LinkedIn</a></span>
                                     <span className="inline-flex items-center gap-2"><MapPin className="h-4 w-4" /> {PROFILE_V.location}</span>
-                                    <EmojiCaptcha phone={PROFILE_V.phone} />
                                 </div>
                             </div>
                             <div className="w-full mt-6 md:mt-0 md:pl-10">
@@ -988,6 +987,9 @@ export default function Portfolio() {
                             </div>
                         </div>
                     </Card>
+                    <div className="mt-4 flex justify-center">
+                        <EmojiCaptcha phone={PROFILE_V.phone} />
+                    </div>
                 </Section>
                 <footer className="w-full relative py-2 border-t border-zinc-200/60 dark:border-zinc-800/60">
                     <div className="mx-auto max-w-6xl px-4 sm:px-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
