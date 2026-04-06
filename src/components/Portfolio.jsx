@@ -1075,26 +1075,8 @@ export default function Portfolio() {
                         </div>
                     </Card>
                 </Section>
-                {/* Marquee Banner */}
-                <div className="relative w-full overflow-hidden bg-zinc-950 py-16 sm:py-20">
-                    <div className="flex whitespace-nowrap w-max" style={{ animation: "marquee-scroll 20s linear infinite" }}>
-                        {[0, 1].map((set) => (
-                            <div key={set} className="flex shrink-0">
-                                {Array.from({ length: 6 }).map((_, i) => (
-                                    <span key={i} className="text-[8rem] sm:text-[12rem] text-zinc-800/30 select-none px-6 leading-none" style={{ fontFamily: '"Dancing Script", cursive' }}>ne</span>
-                                ))}
-                            </div>
-                        ))}
-                    </div>
-                    <div className="absolute inset-0 flex items-center justify-center gap-3">
-                        <span className="text-white text-2xl sm:text-3xl tracking-wide" style={{ fontFamily: '"Dancing Script", cursive' }}>
-                            let's write something great
-                        </span>
-                        <span className="text-red-500 text-2xl sm:text-3xl" style={{ animation: "heartbeat 1.2s ease-in-out infinite" }}>❤</span>
-                    </div>
-                </div>
-                <footer className="w-full relative py-2 bg-zinc-950 border-t border-zinc-800/60">
-                    <div className="mx-auto max-w-6xl px-4 sm:px-6 text-center text-sm text-zinc-400">
+                <footer className="w-full relative py-2 border-t border-zinc-200/60 dark:border-zinc-800/60">
+                    <div className="mx-auto max-w-6xl px-4 sm:px-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
                         © {new Date().getFullYear()} Nijanthan Elangovan
                     </div>
                 </footer>
