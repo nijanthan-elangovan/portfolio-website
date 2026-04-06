@@ -63,6 +63,7 @@ function useInlineStyles() {
 .animate-blob { animation: blob 7s infinite; }
 .animation-delay-2000 { animation-delay: 2s; }
 .animation-delay-4000 { animation-delay: 4s; }
+@keyframes marquee-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 `;
         document.head.appendChild(el);
     }, []);
@@ -1073,9 +1074,24 @@ export default function Portfolio() {
                         </div>
                     </Card>
                 </Section>
-                <footer className="w-full relative py-2 border-t border-zinc-200/60 dark:border-zinc-800/60">
-                    <div className="mx-auto max-w-6xl px-4 sm:px-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
-                        © {new Date().getFullYear()} Nijanthan Elangovan{UI_V.footer ? ` · ${UI_V.footer}` : ""}
+                {/* Marquee Banner */}
+                <div className="relative w-full overflow-hidden bg-zinc-950 dark:bg-zinc-950 py-16 sm:py-20">
+                    {/* Scrolling background text */}
+                    <div className="flex whitespace-nowrap" style={{ animation: "marquee-scroll 15s linear infinite" }}>
+                        {Array.from({ length: 8 }).map((_, i) => (
+                            <span key={i} className="text-[8rem] sm:text-[12rem] font-bold text-zinc-800/40 dark:text-zinc-800/40 select-none mx-4" style={{ fontFamily: '"Host Grotesk", sans-serif' }}>NE</span>
+                        ))}
+                    </div>
+                    {/* Center overlay text */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-white text-2xl sm:text-3xl font-semibold tracking-tight" style={{ fontFamily: '"Host Grotesk", sans-serif' }}>
+                            follow your<span className="inline-block ml-1 text-3xl sm:text-4xl align-middle">❤️</span>
+                        </span>
+                    </div>
+                </div>
+                <footer className="w-full relative py-2 bg-zinc-950 border-t border-zinc-800/60">
+                    <div className="mx-auto max-w-6xl px-4 sm:px-6 text-center text-sm text-zinc-400">
+                        © {new Date().getFullYear()} Nijanthan Elangovan
                     </div>
                 </footer>
             </main>
