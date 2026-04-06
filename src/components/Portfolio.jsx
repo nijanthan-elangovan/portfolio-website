@@ -428,24 +428,41 @@ function LogoNE() {
 /* --------------------------- Hero Rotating Word ----------------------------- */
 function TypingWord({ word }) {
     const [shown, setShown] = useState("");
+    const [done, setDone] = useState(false);
     useEffect(() => {
-        let i = 0; const letters = word.split(""); setShown("");
-        const id = setInterval(() => { i += 1; setShown(letters.slice(0, i).join("")); if (i >= letters.length) clearInterval(id); }, 150);
+        let i = 0; const letters = word.split(""); setShown(""); setDone(false);
+        const id = setInterval(() => { i += 1; setShown(letters.slice(0, i).join("")); if (i >= letters.length) { clearInterval(id); setDone(true); } }, 150);
         return () => clearInterval(id);
     }, [word]);
     return (
-        <span className="relative">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-400 dark:from-emerald-400 dark:to-cyan-300">{shown}</span>
-            <span className="ml-[1px] inline-block w-[2px] h-[1em] align-text-bottom bg-current animate-pulse" />
+        <span className="relative inline-flex items-center justify-center">
+            {/* Invisible full word to reserve width */}
+            <span className="invisible" aria-hidden>{word}</span>
+            <span className="absolute inset-0 flex items-center justify-center">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-400 dark:from-emerald-400 dark:to-cyan-300">{shown}</span>
+                <span className={`ml-[1px] inline-block w-[2px] h-[1em] align-text-bottom bg-emerald-500 ${done ? "animate-pulse" : ""}`} />
+            </span>
         </span>
     );
 }
 
 function ClickWord({ word }) {
+    const letters = word.split("");
     return (
         <motion.span initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1.08, opacity: 1 }} transition={{ type: "spring", stiffness: 400, damping: 18 }} className="relative inline-flex items-center">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-400 dark:from-emerald-400 dark:to-cyan-300">{word}</span>
-            <MousePointerClick className="ml-2 h-4 w-4 text-emerald-500" />
+            <span className="relative">
+                {letters.map((letter, i) => (
+                    <span key={i} className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-400 dark:from-emerald-400 dark:to-cyan-300">{letter}</span>
+                ))}
+                <motion.span
+                    className="absolute top-1/2 text-emerald-500 pointer-events-none"
+                    initial={{ left: "0%", y: "-50%" }}
+                    animate={{ left: ["0%", "50%", "100%", "50%", "0%"] }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                >
+                    <MousePointerClick className="h-5 w-5" />
+                </motion.span>
+            </span>
             <span className="pointer-events-none absolute -inset-2 rounded-full border border-emerald-400/30" />
         </motion.span>
     );
@@ -468,14 +485,82 @@ function PaintedWord({ word }) {
     );
 }
 
-function RotatingWord({ items = ["Design", "Word", "Click"] }) {
+function PixelWord({ word }) {
+    const [rendered, setRendered] = useState("");
+    const [glitch, setGlitch] = useState(false);
+
+    useLayoutEffect(() => {
+        // Load pixel font
+        const id = "pixel-font-link";
+        if (!document.getElementById(id)) {
+            const link = document.createElement("link");
+            link.id = id;
+            link.rel = "stylesheet";
+            link.href = "https://fonts.googleapis.com/css2?family=Silkscreen:wght@700&display=swap";
+            document.head.appendChild(link);
+        }
+        const styleId = "pixel-word-anim";
+        if (!document.getElementById(styleId)) {
+            const style = document.createElement("style");
+            style.id = styleId;
+            style.textContent = `
+@keyframes pixelScanline { 0% { top: -2px; } 100% { top: 100%; } }
+@keyframes pixelFlicker { 0%,100% { opacity:1 } 4% { opacity:0.7 } 8% { opacity:1 } 42% { opacity:0.8 } 44% { opacity:1 } }
+`;
+            document.head.appendChild(style);
+        }
+    }, []);
+
+    useEffect(() => {
+        const letters = word.split("");
+        let i = 0;
+        setRendered("");
+        setGlitch(true);
+        const id = setInterval(() => {
+            i += 1;
+            setRendered(letters.slice(0, i).join(""));
+            if (i >= letters.length) {
+                clearInterval(id);
+                setTimeout(() => setGlitch(false), 300);
+            }
+        }, 120);
+        return () => clearInterval(id);
+    }, [word]);
+
+    return (
+        <span className="relative inline-block">
+            <span
+                className="text-emerald-500 dark:text-emerald-400"
+                style={{
+                    fontFamily: '"Silkscreen", monospace',
+                    fontSize: "0.85em",
+                    letterSpacing: "0.05em",
+                    textShadow: "0 0 8px rgba(16,185,129,0.5), 0 0 20px rgba(16,185,129,0.2)",
+                    animation: glitch ? "pixelFlicker 0.15s steps(1) infinite" : "none",
+                }}
+            >
+                {rendered}
+                <span className="inline-block w-[0.6em] h-[1em] align-text-bottom ml-[1px] bg-emerald-500/70 animate-pulse" style={{ animation: "pixelFlicker 0.8s steps(1) infinite" }} />
+            </span>
+            {glitch && (
+                <span
+                    aria-hidden
+                    className="absolute left-0 right-0 h-[2px] bg-emerald-400/30 pointer-events-none"
+                    style={{ animation: "pixelScanline 0.4s linear infinite" }}
+                />
+            )}
+        </span>
+    );
+}
+
+function RotatingWord({ items = ["Pixel", "Word", "Click"] }) {
     const [idx, setIdx] = useState(0);
     useEffect(() => { const id = setInterval(() => setIdx((i) => (i + 1) % items.length), 3000); return () => clearInterval(id); }, [items.length]);
     const active = items[idx];
     return (
         <span className="inline-block align-baseline">
             <motion.span key={active} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
-                {active === "Word" ? <TypingWord word="Word" /> : active === "Click" ? <ClickWord word="Click" /> : <PaintedWord word="Design" />}
+                {active === "Pixel" ? <PixelWord word="Pixel" /> : active === "Word" ? <TypingWord word="Word" /> : active === "Click" ? <ClickWord word="Click" /> : <PaintedWord word={active} />}
             </motion.span>
         </span>
     );
