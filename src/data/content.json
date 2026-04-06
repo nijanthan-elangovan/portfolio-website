@@ -3,22 +3,22 @@
     "name": "Nijanthan Elangovan",
     "roles": [
       "Technical Writer",
-      "Creative Designer"
+      "Content Developer"
     ],
-    "summary": "Multidisciplinary Technical & Conversational Writer with 5+ years crafting clear, user-focused content and elegant interfaces for global tech products (Google Ads, YouTube, DV360). Blends precise documentation with thoughtful design to create friction-free experiences.",
-    "location": "Hyderabad & Chennai, India",
+    "summary": "Technical Writer with 5+ years of experience creating documentation, SOPs, and user-facing content for global products. Currently writing Help Center articles, operational docs, and AI chatbot content for Google Ads, YouTube, and SA360 — with a bonus background in web development and UI design.",
+    "location": "Hyderabad & Bangalore, India",
     "email": "hi@njthnelvgn.com",
     "phone": "+91 8681828144",
-    "availability": "Open to select freelance & consulting"
+    "availability": "Open to Technical Writing roles"
   },
   "NOW": {
-    "title": "Senior Technical Writer",
-    "company": "Google Operations Center",
+    "title": "Senior Tech Writer Associate",
+    "company": "Google Operations Center, Hyderabad",
     "link": "#work",
     "bullets": [
-      "Help Center articles & internal docs for Google Ads",
-      "AI-assisted chatbot scripts & flows",
-      "Cross-functional launch communications"
+      "Authoring Help Center articles for Google Ads, SA360 & YouTube",
+      "Optimizing AI chatbot content so users solve problems without calling support",
+      "Shipping launch comms across YouTube, DV360 & Google Billing"
     ]
   },
   "HERO": {
@@ -35,38 +35,38 @@
       "line3": "at a time."
     },
     "latest": {
-      "eyebrow": "Fresh",
-      "title": "Latest Published Work"
+      "eyebrow": "Recently Shipped",
+      "title": "Work That’s Live Right Now"
     },
     "work": {
-      "eyebrow": "Experience",
-      "title": "Selected Work"
+      "eyebrow": "The Journey",
+      "title": "Places I’ve Worked"
     },
     "projects": {
-      "eyebrow": "Case Studies",
-      "title": "Projects & Impact"
+      "eyebrow": "Highlights",
+      "title": "Select Projects & Writing Samples"
     },
     "clients": {
-      "eyebrow": "Trusted by",
-      "title": "Clients & Collaborations"
+      "eyebrow": "Trusted By",
+      "title": "Brands I’ve Worked With"
     },
     "skills": {
-      "eyebrow": "Toolbox",
-      "title": "Skills & Superpowers"
+      "eyebrow": "What I Bring",
+      "title": "Skills & Tools I Work With"
     },
     "about": {
-      "eyebrow": "Story",
-      "title": "About Nijanthan"
+      "eyebrow": "Behind the Work",
+      "title": "A Bit About Me"
     },
     "community": {
-      "eyebrow": "Shoutout",
-      "title": "Community & Causes"
+      "eyebrow": "Giving Back",
+      "title": "Beyond the Screen"
     },
     "contact": {
-      "eyebrow": "Say hello",
-      "title": "Let’s build something clear & beautiful"
+      "eyebrow": "Let’s Connect",
+      "title": "I’d love to hear what you’re working on."
     },
-    "footer": "Built with 💜."
+    "footer": "Made by hand, not by template."
   },
   "SOCIALS": {
     "linkedin": "https://www.linkedin.com/in/nijanthane/",
@@ -79,43 +79,43 @@
   "EXPERIENCE": [
     {
       "company": "Google Operations Center",
-      "title": "Senior Technical Writer",
+      "title": "Senior Tech Writer Associate",
       "range": "Jul 2024 — Present",
       "bullets": [
-        "Create user-facing Help Center articles for Google Ads with global clarity and accessibility.",
-        "Develop internal documentation enabling fast, accurate troubleshooting for support teams.",
-        "Write/optimize conversational content for AI-powered chatbots within the Google Help Center.",
-        "Collaborate on launch comms for YouTube, DV360, Google Ads, and Policy & Billing."
+        "Author external Help Center articles for Google Ads, SA360 & YouTube — built for clarity, accuracy, and localization across global audiences.",
+        "Develop internal SOPs and operational docs that power troubleshooting, escalation handling, and trust & safety workflows.",
+        "Optimize AI chatbot conversations so users get answers faster — fewer tickets, better outcomes.",
+        "Collaborate with PMs and UX Writers to ship launch communications for YouTube, DV360, Google Ads, and Policy & Billing."
       ]
     },
     {
       "company": "Euclid Innovations",
-      "title": "UI Designer & Content",
+      "title": "Content Writer & UI Designer",
       "range": "Dec 2022 — Jul 2024",
       "bullets": [
-        "Produced employee handbooks, project docs, and marketing copy to elevate org clarity.",
-        "Designed & migrated web content (blogs, case studies) with accessibility best practices.",
-        "Conceptualised social creatives + marketing materials; implemented analytics for performance.",
-        "Managed multiple websites, optimizing UX and engagement."
+        "Wrote employee handbooks, project documentation, and marketing copy — the kind of content people actually referenced.",
+        "Authored and migrated web content — blogs, case studies — ensuring accessibility and industry standards.",
+        "Managed multiple websites, using analytics to track content performance and improve user engagement.",
+        "Also handled UI design for web platforms and social media creatives alongside the writing work."
       ]
     },
     {
       "company": "AdsHi5",
-      "title": "WordPress Developer",
+      "title": "Web Developer & Content Producer",
       "range": "Nov 2021 — Dec 2022",
       "bullets": [
-        "Directed compliant, performant web experiences across a 40+ site portfolio.",
-        "Shipped e-commerce & landing pages—several properties reached 500k+ monthly visits.",
-        "Ensured uptime, accessibility, analytics, and SEO discipline."
+        "Produced and maintained content for 40+ websites — e-commerce, landing pages — each averaging 500k+ monthly views.",
+        "Ensured all content met compliance, accessibility, and SEO standards across the entire portfolio.",
+        "Combined web development skills with content strategy to improve search rankings and user engagement."
       ]
     },
     {
       "company": "Yorafitness (PG Internship)",
-      "title": "Graphic Designer / DM Associate",
+      "title": "Content & Marketing Intern",
       "range": "Apr 2021 — Oct 2021",
       "bullets": [
-        "Designed branding assets and video content; managed targeted ad promotions.",
-        "Refined strategy via analytics and audience insights."
+        "Wrote copy for social media campaigns and marketing materials across multiple platforms.",
+        "Created branding assets and promotional content — bridging writing and visual design for consistent messaging."
       ]
     },
     {
@@ -123,62 +123,65 @@
       "title": "Technical Content Writer",
       "range": "Jun 2018 — Dec 2018",
       "bullets": [
-        "Built technical content strategy and end-to-end e-learning materials.",
-        "Coordinated content pipeline and analyzed performance for continuous improvement."
+        "Developed technical content strategy and produced structured e-learning materials from scratch.",
+        "Managed the content pipeline end-to-end, collaborating with SMEs to ensure accuracy and relevance."
       ]
     }
   ],
   "PROJECTS": [
     {
-      "title": "Multi-site WordPress Suite (40+ sites)",
-      "blurb": "Delivered e-commerce & content sites with robust SEO and analytics; several properties crossed 500k+ monthly visits.",
+      "title": "Content at Scale — 40+ Websites",
+      "blurb": "Produced, structured, and maintained content across 40+ e-commerce and landing page sites — from product descriptions to compliance copy. Several properties crossed 500k+ monthly page views.",
       "meta": [
-        "WordPress",
-        "SEO",
-        "Analytics"
+        "Content Strategy",
+        "SEO Writing",
+        "WordPress"
       ],
       "featured": true,
       "thumbnail": "",
-      "category": "Web Development",
+      "category": "Content Production",
       "href": "#"
     },
     {
-      "title": "Design Systems & UI Prototypes",
-      "blurb": "Built consistent, minimalist component libraries and interactive flows in Figma for faster iteration and handoffs.",
+      "title": "E-learning Content — Website Learners",
+      "blurb": "Developed structured technical learning materials from scratch — strategy through production. Worked closely with SMEs to keep content accurate and engaging for a non-technical audience.",
       "meta": [
-        "Figma",
-        "Prototyping",
-        "Design System"
+        "Technical Writing",
+        "E-learning",
+        "Content Strategy"
       ],
       "featured": true,
       "thumbnail": "",
-      "category": "UI/UX Design",
+      "category": "Technical Writing",
       "href": "#"
     },
     {
-      "title": "OTT App Concept (University)",
-      "blurb": "Structured a clean, content-first OTT interface with typographic hierarchy and focus states for TV remote UX.",
+      "title": "OTT App — Content Architecture",
+      "blurb": "University project — defined the content structure and information hierarchy for an OTT streaming app, focusing on how users discover and navigate content on TV interfaces.",
       "meta": [
-        "Product Thinking",
-        "Interaction",
-        "TV UX"
+        "Information Architecture",
+        "UX Writing",
+        "Content Design"
       ],
       "featured": true,
       "thumbnail": "",
-      "category": "Product Design",
+      "category": "Content Design",
       "href": "#"
     }
   ],
   "SKILLS": [
-    "Technical & Conversational Writing",
-    "Help Center IA & Governance",
-    "Chatbot / CX Writing",
-    "UX Writing",
-    "HTML • CSS • JS • Bootstrap",
-    "WordPress",
-    "SEO & Web Performance",
-    "Figma • Adobe XD • PS • AI",
-    "Docs: Word • Excel • PowerPoint"
+    "Technical Writing & Documentation",
+    "SOP & Policy Documentation",
+    "Help Center & Knowledge Base Content",
+    "Chatbot & Conversational (CX) Writing",
+    "UX Writing & Microcopy",
+    "Localization & i18n Readiness",
+    "DITA • XML • Structured Authoring",
+    "Content Strategy & Information Architecture",
+    "HTML • CSS • JavaScript",
+    "WordPress • SEO • Web Analytics",
+    "Figma • Adobe Creative Suite",
+    "UI/UX Design (supporting skill)"
   ],
   "EDUCATION": [
     {
@@ -279,8 +282,8 @@
     }
   ],
   "COMMUNITY": {
-    "name": "U&I – Non-profit",
+    "name": "U&I Foundation",
     "href": "https://uandi.org.in/",
-    "note": "Proud volunteer — Chapter Lead. Grateful for the impact they create in education and mentorship."
+    "note": "Proud volunteer and Chapter Lead — helping bridge gaps in education and mentorship for underserved communities. The most meaningful work happens off the clock."
   }
 }

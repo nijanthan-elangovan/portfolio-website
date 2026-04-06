@@ -9,6 +9,7 @@ export default function SEO({
     description,
     canonical,
     openGraph,
+    twitter,
     schema
 }) {
     useEffect(() => {
@@ -24,7 +25,6 @@ export default function SEO({
             if (!element) {
                 element = document.createElement('meta');
 
-                // Parse selector to set attributes (e.g., meta[name="description"] -> name="description")
                 const nameMatch = selector.match(/name="([^"]+)"/);
                 const propertyMatch = selector.match(/property="([^"]+)"/);
 
@@ -38,6 +38,7 @@ export default function SEO({
 
         // 3. Update Standard Metas
         updateMeta('meta[name="description"]', 'content', description);
+        updateMeta('meta[name="author"]', 'content', 'Nijanthan Elangovan');
         if (canonical) {
             let link = document.querySelector('link[rel="canonical"]');
             if (!link) {
@@ -55,9 +56,18 @@ export default function SEO({
             updateMeta('meta[property="og:image"]', 'content', openGraph.image);
             updateMeta('meta[property="og:url"]', 'content', openGraph.url || canonical);
             updateMeta('meta[property="og:type"]', 'content', openGraph.type || 'website');
+            updateMeta('meta[property="og:site_name"]', 'content', openGraph.siteName || 'Nijanthan Elangovan');
+            updateMeta('meta[property="og:locale"]', 'content', 'en_US');
         }
 
-        // 5. Inject JSON-LD Schema
+        // 5. Twitter / X card
+        const tw = twitter || {};
+        updateMeta('meta[name="twitter:card"]', 'content', tw.card || 'summary_large_image');
+        updateMeta('meta[name="twitter:title"]', 'content', tw.title || openGraph?.title || title);
+        updateMeta('meta[name="twitter:description"]', 'content', tw.description || openGraph?.description || description);
+        updateMeta('meta[name="twitter:image"]', 'content', tw.image || openGraph?.image);
+
+        // 6. Inject JSON-LD Schema
         if (schema) {
             let script = document.querySelector('#schema-json-ld');
             if (!script) {
@@ -69,7 +79,7 @@ export default function SEO({
             script.textContent = JSON.stringify(schema);
         }
 
-    }, [title, description, canonical, openGraph, schema]);
+    }, [title, description, canonical, openGraph, twitter, schema]);
 
     return null;
 }

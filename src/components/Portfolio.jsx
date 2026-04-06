@@ -247,6 +247,108 @@ const itemVariants = {
     },
 };
 
+/* ----------------------------- Emoji Captcha ------------------------------ */
+function EmojiCaptcha({ phone }) {
+    const [revealed, setRevealed] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [puzzle, setPuzzle] = useState(null);
+    const [wrong, setWrong] = useState(null);
+
+    const puzzles = [
+        { grid: ["🐱","🐱","🐱","🐱","🐶","🐱","🐱","🐱","🐱"], answer: 4, hint: "Find the odd one out" },
+        { grid: ["🍎","🍎","🍊","🍎","🍎","🍎","🍎","🍎","🍎"], answer: 2, hint: "One of these isn't like the others" },
+        { grid: ["🌙","🌙","🌙","🌙","🌙","🌙","☀️","🌙","🌙"], answer: 6, hint: "Spot the different one" },
+        { grid: ["🐸","🐸","🐸","🐢","🐸","🐸","🐸","🐸","🐸"], answer: 3, hint: "Which one doesn't belong?" },
+        { grid: ["🔵","🔵","🔵","🔵","🔵","🔴","🔵","🔵","🔵"], answer: 5, hint: "Find the imposter" },
+    ];
+
+    const handleOpen = () => {
+        if (revealed) return;
+        const p = puzzles[Math.floor(Math.random() * puzzles.length)];
+        setPuzzle(p);
+        setWrong(null);
+        setOpen(true);
+    };
+
+    const handlePick = (idx) => {
+        if (idx === puzzle.answer) {
+            setRevealed(true);
+            setOpen(false);
+        } else {
+            setWrong(idx);
+            setTimeout(() => setWrong(null), 600);
+        }
+    };
+
+    return (
+        <>
+            <span
+                className={`inline-flex items-center gap-2 ${!revealed ? "cursor-pointer hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors" : ""}`}
+                onClick={handleOpen}
+                role={!revealed ? "button" : undefined}
+                tabIndex={!revealed ? 0 : undefined}
+                onKeyDown={!revealed ? (e) => { if (e.key === "Enter" || e.key === " ") handleOpen(); } : undefined}
+            >
+                <Phone className="h-4 w-4" />
+                {revealed ? (
+                    <a href={`tel:${phone}`} className="hover:underline">{phone}</a>
+                ) : (
+                    <span className="flex items-center gap-1">
+                        +91 ••••••••••
+                        <span className="text-[10px] ml-1 px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 font-medium">tap to reveal</span>
+                    </span>
+                )}
+            </span>
+
+            <AnimatePresence>
+                {open && puzzle && (
+                    <motion.div
+                        className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40 backdrop-blur-sm"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setOpen(false)}
+                    >
+                        <motion.div
+                            className="relative bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-2xl p-6 w-[280px]"
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className="text-center mb-4">
+                                <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">Quick human check</div>
+                                <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">{puzzle.hint}</div>
+                            </div>
+                            <div className="grid grid-cols-3 gap-2">
+                                {puzzle.grid.map((emoji, i) => (
+                                    <motion.button
+                                        key={i}
+                                        onClick={() => handlePick(i)}
+                                        className={`text-2xl p-3 rounded-xl border transition-all ${
+                                            wrong === i
+                                                ? "border-red-400 bg-red-50 dark:bg-red-900/30"
+                                                : "border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                                        }`}
+                                        whileHover={{ scale: 1.1 }}
+                                        whileTap={{ scale: 0.9 }}
+                                        animate={wrong === i ? { x: [0, -4, 4, -4, 4, 0] } : {}}
+                                        transition={wrong === i ? { duration: 0.4 } : { type: "spring", stiffness: 400, damping: 17 }}
+                                    >
+                                        {emoji}
+                                    </motion.button>
+                                ))}
+                            </div>
+                            <div className="text-center mt-3 text-[10px] text-zinc-400">This keeps bots away from my number</div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </>
+    );
+}
+
 function Chip({ children }) {
     return (
         <motion.span
@@ -496,23 +598,64 @@ export default function Portfolio() {
         footer: "Built with care."
     };
 
-    // Construct Schema.org Person Data
+    // Construct Schema.org structured data (Person + WebSite)
     const personSchema = {
         "@context": "https://schema.org",
-        "@type": "Person",
-        "name": PROFILE_V.name,
-        "jobTitle": PROFILE_V.roles,
-        "description": PROFILE_V.summary,
-        "url": SOCIALS_V.website,
-        "sameAs": [
-            SOCIALS_V.linkedin,
-            SOCIALS_V.github
-        ].filter(Boolean),
-        "knowsAbout": SKILLS_V,
-        "worksFor": {
-            "@type": "Organization",
-            "name": NOW_V.company || "Google Operations Center"
-        }
+        "@graph": [
+            {
+                "@type": "Person",
+                "@id": "https://njthnelvgn.com/#person",
+                "name": PROFILE_V.name,
+                "givenName": "Nijanthan",
+                "familyName": "Elangovan",
+                "jobTitle": PROFILE_V.roles[0],
+                "description": PROFILE_V.summary,
+                "url": "https://njthnelvgn.com",
+                "image": "https://res.cloudinary.com/nijanthan/image/upload/f_auto,q_auto/v1765621694/all-devices-white_fi2jmy.png",
+                "email": PROFILE_V.email,
+                "telephone": PROFILE_V.phone,
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": "Hyderabad",
+                    "addressCountry": "IN"
+                },
+                "sameAs": [
+                    SOCIALS_V.linkedin,
+                    SOCIALS_V.github
+                ].filter(Boolean),
+                "knowsAbout": SKILLS_V,
+                "worksFor": {
+                    "@type": "Organization",
+                    "name": "Google Operations Center",
+                    "url": "https://about.google/"
+                },
+                "alumniOf": EDUCATION_V.map(e => ({
+                    "@type": "EducationalOrganization",
+                    "name": e.school
+                })),
+                "hasCredential": CERTS_V.map(c => ({
+                    "@type": "EducationalOccupationalCredential",
+                    "name": c.name,
+                    "credentialCategory": "certificate",
+                    "recognizedBy": { "@type": "Organization", "name": c.issuer }
+                }))
+            },
+            {
+                "@type": "WebSite",
+                "@id": "https://njthnelvgn.com/#website",
+                "url": "https://njthnelvgn.com",
+                "name": `${PROFILE_V.name} — ${PROFILE_V.roles[0]}`,
+                "description": PROFILE_V.summary,
+                "publisher": { "@id": "https://njthnelvgn.com/#person" }
+            },
+            {
+                "@type": "ProfilePage",
+                "@id": "https://njthnelvgn.com/#profilepage",
+                "url": "https://njthnelvgn.com",
+                "name": `${PROFILE_V.name} | Portfolio`,
+                "mainEntity": { "@id": "https://njthnelvgn.com/#person" }
+            }
+        ]
     };
 
     return (
@@ -520,12 +663,13 @@ export default function Portfolio() {
             <SEO
                 title={`${PROFILE_V.name} | ${PROFILE_V.roles[0]}`}
                 description={PROFILE_V.summary}
-                canonical={SOCIALS_V.website}
+                canonical="https://njthnelvgn.com"
                 openGraph={{
                     type: 'website',
                     image: 'https://res.cloudinary.com/nijanthan/image/upload/f_auto,q_auto/v1765621694/all-devices-white_fi2jmy.png',
-                    title: `${PROFILE_V.name} - Portfolio`,
-                    description: PROFILE_V.summary
+                    title: `${PROFILE_V.name} — ${PROFILE_V.roles[0]}`,
+                    description: PROFILE_V.summary,
+                    siteName: 'Nijanthan Elangovan'
                 }}
                 schema={personSchema}
             />
@@ -808,7 +952,7 @@ export default function Portfolio() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(0,1fr)]">
                         <Card><div className="p-6 sm:p-8"><div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400"><GraduationCap className="h-4 w-4" /> Education</div><ul className="mt-4 space-y-3 text-sm">{EDUCATION_V.map((e) => (<li key={e.school} className="text-zinc-800 dark:text-zinc-200"><div className="font-medium">{e.school}</div><div className="text-zinc-600 dark:text-zinc-400">{e.degree}</div><div className="text-zinc-500 dark:text-zinc-500">{e.year}</div></li>))}</ul></div></Card>
                         <Card><div className="p-6 sm:p-8"><div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400"><BadgeCheck className="h-4 w-4" /> Certification</div><ul className="mt-4 space-y-3 text-sm">{CERTS_V.map((c) => (<li key={c.name} className="text-zinc-800 dark:text-zinc-200"><div className="font-medium">{c.name}</div><div className="text-zinc-600 dark:text-zinc-400">{c.issuer}</div></li>))}</ul></div></Card>
-                        <Card><div className="p-6 sm:p-8"><div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400"><BookOpen className="h-4 w-4" /> Focus</div><p className="mt-4 text-sm text-zinc-700 dark:text-zinc-300">I turn complex systems into simple, elegant narratives—whether that’s product docs, chatbots, or interfaces. I care about inclusive language, fast load times, and the tiny details people feel more than see.</p></div></Card>
+                        <Card><div className="p-6 sm:p-8"><div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400"><BookOpen className="h-4 w-4" /> Focus</div><p className="mt-4 text-sm text-zinc-700 dark:text-zinc-300">I write the kind of documentation people don’t have to re-read. Whether it’s a Help Center article, an SOP for escalation handling, or a chatbot script that actually resolves issues — the goal is always clarity on the first pass. My background in web development and UI design means I understand the products I document, not just the words around them.</p></div></Card>
                     </div>
                 </Section>
                 {/* Community */}
@@ -836,7 +980,7 @@ export default function Portfolio() {
                                 <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-zinc-600 dark:text-zinc-400">
                                     <span className="inline-flex items-center gap-2"><Linkedin className="h-4 w-4" /> <a className="hover:underline" target="_blank" rel="noreferrer" href={SOCIALS_V.linkedin}>LinkedIn</a></span>
                                     <span className="inline-flex items-center gap-2"><MapPin className="h-4 w-4" /> {PROFILE_V.location}</span>
-                                    <span className="inline-flex items-center gap-2"><Phone className="h-4 w-4" /> {PROFILE_V.phone}</span>
+                                    <EmojiCaptcha phone={PROFILE_V.phone} />
                                 </div>
                             </div>
                             <div className="w-full mt-6 md:mt-0 md:pl-10">
