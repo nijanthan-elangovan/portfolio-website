@@ -431,12 +431,12 @@ function TypingWord({ word }) {
     const [done, setDone] = useState(false);
     useEffect(() => {
         let i = 0; const letters = word.split(""); setShown(""); setDone(false);
-        const id = setInterval(() => { i += 1; setShown(letters.slice(0, i).join("")); if (i >= letters.length) { clearInterval(id); setDone(true); } }, 150);
+        const id = setInterval(() => { i += 1; setShown(letters.slice(0, i).join("")); if (i >= letters.length) { clearInterval(id); setDone(true); } }, 250);
         return () => clearInterval(id);
     }, [word]);
     return (
         <span className="relative">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-400 dark:from-emerald-400 dark:to-cyan-300">{shown}</span>
+            <span className="font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-400 dark:from-emerald-400 dark:to-cyan-300">{shown}</span>
             <span className={`ml-[1px] inline-block w-[2px] h-[1em] align-text-bottom bg-emerald-500 ${done ? "animate-pulse" : ""}`} />
         </span>
     );
@@ -550,7 +550,7 @@ function PixelWord({ word }) {
 
 function RotatingWord({ items = ["Pixel", "Word", "Click"] }) {
     const [idx, setIdx] = useState(0);
-    useEffect(() => { const id = setInterval(() => setIdx((i) => (i + 1) % items.length), 3000); return () => clearInterval(id); }, [items.length]);
+    useEffect(() => { const id = setInterval(() => setIdx((i) => (i + 1) % items.length), 5000); return () => clearInterval(id); }, [items.length]);
     const active = items[idx];
     return (
         <span className="inline-block align-baseline">
