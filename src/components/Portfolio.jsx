@@ -435,30 +435,39 @@ function TypingWord({ word }) {
         return () => clearInterval(id);
     }, [word]);
     return (
-        <span className="relative inline-flex items-center justify-center">
-            {/* Invisible full word to reserve width */}
-            <span className="invisible" aria-hidden>{word}</span>
-            <span className="absolute inset-0 flex items-center justify-center">
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-400 dark:from-emerald-400 dark:to-cyan-300">{shown}</span>
-                <span className={`ml-[1px] inline-block w-[2px] h-[1em] align-text-bottom bg-emerald-500 ${done ? "animate-pulse" : ""}`} />
-            </span>
+        <span className="relative">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-400 dark:from-emerald-400 dark:to-cyan-300">{shown}</span>
+            <span className={`ml-[1px] inline-block w-[2px] h-[1em] align-text-bottom bg-emerald-500 ${done ? "animate-pulse" : ""}`} />
         </span>
     );
 }
 
 function ClickWord({ word }) {
-    const letters = word.split("");
+    const ref = useRef(null);
+    const cursorX = useMotionValue(0);
+    const cursorY = useMotionValue(0);
+    const springX = useSpring(cursorX, { stiffness: 120, damping: 15 });
+    const springY = useSpring(cursorY, { stiffness: 120, damping: 15 });
+
+    useEffect(() => {
+        const move = () => {
+            if (!ref.current) return;
+            const rect = ref.current.getBoundingClientRect();
+            cursorX.set(Math.random() * (rect.width - 16));
+            cursorY.set(Math.random() * (rect.height - 16));
+        };
+        move();
+        const id = setInterval(move, 900);
+        return () => clearInterval(id);
+    }, [cursorX, cursorY]);
+
     return (
         <motion.span initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1.08, opacity: 1 }} transition={{ type: "spring", stiffness: 400, damping: 18 }} className="relative inline-flex items-center">
-            <span className="relative">
-                {letters.map((letter, i) => (
-                    <span key={i} className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-400 dark:from-emerald-400 dark:to-cyan-300">{letter}</span>
-                ))}
+            <span ref={ref} className="relative">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-400 dark:from-emerald-400 dark:to-cyan-300">{word}</span>
                 <motion.span
-                    className="absolute top-1/2 text-emerald-500 pointer-events-none"
-                    initial={{ left: "0%", y: "-50%" }}
-                    animate={{ left: ["0%", "50%", "100%", "50%", "0%"] }}
-                    transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute top-0 left-0 text-emerald-500 pointer-events-none"
+                    style={{ x: springX, y: springY }}
                 >
                     <MousePointerClick className="h-5 w-5" />
                 </motion.span>
@@ -486,17 +495,15 @@ function PaintedWord({ word }) {
 }
 
 function PixelWord({ word }) {
-    const [rendered, setRendered] = useState("");
     const [glitch, setGlitch] = useState(false);
 
     useLayoutEffect(() => {
-        // Load pixel font
         const id = "pixel-font-link";
         if (!document.getElementById(id)) {
             const link = document.createElement("link");
             link.id = id;
             link.rel = "stylesheet";
-            link.href = "https://fonts.googleapis.com/css2?family=Silkscreen:wght@700&display=swap";
+            link.href = "https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&display=swap";
             document.head.appendChild(link);
         }
         const styleId = "pixel-word-anim";
@@ -512,19 +519,9 @@ function PixelWord({ word }) {
     }, []);
 
     useEffect(() => {
-        const letters = word.split("");
-        let i = 0;
-        setRendered("");
         setGlitch(true);
-        const id = setInterval(() => {
-            i += 1;
-            setRendered(letters.slice(0, i).join(""));
-            if (i >= letters.length) {
-                clearInterval(id);
-                setTimeout(() => setGlitch(false), 300);
-            }
-        }, 120);
-        return () => clearInterval(id);
+        const id = setTimeout(() => setGlitch(false), 500);
+        return () => clearTimeout(id);
     }, [word]);
 
     return (
@@ -532,15 +529,13 @@ function PixelWord({ word }) {
             <span
                 className="text-emerald-500 dark:text-emerald-400"
                 style={{
-                    fontFamily: '"Silkscreen", monospace',
-                    fontSize: "0.85em",
-                    letterSpacing: "0.05em",
+                    fontFamily: '"Pixelify Sans", sans-serif',
+                    letterSpacing: "0.02em",
                     textShadow: "0 0 8px rgba(16,185,129,0.5), 0 0 20px rgba(16,185,129,0.2)",
                     animation: glitch ? "pixelFlicker 0.15s steps(1) infinite" : "none",
                 }}
             >
-                {rendered}
-                <span className="inline-block w-[0.6em] h-[1em] align-text-bottom ml-[1px] bg-emerald-500/70 animate-pulse" style={{ animation: "pixelFlicker 0.8s steps(1) infinite" }} />
+                {word.toLowerCase()}
             </span>
             {glitch && (
                 <span
