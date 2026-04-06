@@ -64,6 +64,7 @@ function useInlineStyles() {
 .animation-delay-2000 { animation-delay: 2s; }
 .animation-delay-4000 { animation-delay: 4s; }
 @keyframes marquee-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+@keyframes heartbeat { 0%,100% { transform: scale(1); } 14% { transform: scale(1.3); } 28% { transform: scale(1); } 42% { transform: scale(1.2); } 56% { transform: scale(1); } }
 `;
         document.head.appendChild(el);
     }, []);
@@ -504,7 +505,7 @@ function PixelWord({ word }) {
             const link = document.createElement("link");
             link.id = id;
             link.rel = "stylesheet";
-            link.href = "https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&display=swap";
+            link.href = "https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&family=Dancing+Script:wght@400;700&display=swap";
             document.head.appendChild(link);
         }
         const styleId = "pixel-word-anim";
@@ -1080,15 +1081,16 @@ export default function Portfolio() {
                         {[0, 1].map((set) => (
                             <div key={set} className="flex shrink-0">
                                 {Array.from({ length: 6 }).map((_, i) => (
-                                    <span key={i} className="text-[8rem] sm:text-[12rem] font-extrabold italic text-zinc-800/30 select-none px-6 leading-none" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>NE</span>
+                                    <span key={i} className="text-[8rem] sm:text-[12rem] text-zinc-800/30 select-none px-6 leading-none" style={{ fontFamily: '"Dancing Script", cursive' }}>ne</span>
                                 ))}
                             </div>
                         ))}
                     </div>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-white text-2xl sm:text-3xl font-medium italic tracking-wide" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>
+                    <div className="absolute inset-0 flex items-center justify-center gap-3">
+                        <span className="text-white text-2xl sm:text-3xl tracking-wide" style={{ fontFamily: '"Dancing Script", cursive' }}>
                             let's write something great
                         </span>
+                        <span className="text-red-500 text-2xl sm:text-3xl" style={{ animation: "heartbeat 1.2s ease-in-out infinite" }}>❤</span>
                     </div>
                 </div>
                 <footer className="w-full relative py-2 bg-zinc-950 border-t border-zinc-800/60">
