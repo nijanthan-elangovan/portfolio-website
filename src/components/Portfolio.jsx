@@ -1,4 +1,5 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
     ArrowRight,
@@ -300,51 +301,54 @@ function EmojiCaptcha({ phone }) {
                 )}
             </span>
 
-            <AnimatePresence>
-                {open && puzzle && (
-                    <motion.div
-                        className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40 backdrop-blur-sm"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onClick={() => setOpen(false)}
-                    >
+            {createPortal(
+                <AnimatePresence>
+                    {open && puzzle && (
                         <motion.div
-                            className="relative bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-2xl p-6 w-[280px]"
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.9, opacity: 0 }}
-                            transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                            onClick={(e) => e.stopPropagation()}
+                            className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40 backdrop-blur-sm"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setOpen(false)}
                         >
-                            <div className="text-center mb-4">
-                                <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">Quick human check</div>
-                                <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">{puzzle.hint}</div>
-                            </div>
-                            <div className="grid grid-cols-3 gap-2">
-                                {puzzle.grid.map((emoji, i) => (
-                                    <motion.button
-                                        key={i}
-                                        onClick={() => handlePick(i)}
-                                        className={`text-2xl p-3 rounded-xl border transition-all ${
-                                            wrong === i
-                                                ? "border-red-400 bg-red-50 dark:bg-red-900/30"
-                                                : "border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
-                                        }`}
-                                        whileHover={{ scale: 1.1 }}
-                                        whileTap={{ scale: 0.9 }}
-                                        animate={wrong === i ? { x: [0, -4, 4, -4, 4, 0] } : {}}
-                                        transition={wrong === i ? { duration: 0.4 } : { type: "spring", stiffness: 400, damping: 17 }}
-                                    >
-                                        {emoji}
-                                    </motion.button>
-                                ))}
-                            </div>
-                            <div className="text-center mt-3 text-[10px] text-zinc-400">This keeps bots away from my number</div>
+                            <motion.div
+                                className="relative bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-2xl p-6 w-[280px]"
+                                initial={{ scale: 0.9, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.9, opacity: 0 }}
+                                transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <div className="text-center mb-4">
+                                    <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">Quick human check</div>
+                                    <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">{puzzle.hint}</div>
+                                </div>
+                                <div className="grid grid-cols-3 gap-2">
+                                    {puzzle.grid.map((emoji, i) => (
+                                        <motion.button
+                                            key={i}
+                                            onClick={() => handlePick(i)}
+                                            className={`text-2xl p-3 rounded-xl border transition-all ${
+                                                wrong === i
+                                                    ? "border-red-400 bg-red-50 dark:bg-red-900/30"
+                                                    : "border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                                            }`}
+                                            whileHover={{ scale: 1.1 }}
+                                            whileTap={{ scale: 0.9 }}
+                                            animate={wrong === i ? { x: [0, -4, 4, -4, 4, 0] } : {}}
+                                            transition={wrong === i ? { duration: 0.4 } : { type: "spring", stiffness: 400, damping: 17 }}
+                                        >
+                                            {emoji}
+                                        </motion.button>
+                                    ))}
+                                </div>
+                                <div className="text-center mt-3 text-[10px] text-zinc-400">This keeps bots away from my number</div>
+                            </motion.div>
                         </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                    )}
+                </AnimatePresence>,
+                document.body
+            )}
         </>
     );
 }
