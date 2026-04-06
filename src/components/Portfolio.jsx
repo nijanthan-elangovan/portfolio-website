@@ -1075,17 +1075,19 @@ export default function Portfolio() {
                     </Card>
                 </Section>
                 {/* Marquee Banner */}
-                <div className="relative w-full overflow-hidden bg-zinc-950 dark:bg-zinc-950 py-16 sm:py-20">
-                    {/* Scrolling background text */}
-                    <div className="flex whitespace-nowrap" style={{ animation: "marquee-scroll 15s linear infinite" }}>
-                        {Array.from({ length: 8 }).map((_, i) => (
-                            <span key={i} className="text-[8rem] sm:text-[12rem] font-bold text-zinc-800/40 dark:text-zinc-800/40 select-none mx-4" style={{ fontFamily: '"Host Grotesk", sans-serif' }}>NE</span>
+                <div className="relative w-full overflow-hidden bg-zinc-950 py-16 sm:py-20">
+                    <div className="flex whitespace-nowrap w-max" style={{ animation: "marquee-scroll 20s linear infinite" }}>
+                        {[0, 1].map((set) => (
+                            <div key={set} className="flex shrink-0">
+                                {Array.from({ length: 6 }).map((_, i) => (
+                                    <span key={i} className="text-[8rem] sm:text-[12rem] font-extrabold italic text-zinc-800/30 select-none px-6 leading-none" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>NE</span>
+                                ))}
+                            </div>
                         ))}
                     </div>
-                    {/* Center overlay text */}
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-white text-2xl sm:text-3xl font-semibold tracking-tight" style={{ fontFamily: '"Host Grotesk", sans-serif' }}>
-                            follow your<span className="inline-block ml-1 text-3xl sm:text-4xl align-middle">❤️</span>
+                        <span className="text-white text-2xl sm:text-3xl font-medium italic tracking-wide" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>
+                            let's write something great
                         </span>
                     </div>
                 </div>
