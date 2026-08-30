@@ -805,7 +805,7 @@ export default function Portfolio() {
                             </div>
                             <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-zinc-600 dark:text-zinc-400">
                                 <span className="inline-flex items-center gap-2"><MapPin className="h-4 w-4" /> {PROFILE_V.location}</span>
-                                <span className="inline-flex items-center gap-2"><Calendar className="h-4 w-4" /> 5+ years</span>
+                                <span className="inline-flex items-center gap-2"><Calendar className="h-4 w-4" /> 5+ years experience</span>
                                 <Chip>{PROFILE_V.availability}</Chip>
                             </div>
                         </div>
@@ -845,7 +845,7 @@ export default function Portfolio() {
                                             {yt ? (
                                                 <img
                                                     src={`https://img.youtube.com/vi/${yt}/hqdefault.jpg`}
-                                                    alt=""
+                                                    alt={item.title}
                                                     loading="lazy"
                                                     decoding="async"
                                                     width="480"
@@ -861,7 +861,7 @@ export default function Portfolio() {
                                                         ${optimizeImage(item.thumbnail, 1200)} 1200w
                                                     `}
                                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                                    alt=""
+                                                    alt={item.title}
                                                     loading="lazy"
                                                     decoding="async"
                                                     className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
@@ -930,7 +930,7 @@ export default function Portfolio() {
                         {PROJECTS_V.filter(p => p.featured !== false).map((p, i) => (
                             <motion.div key={p.title} className="h-full" initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-20%" }} transition={{ duration: 0.5, delay: i * 0.06 }} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                                 <Card>
-                                    <a href={p.href || '#'} className="block h-full p-6 sm:p-8">
+                                    <div className={`block h-full p-6 sm:p-8 ${p.href && p.href !== '#' ? 'cursor-pointer' : ''}`} onClick={() => { if (p.href && p.href !== '#') window.open(p.href, '_blank', 'noopener,noreferrer'); }}>
                                         <div className="flex items-start justify-between gap-4">
                                             <div className="flex flex-wrap gap-2">
                                                 {p.meta.map((m) => (
@@ -949,13 +949,13 @@ export default function Portfolio() {
                                                     ${optimizeImage(p.thumbnail, 800)} 800w
                                                 `}
                                                 sizes="(max-width: 768px) 100vw, 50vw"
-                                                alt=""
+                                                alt={p.title}
                                                 className="mt-4 w-full h-48 object-cover rounded-lg"
                                                 loading="lazy"
                                                 decoding="async"
                                             />
                                         )}
-                                    </a>
+                                    </div>
                                 </Card>
                             </motion.div>
                         ))}
@@ -1038,7 +1038,7 @@ export default function Portfolio() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(0,1fr)]">
                         <Card><div className="p-6 sm:p-8"><div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400"><GraduationCap className="h-4 w-4" /> Education</div><ul className="mt-4 space-y-3 text-sm">{EDUCATION_V.map((e) => (<li key={e.school} className="text-zinc-800 dark:text-zinc-200"><div className="font-medium">{e.school}</div><div className="text-zinc-600 dark:text-zinc-400">{e.degree}</div><div className="text-zinc-500 dark:text-zinc-500">{e.year}</div></li>))}</ul></div></Card>
                         <Card><div className="p-6 sm:p-8"><div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400"><BadgeCheck className="h-4 w-4" /> Certification</div><ul className="mt-4 space-y-3 text-sm">{CERTS_V.map((c) => (<li key={c.name} className="text-zinc-800 dark:text-zinc-200"><div className="font-medium">{c.name}</div><div className="text-zinc-600 dark:text-zinc-400">{c.issuer}</div></li>))}</ul></div></Card>
-                        <Card><div className="p-6 sm:p-8"><div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400"><BookOpen className="h-4 w-4" /> Focus</div><p className="mt-4 text-sm text-zinc-700 dark:text-zinc-300">I write documentation that people understand on the first read. Whether it’s a Help Center article, an SOP for escalation handling, or a chatbot script, the goal is always clarity. My background in web development and UI design helps me understand the products I document, not just the words around them.</p></div></Card>
+                        <Card><div className="p-6 sm:p-8"><div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400"><BookOpen className="h-4 w-4" /> Focus</div><p className="mt-4 text-sm text-zinc-700 dark:text-zinc-300">I write documentation that works on the first read. Whether it’s a Help Center article or an internal SOP, the goal is always clarity — if the reader has to re-read something, the writing needs work. I also do web development and UI design, which helps me understand the products I’m documenting, not just the words around them.</p></div></Card>
                     </div>
                 </Section>
                 {/* Community */}
@@ -1046,10 +1046,9 @@ export default function Portfolio() {
                     <Card>
                         <a href={COMMUNITY_V.href} target="_blank" rel="noopener noreferrer" className="block">
                             <div className="p-6 sm:p-8 flex items-start gap-4">
-                                <div className="mt-1"><Heart className="h-5 w-5 text-rose-500" /></div>
+                                <div className="mt-1"><Heart className="h-5 w-5 text-rose-500" style={{ animation: "heartbeat 1.5s ease-in-out infinite" }} /></div>
                                 <div>
-                                    <div className="text-sm uppercase tracking-[0.18em] text-zinc-500 dark:text-zinc-400">U&I Foundation</div>
-                                    <h3 className="mt-1 text-lg font-semibold">{COMMUNITY_V.name}</h3>
+                                    <h3 className="text-lg font-semibold">{COMMUNITY_V.name}</h3>
                                     <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">{COMMUNITY_V.note}</p>
                                 </div>
                             </div>
@@ -1075,9 +1074,14 @@ export default function Portfolio() {
                         </div>
                     </Card>
                 </Section>
-                <footer className="w-full relative py-2 border-t border-zinc-200/60 dark:border-zinc-800/60">
-                    <div className="mx-auto max-w-6xl px-4 sm:px-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
-                        © {new Date().getFullYear()} Nijanthan Elangovan
+                <footer className="w-full relative py-8 border-t border-zinc-200/60 dark:border-zinc-800/60">
+                    <div className="mx-auto max-w-6xl px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-zinc-500 dark:text-zinc-400">
+                        <span>&copy; {new Date().getFullYear()} Nijanthan Elangovan</span>
+                        <div className="flex items-center gap-4">
+                            <a href={`mailto:${PROFILE_V.email}`} className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"><Mail className="h-4 w-4" /></a>
+                            {SOCIALS_V.linkedin && <a href={SOCIALS_V.linkedin} target="_blank" rel="noreferrer" className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"><Linkedin className="h-4 w-4" /></a>}
+                            {SOCIALS_V.github && <a href={SOCIALS_V.github} target="_blank" rel="noreferrer" className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"><Github className="h-4 w-4" /></a>}
+                        </div>
                     </div>
                 </footer>
             </main>

@@ -5,7 +5,7 @@
       "Technical Writer",
       "Content Developer"
     ],
-    "summary": "Technical Writer with 5+ years of experience creating documentation, SOPs, and user-facing content for global products. Currently writing Help Center articles, operational docs, and AI chatbot content for Google Ads, YouTube, and SA360. Also brings a background in web development and UI design.",
+    "summary": "Technical writer with 5+ years of experience making complex products easy to understand. At Google Ops Center, I write Help Center articles, SOPs, and AI chatbot content for Google Ads, YouTube, and SA360. I also do web development and UI design, so I understand the products I document, not just the words around them.",
     "location": "Hyderabad, Bangalore & Chennai, India",
     "email": "hi@njthnelvgn.com",
     "phone": "+91 8681828144",
@@ -16,9 +16,9 @@
     "company": "Google Operations Center, Hyderabad",
     "link": "#work",
     "bullets": [
-      "Help Center articles for Google Ads, SA360 & YouTube",
-      "AI chatbot content and conversational flows",
-      "Product launch communications and SOPs"
+      "Help Center articles for Google Ads, SA360, and YouTube",
+      "AI chatbot scripts and conversational flows",
+      "Product launch communications and internal SOPs"
     ]
   },
   "HERO": {
@@ -30,32 +30,32 @@
   },
   "UI": {
     "hero": {
-      "line1": "Creating Strategic",
-      "line2_prefix": "Impact, One",
-      "line3": "at a time."
+      "line1": "Making the Complex",
+      "line2_prefix": "Clear, One",
+      "line3": "at a Time."
     },
     "latest": {
       "eyebrow": "Recently Shipped",
-      "title": "Work That’s Live Right Now"
+      "title": "Work That's Live Right Now"
     },
     "work": {
-      "eyebrow": "The Journey",
-      "title": "Places I’ve Worked"
+      "eyebrow": "Career Path",
+      "title": "Where I've Worked"
     },
     "projects": {
-      "eyebrow": "Highlights",
-      "title": "Select Projects & Writing Samples"
+      "eyebrow": "Case Studies",
+      "title": "Projects Worth a Closer Look"
     },
     "clients": {
       "eyebrow": "Trusted By",
-      "title": "Brands I’ve Worked With"
+      "title": "Brands I've Written For"
     },
     "skills": {
-      "eyebrow": "What I Bring",
-      "title": "Skills & Tools I Work With"
+      "eyebrow": "Toolkit",
+      "title": "What I Work With"
     },
     "about": {
-      "eyebrow": "Behind the Work",
+      "eyebrow": "Background",
       "title": "A Bit About Me"
     },
     "community": {
@@ -63,8 +63,8 @@
       "title": "Beyond the Screen"
     },
     "contact": {
-      "eyebrow": "Let’s Connect",
-      "title": "I’d love to hear what you’re working on."
+      "eyebrow": "Get in Touch",
+      "title": "Have a project in mind? Let's talk."
     },
     "footer": ""
   },
@@ -82,10 +82,10 @@
       "title": "Senior Tech Writer Associate",
       "range": "Jul 2024 - Present",
       "bullets": [
-        "Write external Help Center articles for Google Ads, SA360 & YouTube, ensuring clarity, accuracy, and localization readiness.",
-        "Develop internal SOPs and operational docs for troubleshooting, escalation handling, and trust & safety workflows.",
-        "Optimize AI chatbot content to improve task success and reduce support ticket volume.",
-        "Collaborate with PMs and UX Writers on launch communications for YouTube, DV360, Google Ads, and Policy & Billing."
+        "Write and maintain external Help Center articles for Google Ads, SA360, and YouTube, with a focus on clarity, accuracy, and localization readiness.",
+        "Create internal SOPs for troubleshooting, escalation handling, and trust and safety workflows.",
+        "Write and optimize AI chatbot content to improve task completion and reduce support tickets.",
+        "Work with product managers and UX writers on launch communications for YouTube, DV360, Google Ads, and Policy and Billing."
       ]
     },
     {
@@ -94,9 +94,9 @@
       "range": "Dec 2022 - Jul 2024",
       "bullets": [
         "Wrote employee handbooks, project documentation, and marketing copy used across teams.",
-        "Authored and migrated web content (blogs, case studies) to meet accessibility and industry standards.",
-        "Managed multiple websites and used analytics to track content performance.",
-        "Handled UI design for web platforms and social media creatives alongside writing work."
+        "Migrated and rewrote web content (blogs, case studies, landing pages) to meet WCAG accessibility standards.",
+        "Tracked content performance through analytics and used the data to guide editorial decisions.",
+        "Designed UI for web platforms and social media creatives alongside the writing work."
       ]
     },
     {
@@ -104,18 +104,18 @@
       "title": "Web Developer & Content Producer",
       "range": "Nov 2021 - Dec 2022",
       "bullets": [
-        "Produced and maintained content for 40+ websites (e-commerce, landing pages), each averaging 500k+ monthly views.",
-        "Ensured all content met compliance, accessibility, and SEO standards across the portfolio.",
-        "Applied web development skills alongside content strategy to improve search rankings and engagement."
+        "Produced and maintained content across 40+ e-commerce sites and landing pages, several averaging 500K+ monthly views.",
+        "Reviewed every page for compliance, accessibility, and SEO before it went live.",
+        "Used web development skills alongside content strategy to improve search rankings and engagement."
       ]
     },
     {
-      "company": "Yorafitness (PG Internship)",
+      "company": "Yorafitness",
       "title": "Content & Marketing Intern",
       "range": "Apr 2021 - Oct 2021",
       "bullets": [
-        "Wrote copy for social media campaigns and marketing materials across multiple platforms.",
-        "Created branding assets and promotional content, combining writing and visual design for consistent messaging."
+        "Wrote social media copy and campaign materials for Instagram, Facebook, and YouTube.",
+        "Created branding assets and promotional content, keeping voice and visuals consistent across channels."
       ]
     },
     {
@@ -123,15 +123,15 @@
       "title": "Technical Content Writer",
       "range": "Jun 2018 - Dec 2018",
       "bullets": [
-        "Developed technical content strategy and produced structured e-learning materials from scratch.",
-        "Managed the content pipeline end-to-end, collaborating with SMEs to ensure accuracy and relevance."
+        "Built a technical content strategy and produced structured e-learning materials for a non-technical audience.",
+        "Managed the content pipeline end to end, from SME interviews to final published pieces."
       ]
     }
   ],
   "PROJECTS": [
     {
       "title": "Content at Scale: 40+ Websites",
-      "blurb": "Produced, structured, and maintained content across 40+ e-commerce and landing page sites, from product descriptions to compliance copy. Several properties crossed 500k+ monthly page views.",
+      "blurb": "Managed content across 40+ live e-commerce and landing page sites at the same time. The work included product descriptions, compliance copy, SEO content, and landing pages. Several sites consistently crossed 500K monthly page views.",
       "meta": [
         "Content Strategy",
         "SEO Writing",
@@ -143,11 +143,11 @@
       "href": "#"
     },
     {
-      "title": "E-learning Content: Website Learners",
-      "blurb": "Developed structured technical learning materials from scratch, covering strategy through production. Worked closely with SMEs to keep content accurate and engaging for a non-technical audience.",
+      "title": "E-Learning Content: Website Learners",
+      "blurb": "Created a full set of technical learning materials for a non-technical audience. Handled everything from audience research and content planning to writing and publishing, working closely with SMEs throughout.",
       "meta": [
         "Technical Writing",
-        "E-learning",
+        "E-Learning",
         "Content Strategy"
       ],
       "featured": true,
@@ -157,7 +157,7 @@
     },
     {
       "title": "OTT App: Content Architecture",
-      "blurb": "University project where I defined the content structure and information hierarchy for an OTT streaming app, focusing on how users discover and navigate content on TV interfaces.",
+      "blurb": "Defined the content structure and navigation for an OTT streaming app as a university project. The focus was on how users find and browse content on TV interfaces, where screen-based navigation patterns don't apply the same way.",
       "meta": [
         "Information Architecture",
         "UX Writing",
@@ -173,26 +173,26 @@
     "Technical Writing & Documentation",
     "SOP & Policy Documentation",
     "Help Center & Knowledge Base Content",
-    "Chatbot & Conversational (CX) Writing",
+    "Chatbot & Conversational Writing",
     "UX Writing & Microcopy",
     "Localization & i18n Readiness",
-    "DITA • XML • Structured Authoring",
+    "DITA, XML & Structured Authoring",
     "Content Strategy & Information Architecture",
-    "HTML • CSS • JavaScript",
-    "WordPress • SEO • Web Analytics",
-    "Figma • Adobe Creative Suite",
-    "UI/UX Design (supporting skill)"
+    "HTML, CSS & JavaScript",
+    "WordPress, SEO & Web Analytics",
+    "Figma & Adobe Creative Suite",
+    "UI/UX Design"
   ],
   "EDUCATION": [
     {
       "school": "Pondicherry University",
-      "degree": "Masters in Electronic Media (Writing, Design & Production)",
-      "year": "2019 – 2021"
+      "degree": "Master of Arts in Electronic Media (Writing, Design & Production)",
+      "year": "2019 - 2021"
     },
     {
       "school": "St. Thomas College of Arts & Science, University of Madras",
-      "degree": "Bachelors in Electronic Media",
-      "year": "2015 – 2018"
+      "degree": "Bachelor of Arts in Electronic Media",
+      "year": "2015 - 2018"
     }
   ],
   "CERTS": [
@@ -204,7 +204,7 @@
   "LATEST": [
     {
       "kind": "Article",
-      "title": "About ads and AI Overviews",
+      "title": "About Ads and AI Overviews",
       "href": "https://support.google.com/google-ads/answer/16297775",
       "meta": "Google Ads | Article",
       "featured": true,
@@ -220,7 +220,7 @@
     },
     {
       "kind": "Video",
-      "title": "How To Make A Logo in 5 Minutes — for Free",
+      "title": "How to Make a Logo in 5 Minutes — for Free",
       "href": "https://youtu.be/wVrEeImyg_E?si=Iz8r8AHQI-8QWwxO",
       "meta": "YouTube | Video",
       "featured": true,
@@ -228,7 +228,7 @@
     },
     {
       "kind": "Article",
-      "title": "YouTube Shorts ads",
+      "title": "YouTube Shorts Ads",
       "href": "https://support.google.com/google-ads/answer/16042243",
       "meta": "YouTube | Article",
       "featured": true,
@@ -247,25 +247,25 @@
     {
       "name": "Euclid Innovations",
       "href": "https://euclidinnovations.com/",
-      "blurb": "Staffing • Cloud Enablement • Digital Transformation",
+      "blurb": "Staffing, Cloud Enablement & Digital Transformation",
       "featured": true
     },
     {
       "name": "GetKitch",
       "href": "https://getkitch.in/",
-      "blurb": "Kitchen solutions & e-commerce",
+      "blurb": "Kitchen Solutions & E-Commerce",
       "featured": true
     },
     {
       "name": "Yaamohaideen Briyani",
       "href": "https://yaamohaideenbriyani.com/",
-      "blurb": "F&B • Restaurant brand",
+      "blurb": "Food & Beverage, Restaurant Brand",
       "featured": true
     },
     {
       "name": "Yorafitness",
       "href": "https://yorafitness.com/",
-      "blurb": "Fitness & lifestyle",
+      "blurb": "Fitness & Lifestyle",
       "featured": true
     },
     {
@@ -277,13 +277,13 @@
     {
       "name": "SLAM Fitness Studio",
       "href": "https://slamfitnessstudio.in/",
-      "blurb": "Fitness & lifestyle",
+      "blurb": "Fitness & Lifestyle",
       "featured": true
     }
   ],
   "COMMUNITY": {
     "name": "U&I Foundation",
     "href": "https://uandi.org.in/",
-    "note": "Proud volunteer and Chapter Lead, helping bridge gaps in education and mentorship for underserved communities."
+    "note": "Volunteer and chapter lead. I help with teaching, mentoring, and building learning programs for underserved communities across India."
   }
 }
