@@ -262,7 +262,6 @@ export default function Admin() {
                         <Field label="Name" value={content.PROFILE.name} onChange={(v) => handleChange('PROFILE', 'name', v)} />
                         <Field label="Location" value={content.PROFILE.location} onChange={(v) => handleChange('PROFILE', 'location', v)} />
                         <Field label="Email" value={content.PROFILE.email} onChange={(v) => handleChange('PROFILE', 'email', v)} />
-                        <Field label="Phone" value={content.PROFILE.phone} onChange={(v) => handleChange('PROFILE', 'phone', v)} />
                         <Field label="Availability" value={content.PROFILE.availability} onChange={(v) => handleChange('PROFILE', 'availability', v)} />
                         <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-1">Summary</label>

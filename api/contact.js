@@ -91,19 +91,20 @@ export function createContactHandler() {
         if (data === undefined) return reply(413, { error: "Your message is too long." });
         if (typeof data?.website === "string" && data.website.trim()) return reply(200, { ok: true });
 
+        const revealPhone = data?.intent === "reveal-phone";
         const name = typeof data?.name === "string" ? data.name.trim() : "";
         const email = typeof data?.email === "string" ? data.email.trim() : "";
         const message = typeof data?.message === "string" ? data.message.trim() : "";
-        if (!name || name.length > 80 || /[\r\n]/.test(name) ||
-            email.length > 254 || !EMAIL_PATTERN.test(email) || !message || message.length > 3000) {
+        if (!revealPhone && (!name || name.length > 80 || /[\r\n]/.test(name) ||
+            email.length > 254 || !EMAIL_PATTERN.test(email) || !message || message.length > 3000)) {
             return reply(400, { error: "Enter your name, a valid email address, and a message up to 3,000 characters." });
         }
 
         const token = env.MAILTRAP_API_TOKEN?.trim();
         const sender = env.MAILTRAP_FROM_EMAIL?.trim();
         const turnstileSecret = env.TURNSTILE_SECRET_KEY?.trim();
-        if (!token || !EMAIL_PATTERN.test(sender ?? "") || !turnstileSecret) {
-            console.error("Contact Mailtrap or Turnstile configuration is incomplete");
+        if (!turnstileSecret || (!revealPhone && (!token || !EMAIL_PATTERN.test(sender ?? "")))) {
+            console.error("Contact configuration is incomplete");
             return reply(503, { error: SEND_ERROR });
         }
         const captcha = typeof data?.captcha === "string" ? data.captcha.trim() : "";
@@ -115,6 +116,14 @@ export function createContactHandler() {
         } catch (error) {
             console.error("Contact Turnstile verification failed:", error.name);
             return reply(503, { error: "The security check is temporarily unavailable. Please try again." });
+        }
+
+        if (revealPhone) {
+            const phone = env.CONTACT_PHONE?.trim();
+            if (!phone || !/^\+?[\d ().-]{7,32}$/.test(phone)) {
+                return reply(503, { error: "The phone number is temporarily unavailable." });
+            }
+            return reply(200, { ok: true, phone });
         }
 
         const now = Date.now();

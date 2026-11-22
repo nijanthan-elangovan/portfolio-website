@@ -5,7 +5,6 @@
   --scene-grid: rgb(76 56 39 / 0.075);
   --scene-warm: rgb(213 117 48 / 0.2);
   --scene-cool: rgb(104 126 112 / 0.16);
-  --scene-spot: rgb(229 147 71 / 0.22);
 }
 
 .dark .portfolio {
@@ -15,7 +14,6 @@
   --scene-grid: rgb(253 251 244 / 0.08);
   --scene-warm: rgb(195 76 25 / 0.24);
   --scene-cool: rgb(84 124 116 / 0.19);
-  --scene-spot: rgb(234 88 12 / 0.2);
 }
 
 .portfolio ::selection {
@@ -92,21 +90,6 @@
     linear-gradient(to bottom, var(--scene-grid) 1px, transparent 1px);
   background-size: var(--grid-tile);
   background-position: center top;
-}
-
-.portfolio-scene-spotlight {
-  position: absolute;
-  top: -220px;
-  left: -220px;
-  width: 440px;
-  height: 440px;
-  background: radial-gradient(circle, var(--scene-spot), transparent 68%);
-  opacity: 0;
-  transition: opacity 260ms ease;
-}
-
-.portfolio-scene-spotlight[data-visible] {
-  opacity: 1;
 }
 
 .portfolio :where(a[href], button, input, textarea, summary, [tabindex="0"]):focus-visible {
@@ -243,7 +226,6 @@
 @media (prefers-reduced-motion: reduce) {
   .portfolio-parallax,
   .portfolio-section-mark { transform: none !important; }
-  .portfolio-scene-spotlight { display: none; }
 }
 
 @keyframes role-badge-spin {

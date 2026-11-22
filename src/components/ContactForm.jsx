@@ -46,14 +46,28 @@ function loadTurnstile() {
     return turnstileScript;
 }
 
-export default function ContactForm() {
+async function postContact(data) {
+    const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+        signal: AbortSignal.timeout(25000),
+    });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok !== true) throw new Error(result?.error || fallback);
+    return result;
+}
+
+export default function ContactForm({ onPhoneVerified }) {
     const submitting = useRef(false);
+    const revealOnNextToken = useRef(true);
     const challengeElement = useRef(null);
     const widgetId = useRef(null);
     const [status, setStatus] = useState({ state: "idle", message: "" });
     const [captcha, setCaptcha] = useState("");
     const [challengeError, setChallengeError] = useState(false);
     const [challengeAttempt, setChallengeAttempt] = useState(0);
+    const [phoneError, setPhoneError] = useState(false);
     const isSending = status.state === "sending";
 
     useEffect(() => {
@@ -68,10 +82,26 @@ export default function ContactForm() {
                 size: "flexible",
                 appearance: "interaction-only",
                 "response-field": false,
-                callback: (token) => {
+                callback: async (token) => {
                     if (!active) return;
-                    setCaptcha(token);
                     setChallengeError(false);
+                    if (!revealOnNextToken.current) {
+                        setCaptcha(token);
+                        return;
+                    }
+
+                    revealOnNextToken.current = false;
+                    try {
+                        const result = await postContact({ intent: "reveal-phone", captcha: token });
+                        if (active && result.phone) onPhoneVerified(result.phone);
+                        else if (active) setPhoneError(true);
+                    } catch {
+                        if (active) setPhoneError(true);
+                    } finally {
+                        // The phone lookup redeems its token. Refresh it for the message form.
+                        if (active) turnstile.reset(widget);
+                        else revealOnNextToken.current = true;
+                    }
                 },
                 "expired-callback": () => {
                     if (active) setCaptcha("");
@@ -91,7 +121,7 @@ export default function ContactForm() {
             if (widget != null) window.turnstile.remove(widget);
             widgetId.current = null;
         };
-    }, [challengeAttempt]);
+    }, [challengeAttempt, onPhoneVerified]);
 
     const submit = async (event) => {
         event.preventDefault();
@@ -103,21 +133,11 @@ export default function ContactForm() {
         setStatus({ state: "sending", message: "" });
 
         try {
-            const response = await fetch(endpoint, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ...data, captcha }),
-                signal: AbortSignal.timeout(25000),
-            });
-            const result = await response.json().catch(() => null);
-            if (!response.ok || result?.ok !== true) {
-                setStatus({ state: "error", message: result?.error || fallback });
-                return;
-            }
+            await postContact({ ...data, captcha });
             form.reset();
             setStatus({ state: "sent", message: "Message sent. Thanks for reaching out." });
-        } catch {
-            setStatus({ state: "error", message: fallback });
+        } catch (error) {
+            setStatus({ state: "error", message: error.message || fallback });
         } finally {
             submitting.current = false;
             setCaptcha("");
@@ -162,6 +182,17 @@ export default function ContactForm() {
                             </p>
                         )}
                     </div>
+                )}
+                {phoneError && (
+                    <p role="status" className="text-sm">
+                        The phone number couldn’t be loaded.{" "}
+                        <button type="button" disabled={!captcha} className="underline underline-offset-4 disabled:opacity-60" onClick={() => {
+                            revealOnNextToken.current = true;
+                            setPhoneError(false);
+                            setCaptcha("");
+                            window.turnstile.reset(widgetId.current);
+                        }}>Retry</button>
+                    </p>
                 )}
                 {!siteKey && <p role="status" className="text-sm">The form is unavailable. Please email me directly.</p>}
                 {siteKey && !captcha && !challengeError && !isSending && <p role="status" className="text-sm">Waiting for the security check…</p>}

@@ -1,5 +1,4 @@
 import React, { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import { motion, useScroll, useSpring, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
     ArrowRight,
@@ -133,110 +132,6 @@ const itemVariants = {
     hidden: { opacity: 0, y: 14 },
     visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 120, damping: 14 } },
 };
-
-/* ------------------------------- Emoji Captcha ------------------------------ */
-function EmojiCaptcha({ phone }) {
-    const [revealed, setRevealed] = useState(false);
-    const [open, setOpen] = useState(false);
-    const [puzzle, setPuzzle] = useState(null);
-    const [wrong, setWrong] = useState(null);
-
-    const puzzles = [
-        { grid: ["🐱", "🐱", "🐱", "🐱", "🐶", "🐱", "🐱", "🐱", "🐱"], answer: 4, hint: "Find the odd one out" },
-        { grid: ["🍎", "🍎", "🍊", "🍎", "🍎", "🍎", "🍎", "🍎", "🍎"], answer: 2, hint: "One of these isn't like the others" },
-        { grid: ["🌙", "🌙", "🌙", "🌙", "🌙", "🌙", "☀️", "🌙", "🌙"], answer: 6, hint: "Spot the different one" },
-        { grid: ["🐸", "🐸", "🐸", "🐢", "🐸", "🐸", "🐸", "🐸", "🐸"], answer: 3, hint: "Which one doesn't belong?" },
-        { grid: ["🔵", "🔵", "🔵", "🔵", "🔵", "🔴", "🔵", "🔵", "🔵"], answer: 5, hint: "Find the imposter" },
-    ];
-
-    const handleOpen = () => {
-        if (revealed) return;
-        const p = puzzles[Math.floor(Math.random() * puzzles.length)];
-        setPuzzle(p);
-        setWrong(null);
-        setOpen(true);
-    };
-
-    const handlePick = (idx) => {
-        if (idx === puzzle.answer) {
-            setRevealed(true);
-            setOpen(false);
-        } else {
-            setWrong(idx);
-            setTimeout(() => setWrong(null), 600);
-        }
-    };
-
-    return (
-        <>
-            <span
-                className={`inline-flex items-center gap-2 ${!revealed ? "cursor-pointer hover:text-mark dark:hover:text-mark-light transition-colors" : ""}`}
-                onClick={handleOpen}
-                role={!revealed ? "button" : undefined}
-                tabIndex={!revealed ? 0 : undefined}
-                onKeyDown={!revealed ? (e) => { if (e.key === "Enter" || e.key === " ") handleOpen(); } : undefined}
-            >
-                <Phone className="h-4 w-4" />
-                {revealed ? (
-                    <a href={`tel:${phone}`} className="hover:underline">{phone}</a>
-                ) : (
-                    <span className="flex items-center gap-1">
-                        +91 ••••••••••
-                        <span className="font-mono text-[10px] ml-1 px-1.5 py-0.5 rounded-sm border border-ink-900/20 dark:border-paper-50/20 text-ink-700 dark:text-paper-200">tap to verify</span>
-                    </span>
-                )}
-            </span>
-
-            {createPortal(
-                <AnimatePresence>
-                    {open && puzzle && (
-                        <motion.div
-                            className="fixed inset-0 z-[200] flex items-center justify-center bg-ink-900/50 backdrop-blur-sm"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setOpen(false)}
-                        >
-                            <motion.div
-                                className="relative bg-paper-50 dark:bg-ink-800 rounded-sm border-2 border-ink-900 dark:border-paper-100 shadow-[6px_6px_0_0_rgba(27,26,23,0.25)] p-6 w-[280px]"
-                                initial={{ scale: 0.92, opacity: 0, rotate: -1 }}
-                                animate={{ scale: 1, opacity: 1, rotate: 0 }}
-                                exit={{ scale: 0.92, opacity: 0 }}
-                                transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                <div className="text-center mb-4">
-                                    <div className="font-mono text-[10px] uppercase tracking-widest text-mark">Human Verification</div>
-                                    <div className="text-xs text-ink-700/80 dark:text-paper-200/80 mt-1">{puzzle.hint}</div>
-                                </div>
-                                <div className="grid grid-cols-3 gap-2">
-                                    {puzzle.grid.map((emoji, i) => (
-                                        <motion.button
-                                            key={i}
-                                            onClick={() => handlePick(i)}
-                                            className={`text-2xl p-3 rounded-sm border transition-all ${wrong === i
-                                                ? "border-red-500 bg-red-500/10"
-                                                : "border-ink-900/15 dark:border-paper-50/15 bg-paper-100 dark:bg-ink-700 hover:border-mark"
-                                                }`}
-                                            whileHover={{ scale: 1.08 }}
-                                            whileTap={{ scale: 0.92 }}
-                                            animate={wrong === i ? { x: [0, -4, 4, -4, 4, 0] } : {}}
-                                            transition={wrong === i ? { duration: 0.4 } : { type: "spring", stiffness: 400, damping: 17 }}
-                                        >
-                                            {emoji}
-                                        </motion.button>
-                                    ))}
-                                </div>
-                                <div className="text-center mt-3 font-mono text-[10px] text-ink-700/50 dark:text-paper-200/50">no bots past this checkpoint</div>
-                            </motion.div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>,
-                document.body
-            )}
-        </>
-    );
-}
 
 /* --------------------------------- Doc Tag ---------------------------------- */
 function Tag({ children }) {
@@ -667,6 +562,7 @@ function Header({ theme, setTheme, hasWriting }) {
 
 /* --------------------------------- Layout ---------------------------------- */
 export default function Portfolio() {
+    const [verifiedPhone, setVerifiedPhone] = useState("");
     const { theme, setTheme } = useTheme();
     const mediumProfile = contentData.SOCIALS.medium || "https://nijanthanelangovan.medium.com";
     const mediumPosts = useMediumPosts(`${mediumProfile.replace(/\/$/, "")}/feed`, 6);
@@ -1033,11 +929,18 @@ export default function Portfolio() {
                                 <div className="flex flex-wrap items-center gap-3 text-sm text-ink-700 dark:text-paper-300">
                                     <span className="inline-flex items-center gap-2"><Linkedin className="h-4 w-4" /> <a className="hover:underline" target="_blank" rel="noreferrer" href={SOCIALS_V.linkedin}>LinkedIn</a></span>
                                     <span className="inline-flex items-center gap-2"><MapPin className="h-4 w-4" /> {PROFILE_V.location}</span>
-                                    <EmojiCaptcha phone={PROFILE_V.phone} />
+                                    <span aria-live="polite" className="inline-flex items-center gap-2">
+                                        <Phone className="h-4 w-4" aria-hidden="true" />
+                                        {verifiedPhone ? (
+                                            <a href={`tel:${verifiedPhone.replace(/[^+\d]/g, "")}`} className="hover:underline">{verifiedPhone}</a>
+                                        ) : (
+                                            "Phone available after verification"
+                                        )}
+                                    </span>
                                 </div>
                             </div>
                             <div className="min-w-0 border-t border-dashed border-ink-900/25 pt-6 dark:border-paper-50/20 md:border-l md:border-t-0 md:pl-8 md:pt-0">
-                                <ContactForm />
+                                <ContactForm onPhoneVerified={setVerifiedPhone} />
                             </div>
                         </div>
                     </Card>
