@@ -271,7 +271,7 @@ function SpinningBadge({ text }) {
             </defs>
             <circle cx="42" cy="42" r="40" className="fill-paper-50 stroke-current dark:fill-ink-800" strokeWidth="2" />
             <g className="role-badge-lettering">
-                <text className="fill-current font-mono font-medium" fontSize={fontSize} textLength={circumference.toFixed(1)} lengthAdjust="spacing">
+                <text className="fill-current font-mono font-semibold" fontSize={fontSize} style={{ letterSpacing: "0.1em" }} textLength={circumference.toFixed(1)} lengthAdjust="spacing">
                     <textPath href={`#${pathId}`}>{unit.repeat(2)}</textPath>
                 </text>
             </g>
@@ -418,7 +418,7 @@ function HeroHeadline({ connector, prefix, strike, lines }) {
     return (
         <h1
             ref={headlineRef}
-            className="text-left font-display text-[clamp(1.25rem,6.5vw,4.6rem)] font-medium leading-[1.15] tracking-tight text-ink-900 dark:text-paper-50 sm:text-[clamp(1.65rem,7vw,4.6rem)] lg:text-[2.625rem]"
+            className="text-left font-display text-[clamp(1.6rem,8.5vw,4.6rem)] font-medium leading-[1.15] tracking-tight text-ink-900 dark:text-paper-50 sm:text-[clamp(1.9rem,7.5vw,4.6rem)] lg:text-[2.625rem]"
             aria-label={headlineSentence(firstLine, connector, prefix)}
         >
             <span className="flex flex-wrap items-end gap-x-[0.25em]" aria-hidden="true">
@@ -554,10 +554,10 @@ function Header({ theme, setTheme, hasWriting }) {
                             <summary aria-label="Sections" className="list-none cursor-pointer rounded-sm border border-ink-900/15 p-2 dark:border-paper-50/15 [&::-webkit-details-marker]:hidden">
                                 <Menu className="h-4 w-4" aria-hidden="true" />
                             </summary>
-                            <nav aria-label="Portfolio sections" className="absolute right-0 mt-2 grid max-h-[calc(100dvh-5rem)] w-44 gap-1 overflow-y-auto rounded-sm border border-ink-900/15 bg-paper-50 p-2 shadow-lg dark:border-paper-50/15 dark:bg-ink-900">
-                                <DocMarkLink onClick={closeMobileMenu} className="flex items-center gap-2 border-b border-dashed border-ink-900/20 px-2 py-2 text-sm hover:text-mark dark:border-paper-50/20 dark:hover:text-mark-light">
+                            <nav aria-label="Portfolio sections" className="fixed inset-x-3 top-[4.25rem] z-50 grid max-h-[calc(100dvh-5.5rem)] gap-1 overflow-y-auto rounded-sm border border-ink-900/15 bg-paper-50 p-2 shadow-lg dark:border-paper-50/15 dark:bg-ink-900 sm:inset-x-5">
+                                <a href="#top" onClick={closeMobileMenu} className="border-b border-dashed border-ink-900/20 px-2 py-2 text-sm hover:text-mark dark:border-paper-50/20 dark:hover:text-mark-light">
                                     Back to top
-                                </DocMarkLink>
+                                </a>
                                 {navItems.map(({ id, label }) => (
                                     <a key={id} href={`#${id}`} aria-current={activeSection === id ? "location" : undefined} onClick={closeMobileMenu} className="portfolio-nav-link relative px-2 py-2 text-sm hover:text-mark dark:hover:text-mark-light">
                                         {label}
