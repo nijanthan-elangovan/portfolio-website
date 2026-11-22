@@ -5,6 +5,21 @@ const endpoint = import.meta.env.VITE_CONTACT_API_URL?.trim() || "/api/contact";
 const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY?.trim();
 const fallback = "Your message couldn’t be sent. Please try again or email me directly.";
 const fieldClass = "w-full border-0 border-b border-ink-900/30 bg-transparent px-0 py-2 text-base text-ink-900 focus:border-mark focus:outline-none focus:ring-0 dark:border-paper-50/30 dark:text-paper-50 dark:focus:border-mark-light";
+const fieldPreferences = {
+    autoComplete: "off",
+    autoCorrect: "off",
+    autoCapitalize: "off",
+    spellCheck: false,
+    "data-1p-ignore": "",
+    "data-lpignore": "true",
+    "data-bwignore": "",
+    "data-protonpass-ignore": "true",
+    "data-form-type": "other",
+    "data-gramm": "false",
+    "data-gramm_editor": "false",
+    "data-enable-grammarly": "false",
+    "data-lt-active": "false",
+};
 let turnstileScript;
 
 function loadTurnstile() {
@@ -111,26 +126,26 @@ export default function ContactForm() {
     };
 
     return (
-        <form aria-label="Contact form" onSubmit={submit}>
+        <form aria-label="Contact form" autoComplete="off" onSubmit={submit}>
             <fieldset disabled={isSending} className="min-w-0 space-y-5">
                 <div className="grid gap-4 sm:grid-cols-2">
                     <label className="grid min-w-0 gap-1.5 text-sm font-medium">
                         Name
-                        <input className={fieldClass} name="name" autoComplete="name" maxLength={80} required />
+                        <input {...fieldPreferences} className={fieldClass} name="name" maxLength={80} required />
                     </label>
                     <label className="grid min-w-0 gap-1.5 text-sm font-medium">
                         Email
-                        <input className={fieldClass} name="email" type="email" autoComplete="email" maxLength={254} required />
+                        <input {...fieldPreferences} className={fieldClass} name="email" type="email" maxLength={254} required />
                     </label>
                 </div>
                 <label className="grid gap-1.5 text-sm font-medium">
                     Message
-                    <textarea className={`${fieldClass} contact-postcard-message min-h-32 resize-y`} name="message" rows={4} maxLength={3000} required />
+                    <textarea {...fieldPreferences} className={`${fieldClass} contact-postcard-message min-h-32 resize-y`} name="message" rows={4} maxLength={3000} required />
                 </label>
                 <div hidden>
                     <label>
                         Website
-                        <input name="website" tabIndex={-1} autoComplete="off" />
+                        <input {...fieldPreferences} name="website" tabIndex={-1} />
                     </label>
                 </div>
                 {siteKey && (
