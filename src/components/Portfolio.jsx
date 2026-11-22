@@ -158,7 +158,7 @@ function Section({ id, title, eyebrow, children }) {
                         transition={{ duration: 0.34, ease: "easeOut" }}
                     />
                     {eyebrow && (
-                        <div className="shrink-0 font-mono text-[11px] uppercase tracking-[0.15em] text-mark dark:text-mark-light">{eyebrow}</div>
+                        <div className="shrink-0 font-mono text-[11px] uppercase tracking-[0.08em] text-mark dark:text-mark-light">{eyebrow}</div>
                     )}
                 </div>
                 <div className="space-y-6">{children}</div>
@@ -174,7 +174,7 @@ function Card({ children, className = "", tabLabel }) {
             className={`portfolio-card relative rounded-sm border border-ink-900/15 dark:border-paper-50/15 bg-paper-50/80 dark:bg-ink-800/70 backdrop-blur-sm shadow-[3px_3px_0_0_rgba(27,26,23,0.10)] dark:shadow-[3px_3px_0_0_rgba(0,0,0,0.5)] motion-safe:transition duration-200 motion-safe:hover:-translate-y-0.5 hover:shadow-[5px_5px_0_0_rgba(27,26,23,0.16)] dark:hover:shadow-[5px_5px_0_0_rgba(0,0,0,0.6)] ${className}`}
         >
             {tabLabel && (
-                <span className="absolute -top-3 left-5 bg-paper-50 dark:bg-ink-900 border border-ink-900/20 dark:border-paper-50/20 rounded-sm px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest text-ink-700 dark:text-paper-200">
+                <span className="absolute -top-3 left-5 bg-paper-50 dark:bg-ink-900 border border-ink-900/20 dark:border-paper-50/20 rounded-sm px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide text-ink-700 dark:text-paper-200">
                     {tabLabel}
                 </span>
             )}
@@ -531,7 +531,7 @@ function Header({ theme, setTheme, hasWriting }) {
             <div className="mx-auto max-w-6xl rounded-sm border border-ink-900/15 dark:border-paper-50/15 bg-paper-50/90 dark:bg-ink-900/85 backdrop-blur-xl shadow-[0_2px_0_0_rgba(27,26,23,0.08)]">
                 <div className="flex items-center justify-between gap-4 px-4 sm:px-5 py-2.5">
                     <DocMarkLink className="inline-flex shrink-0" />
-                    <nav aria-label="Portfolio sections" className="hidden lg:flex items-center gap-4 xl:gap-5 font-mono text-[11px] uppercase tracking-widest text-ink-700 dark:text-paper-200">
+                    <nav aria-label="Portfolio sections" className="hidden lg:flex items-center gap-4 xl:gap-5 font-mono text-[11px] uppercase tracking-wide text-ink-700 dark:text-paper-200">
                         {navItems.map(({ id, label }) => (
                             <a key={id} href={`#${id}`} aria-current={activeSection === id ? "location" : undefined} className="portfolio-nav-link relative py-1 hover:text-mark dark:hover:text-mark-light transition-colors">
                                 {label}
@@ -664,10 +664,10 @@ export default function Portfolio() {
                                     <p className="mt-1 text-ink-700 dark:text-paper-300 italic">{NOW_V.company}</p>
                                     <ul className="mt-4 space-y-2 text-sm text-ink-800 dark:text-paper-200">
                                         {NOW_V.bullets.map((bullet, i) => (
-                                            <li key={i} className="flex gap-2"><span className="font-mono text-mark">›</span>{bullet}</li>
+                                            <li key={i} className="flex gap-2"><span className="font-mono text-ink-700/50 dark:text-paper-300/50">›</span>{bullet}</li>
                                         ))}
                                     </ul>
-                                    <a href={NOW_V.link} className="mt-6 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-mark dark:text-mark-light hover:underline">
+                                    <a href={NOW_V.link} className="mt-6 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wide text-mark dark:text-mark-light hover:underline">
                                         See full experience <ArrowRight className="h-3.5 w-3.5" />
                                     </a>
                                 </div>
@@ -689,7 +689,7 @@ export default function Portfolio() {
                                         )}
                                         <div className="min-w-0">
                                             <h3 className="font-display font-semibold leading-snug text-ink-900 transition-colors group-hover:text-mark dark:text-paper-50 dark:group-hover:text-mark-light">{latestPost.title}</h3>
-                                            <span className="mt-2 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-mark dark:text-mark-light">
+                                            <span className="mt-2 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-wide text-mark dark:text-mark-light">
                                                 Read on Medium <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
                                             </span>
                                         </div>
@@ -732,7 +732,7 @@ export default function Portfolio() {
                                         </div>
                                         <div className="p-6">
                                             <div className="flex items-center justify-between gap-4">
-                                                <div className="flex items-center gap-2 font-mono text-[11px] text-ink-700 dark:text-paper-300 uppercase tracking-wider">
+                                                <div className="flex items-center gap-2 font-mono text-[11px] text-ink-700 dark:text-paper-300 uppercase tracking-wide">
                                                     {item.kind === "Video" ? <Video className="h-3 w-3" /> : <Newspaper className="h-3 w-3" />}
                                                     {item.meta}
                                                 </div>
@@ -769,7 +769,7 @@ export default function Portfolio() {
                                         <div className="mt-1 text-ink-700 dark:text-paper-300 italic">{job.company}</div>
                                         <ul className="mt-4 grid gap-2 text-sm text-ink-800 dark:text-paper-200">
                                             {job.bullets.map((b) => (
-                                                <li key={b} className="flex gap-2"><span className="font-mono text-mark shrink-0">›</span><span>{b}</span></li>
+                                                <li key={b} className="flex gap-2"><span className="font-mono text-ink-700/50 dark:text-paper-300/50 shrink-0">›</span><span>{b}</span></li>
                                             ))}
                                         </ul>
                                     </div>
@@ -848,7 +848,7 @@ export default function Portfolio() {
                         <motion.div className="divide-y divide-dashed divide-ink-900/15 dark:divide-paper-50/15" initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-10%" }} variants={containerVariants}>
                             {SKILLS_V.map((group) => (
                                 <motion.div key={group.category} variants={itemVariants} className="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-6">
-                                    <div className="sm:w-48 shrink-0 font-mono text-[11px] uppercase tracking-widest text-mark dark:text-mark-light">{group.category}</div>
+                                    <div className="sm:w-48 shrink-0 font-mono text-[11px] uppercase tracking-wide text-mark dark:text-mark-light">{group.category}</div>
                                     <div className="flex flex-wrap gap-2">
                                         {group.items.map((s) => <Tag key={s}>{s}</Tag>)}
                                     </div>
@@ -863,7 +863,7 @@ export default function Portfolio() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(0,1fr)]">
                         <Card>
                             <div className="p-6 sm:p-8">
-                                <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-ink-700 dark:text-paper-300"><GraduationCap className="h-4 w-4" /> Education</div>
+                                <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-wide text-ink-700 dark:text-paper-300"><GraduationCap className="h-4 w-4" /> Education</div>
                                 <ul className="mt-4 space-y-3 text-sm">
                                     {EDUCATION_V.map((e) => (
                                         <li key={e.school} className="text-ink-800 dark:text-paper-200">
@@ -877,7 +877,7 @@ export default function Portfolio() {
                         </Card>
                         <Card>
                             <div className="p-6 sm:p-8">
-                                <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-ink-700 dark:text-paper-300"><BadgeCheck className="h-4 w-4" /> Certification</div>
+                                <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-wide text-ink-700 dark:text-paper-300"><BadgeCheck className="h-4 w-4" /> Certification</div>
                                 <ul className="mt-4 space-y-3 text-sm">
                                     {CERTS_V.map((c) => (
                                         <li key={c.name} className="text-ink-800 dark:text-paper-200">
@@ -890,7 +890,7 @@ export default function Portfolio() {
                         </Card>
                         <Card>
                             <div className="p-6 sm:p-8">
-                                <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-ink-700 dark:text-paper-300"><BookOpen className="h-4 w-4" /> Focus</div>
+                                <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-wide text-ink-700 dark:text-paper-300"><BookOpen className="h-4 w-4" /> Focus</div>
                                 <p className="mt-4 text-sm text-ink-700 dark:text-paper-300 leading-relaxed">
                                     My background in web development and UI design helps me trace where users get stuck and decide whether they need a clearer article, a better screenshot, or a fix in the interface.
                                 </p>
@@ -928,7 +928,7 @@ export default function Portfolio() {
                                         )}
                                         <div className="p-6">
                                             <div className="flex items-center justify-between gap-4">
-                                                <div className="flex items-center gap-2 font-mono text-[11px] text-ink-700 dark:text-paper-300 uppercase tracking-wider">
+                                                <div className="flex items-center gap-2 font-mono text-[11px] text-ink-700 dark:text-paper-300 uppercase tracking-wide">
                                                     <Newspaper className="h-3 w-3" /> Medium
                                                 </div>
                                                 <ArrowUpRight className="h-4 w-4 text-ink-700/40 dark:text-paper-200/40 transition group-hover:text-mark" />

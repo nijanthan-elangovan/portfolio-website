@@ -187,7 +187,7 @@ html.dark:has(.portfolio)::-webkit-scrollbar-thumb:hover {
 
   .role-badge-lettering {
     transform-origin: center;
-    animation: role-badge-spin 16s linear infinite;
+    animation: role-badge-spin 24s linear infinite;
   }
 
   .portfolio-scene-wave {
@@ -210,7 +210,7 @@ html.dark:has(.portfolio)::-webkit-scrollbar-thumb:hover {
   }
 
   .doc-mark {
-    animation: doc-mark-idle-spin 9s linear infinite;
+    animation: doc-mark-idle-spin 42s linear infinite;
   }
 
   .doc-mark-face::before {
@@ -223,7 +223,7 @@ html.dark:has(.portfolio)::-webkit-scrollbar-thumb:hover {
     height: 220%;
     border-radius: 44% 44% 0 0;
     background: var(--portfolio-accent);
-    animation: doc-mark-liquid 9s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+    animation: doc-mark-liquid 42s cubic-bezier(0.65, 0, 0.35, 1) infinite;
   }
 
   [data-mark-motion="stamp"] .doc-mark-face {
