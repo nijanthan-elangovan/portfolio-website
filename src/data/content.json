@@ -178,11 +178,11 @@
   "SKILLS": [
     {
       "category": "Content Ops & Migration",
-      "items": ["Help Center articles", "SOPs & runbooks", "User & in-app guides", "Chatbot & CX writing", "Large-scale content migration", "Content health metrics", "Localization & i18n"]
+      "items": ["Help Center articles", "SOPs & runbooks", "User & in-app guides", "Chatbot & CX writing", "Large-scale content migration", "Content health metrics", "Localization & i18n", "SEO", "AEO (Answer Engine Optimization)", "Information Architecture", "UX Writing", "Accessibility (a11y)"]
     },
     {
       "category": "Code & Formatting",
-      "items": ["HTML", "CSS", "JavaScript", "Help Center UI debugging", "Markdown", "XML", "CMS/LMS templating"]
+      "items": ["HTML", "CSS", "JavaScript", "Help Center UI debugging", "Markdown", "XML", "CMS/LMS templating", "GitHub", "Docs-as-Code"]
     },
     {
       "category": "AI & Automation",

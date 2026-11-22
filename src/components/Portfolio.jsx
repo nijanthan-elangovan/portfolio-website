@@ -443,7 +443,10 @@ function HeroHeadline({ connector, prefix, strike, lines }) {
             </span>
             <span className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-[0.25em]" aria-hidden="true">
                 <span className="whitespace-nowrap">
-                    {prefix} <s className="text-ink-900/75 decoration-mark/75 decoration-4 dark:text-paper-50/75 dark:decoration-mark-light/75">{strike}</s>
+                    {prefix} <span className="relative inline-block text-ink-900/75 dark:text-paper-50/75">
+                        {strike}
+                        <span className="absolute inset-x-0 bg-mark/75 dark:bg-mark-light/75" style={{ bottom: "0.4em", height: "0.14em" }} />
+                    </span>
                 </span>
                 <span className="grid">
                     {lines.map((entry, index) => (
