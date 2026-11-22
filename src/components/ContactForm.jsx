@@ -58,7 +58,7 @@ async function postContact(data) {
     return result;
 }
 
-export default function ContactForm({ onPhoneVerified }) {
+export default function ContactForm({ onVerified }) {
     const submitting = useRef(false);
     const revealOnNextToken = useRef(true);
     const challengeElement = useRef(null);
@@ -93,7 +93,7 @@ export default function ContactForm({ onPhoneVerified }) {
                     revealOnNextToken.current = false;
                     try {
                         const result = await postContact({ intent: "reveal-phone", captcha: token });
-                        if (active && result.phone) onPhoneVerified(result.phone);
+                        if (active && result.phone) onVerified({ phone: result.phone, email: result.email });
                         else if (active) setPhoneError(true);
                     } catch {
                         if (active) setPhoneError(true);
@@ -121,7 +121,7 @@ export default function ContactForm({ onPhoneVerified }) {
             if (widget != null) window.turnstile.remove(widget);
             widgetId.current = null;
         };
-    }, [challengeAttempt, onPhoneVerified]);
+    }, [challengeAttempt, onVerified]);
 
     const submit = async (event) => {
         event.preventDefault();
@@ -185,7 +185,7 @@ export default function ContactForm({ onPhoneVerified }) {
                 )}
                 {phoneError && (
                     <p role="status" className="text-sm">
-                        The phone number couldn’t be loaded.{" "}
+                        Your contact details couldn’t be loaded.{" "}
                         <button type="button" disabled={!captcha} className="underline underline-offset-4 disabled:opacity-60" onClick={() => {
                             revealOnNextToken.current = true;
                             setPhoneError(false);

@@ -169,6 +169,23 @@
     animation: portfolio-grid-wave 16s linear -5s infinite;
   }
 
+  .doc-mark {
+    animation: doc-mark-idle-spin 9s linear infinite;
+  }
+
+  .doc-mark-face::before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    left: -20%;
+    right: -20%;
+    bottom: -35%;
+    height: 220%;
+    border-radius: 44% 44% 0 0;
+    background: var(--portfolio-accent);
+    animation: doc-mark-liquid 9s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  }
+
   [data-mark-motion="stamp"] .doc-mark-face {
     animation: doc-mark-stamp 520ms cubic-bezier(0.24, 0.7, 0.25, 1);
   }
@@ -236,6 +253,20 @@
   from { transform: translateY(-70%); opacity: 0; }
   14%, 86% { opacity: 1; }
   to { transform: translateY(70%); opacity: 0; }
+}
+
+@keyframes doc-mark-idle-spin {
+  0%, 62% { transform: rotate(-2deg); }
+  70% { transform: rotate(358deg); animation-timing-function: cubic-bezier(0.3, 0.9, 0.4, 1); }
+  100% { transform: rotate(358deg); }
+}
+
+@keyframes doc-mark-liquid {
+  0%, 55% { transform: translateY(6%); }
+  63% { transform: translateY(58%); }
+  75% { transform: translateY(8%); }
+  82% { transform: translateY(0%); }
+  100% { transform: translateY(6%); }
 }
 
 @keyframes doc-mark-stamp {

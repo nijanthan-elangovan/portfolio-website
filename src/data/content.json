@@ -5,7 +5,7 @@
       "Technical Writer & Content Strategist",
       "Documentation Workflows & Automation"
     ],
-    "summary": "I write and maintain documentation for products that ship constantly and get used by advertisers worldwide. At Google Operations Center, I document Google Ads, SA360, DV360, and YouTube, build the AI-assisted workflows that keep our team ahead of the product, and mentor newer writers. I'm also comfortable with code. I treat documentation like a product, not an afterthought.",
+    "summary": "I write and maintain documentation for products that ship constantly and get used by advertisers worldwide. At Google Operations Center, I document Google Ads, SA360, DV360, and YouTube, build the AI-assisted workflows that keep our team ahead of the product, and mentor newer writers. I treat documentation like a product, not an afterthought.",
     "location": "Bangalore / Hyderabad, India",
     "email": "nijanthan.work@gmail.com",
     "availability": "Open to Technical Writing & Content Strategy roles",
@@ -87,8 +87,8 @@
         "Write, update, and migrate Help Center articles for Google Ads, SA360, YouTube, and DV360.",
         "Fix broken layouts and inline styles in published articles with HTML and CSS.",
         "Use generative AI and reusable prompts to turn technical specs into first drafts and automate repetitive publishing tasks.",
-        "Built tools that fill and duplicate templates, route bugs, and capture UI screenshots. This work earned multiple performance bonuses.",
-        "Revised 50+ internal documents and mentored five apprentices and other new writers through independent publishing."
+        "Built tools that fill and duplicate templates, route bugs, and capture UI screenshots.",
+        "Revised 50+ internal documents and mentored five apprentices and other new writers to work independently."
       ]
     },
     {
@@ -117,7 +117,7 @@
       "range": "Jun 2018 – Dec 2018",
       "bullets": [
         "Wrote scripts for tutorial videos and served as the subject-matter expert for the topics I covered.",
-        "Owned each video I wrote from script through production and reviewed it end to end before publication."
+        "Followed each video I wrote from script through production, reviewing it before publication."
       ]
     }
   ],
@@ -163,7 +163,7 @@
     },
     {
       "title": "Tutorial Video Scripts for Website Learners",
-      "blurb": "I wrote tutorial scripts as the subject-matter expert and reviewed each video I owned from script through production.",
+      "blurb": "I wrote tutorial scripts as the subject-matter expert and followed each video from script through production.",
       "meta": [
         "Technical Writing",
         "E-Learning",
@@ -261,37 +261,64 @@
     {
       "name": "Euclid Innovations",
       "href": "https://euclidinnovations.com/",
+      "logo": "/clients/euclid.png",
       "blurb": "Staffing, Cloud Enablement & Digital Transformation",
       "featured": true
     },
     {
-      "name": "GetKitch",
-      "href": "https://getkitch.in/",
+      "name": "Kitchen by Chef Pillai",
+      "href": "https://kitchenbychefpillai.com/",
+      "logo": "/clients/kitchen.png",
       "blurb": "Kitchen Solutions & E-Commerce",
       "featured": true
     },
     {
       "name": "Yaamohaideen Briyani",
       "href": "https://yaamohaideenbriyani.com/",
+      "logo": "/clients/yaamohaideen.png",
       "blurb": "Food & Beverage, Restaurant Brand",
       "featured": true
     },
     {
       "name": "Yorafitness",
       "href": "https://yorafitness.com/",
+      "logo": "/clients/yorafitness.jpg",
       "blurb": "Fitness & Lifestyle",
       "featured": true
     },
     {
       "name": "VivaFit",
       "href": "https://vivafit.life/",
+      "logo": "/clients/vivafit.png",
       "blurb": "Wellness & Nutrition",
       "featured": true
     },
     {
       "name": "SLAM Fitness Studio",
       "href": "https://slamfitnessstudio.in/",
+      "logo": "/clients/slam.png",
       "blurb": "Fitness & Lifestyle",
+      "featured": true
+    },
+    {
+      "name": "Red River",
+      "href": "https://redriver.rent/",
+      "logo": "/clients/redriver.png",
+      "blurb": "Property Rentals & Management",
+      "featured": true
+    },
+    {
+      "name": "IT Vision Academy",
+      "href": "https://itvisionacademy.com/",
+      "logo": "/clients/itvision.png",
+      "blurb": "IT Training & Education",
+      "featured": true
+    },
+    {
+      "name": "Cloudtechnova",
+      "href": "https://cloudtechnova.com/",
+      "logo": "/clients/cloudtechnova.jpg",
+      "blurb": "Cloud & IT Services",
       "featured": true
     }
   ],

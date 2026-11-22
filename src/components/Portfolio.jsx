@@ -222,11 +222,30 @@ function DocMarkLink({ children, className, onClick }) {
             onFocus={(event) => { if (event.currentTarget.matches(":focus-visible")) play(); }}
         >
             <span aria-hidden="true" className="doc-mark pointer-events-none relative isolate inline-flex shrink-0 rotate-[-2deg] select-none">
-                <span className="doc-mark-face relative overflow-hidden rounded-sm border-2 border-ink-900 bg-mark px-1.5 py-0.5 font-mono text-sm font-bold tracking-tight text-paper-50 dark:border-paper-50">NE</span>
+                <span className="doc-mark-face relative overflow-hidden rounded-sm border-2 border-ink-900 bg-transparent px-1.5 py-0.5 font-mono text-sm font-bold tracking-tight text-paper-50 dark:border-paper-50">
+                    <span className="relative z-10">NE</span>
+                </span>
             </span>
             {children}
         </a>
     );
+}
+
+function ClientMark({ name, href, logo }) {
+    const [broken, setBroken] = useState(false);
+    let domain = "";
+    try { domain = new URL(href).hostname; } catch { /* no usable domain, fall back to initial */ }
+    const src = logo || (domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=64` : "");
+
+    if (!src || broken) {
+        return (
+            <div className="h-9 w-9 flex items-center justify-center font-mono text-sm font-bold text-ink-700 dark:text-paper-200">
+                {name[0]}
+            </div>
+        );
+    }
+
+    return <img src={src} alt="" loading="lazy" className="h-9 w-9 rounded-sm object-contain dark:bg-paper-50/90 dark:p-1" onError={() => setBroken(true)} />;
 }
 
 function SpinningBadge({ text }) {
@@ -424,7 +443,7 @@ function HeroHeadline({ connector, prefix, strike, lines }) {
             </span>
             <span className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-[0.25em]" aria-hidden="true">
                 <span className="whitespace-nowrap">
-                    {prefix} <s className="text-ink-900/75 decoration-mark/75 decoration-2 dark:text-paper-50/75 dark:decoration-mark-light/75">{strike}</s>
+                    {prefix} <s className="text-ink-900/75 decoration-mark/75 decoration-4 dark:text-paper-50/75 dark:decoration-mark-light/75">{strike}</s>
                 </span>
                 <span className="grid">
                     {lines.map((entry, index) => (
@@ -562,7 +581,7 @@ function Header({ theme, setTheme, hasWriting }) {
 
 /* --------------------------------- Layout ---------------------------------- */
 export default function Portfolio() {
-    const [verifiedPhone, setVerifiedPhone] = useState("");
+    const [verified, setVerified] = useState({ phone: "", email: "" });
     const { theme, setTheme } = useTheme();
     const mediumProfile = contentData.SOCIALS.medium || "https://nijanthanelangovan.medium.com";
     const mediumPosts = useMediumPosts(`${mediumProfile.replace(/\/$/, "")}/feed`, 6);
@@ -801,7 +820,7 @@ export default function Portfolio() {
                             <Card key={c.name} className="h-full">
                                 <a href={c.href} target="_blank" rel="noopener noreferrer" className="block p-6 h-full group">
                                     <div className="flex items-center justify-between mb-4">
-                                        <div className="h-9 w-9 rounded-sm border border-ink-900/20 dark:border-paper-50/20 flex items-center justify-center font-mono text-sm font-bold text-ink-700 dark:text-paper-200">{c.name[0]}</div>
+                                        <ClientMark name={c.name} href={c.href} logo={c.logo} />
                                         <ArrowUpRight className="h-4 w-4 text-ink-700/40 dark:text-paper-200/40 group-hover:text-mark" />
                                     </div>
                                     <h3 className="font-display font-semibold text-ink-900 dark:text-paper-50">{c.name}</h3>
@@ -922,17 +941,21 @@ export default function Portfolio() {
                                 </div>
                                 <div className="border-b border-ink-900/20 pb-3 dark:border-paper-50/20">
                                     <p className="text-sm font-medium text-ink-700 dark:text-paper-300">To</p>
-                                    <a href={`mailto:${PROFILE_V.email}`} className="mt-1 inline-block break-all font-display text-lg font-medium text-ink-900 hover:text-mark dark:text-paper-50 dark:hover:text-mark-light">
-                                        {PROFILE_V.email}
-                                    </a>
+                                    <span aria-live="polite" className="mt-1 inline-block break-all font-display text-lg font-medium text-ink-900 dark:text-paper-50">
+                                        {verified.email ? (
+                                            <a href={`mailto:${verified.email}`} className="hover:text-mark dark:hover:text-mark-light">{verified.email}</a>
+                                        ) : (
+                                            "Email available after verification"
+                                        )}
+                                    </span>
                                 </div>
                                 <div className="flex flex-wrap items-center gap-3 text-sm text-ink-700 dark:text-paper-300">
                                     <span className="inline-flex items-center gap-2"><Linkedin className="h-4 w-4" /> <a className="hover:underline" target="_blank" rel="noreferrer" href={SOCIALS_V.linkedin}>LinkedIn</a></span>
                                     <span className="inline-flex items-center gap-2"><MapPin className="h-4 w-4" /> {PROFILE_V.location}</span>
                                     <span aria-live="polite" className="inline-flex items-center gap-2">
                                         <Phone className="h-4 w-4" aria-hidden="true" />
-                                        {verifiedPhone ? (
-                                            <a href={`tel:${verifiedPhone.replace(/[^+\d]/g, "")}`} className="hover:underline">{verifiedPhone}</a>
+                                        {verified.phone ? (
+                                            <a href={`tel:${verified.phone.replace(/[^+\d]/g, "")}`} className="hover:underline">{verified.phone}</a>
                                         ) : (
                                             "Phone available after verification"
                                         )}
@@ -940,7 +963,7 @@ export default function Portfolio() {
                                 </div>
                             </div>
                             <div className="min-w-0 border-t border-dashed border-ink-900/25 pt-6 dark:border-paper-50/20 md:border-l md:border-t-0 md:pl-8 md:pt-0">
-                                <ContactForm onPhoneVerified={setVerifiedPhone} />
+                                <ContactForm onVerified={setVerified} />
                             </div>
                         </div>
                     </Card>

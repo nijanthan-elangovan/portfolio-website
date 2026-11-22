@@ -123,7 +123,7 @@ export function createContactHandler() {
             if (!phone || !/^\+?[\d ().-]{7,32}$/.test(phone)) {
                 return reply(503, { error: "The phone number is temporarily unavailable." });
             }
-            return reply(200, { ok: true, phone });
+            return reply(200, { ok: true, phone, email: RECIPIENT });
         }
 
         const now = Date.now();
