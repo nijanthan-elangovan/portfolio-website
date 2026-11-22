@@ -252,19 +252,27 @@ function SpinningBadge({ text }) {
     const pathId = useId();
     if (!text) return null;
 
+    // Pick the largest font where two loops of the phrase still wrap the ring
+    // without being stretched thin, instead of shrinking the font to fit more loops.
+    const radius = 25;
+    const circumference = 2 * Math.PI * radius;
+    const unit = `${text.toUpperCase()}  •  `;
+    const fontSize = 13;
+    const pathD = `M${42 - radius} 42a${radius} ${radius} 0 1 1 ${radius * 2} 0a${radius} ${radius} 0 1 1 ${-radius * 2} 0`;
+
     return (
         <svg
             aria-hidden="true"
             viewBox="0 0 84 84"
-            className="pointer-events-none absolute -top-10 right-3 z-10 size-16 text-ink-900 dark:text-paper-50 lg:-right-4 lg:-top-14 lg:size-[84px]"
+            className="pointer-events-none absolute -top-[26px] -right-[10px] z-10 size-16 text-ink-900 dark:text-paper-50 lg:-top-[34px] lg:-right-[12px] lg:size-[84px]"
         >
             <defs>
-                <path id={pathId} d="M11 42a31 31 0 1 1 62 0a31 31 0 1 1-62 0" />
+                <path id={pathId} d={pathD} />
             </defs>
             <circle cx="42" cy="42" r="40" className="fill-paper-50 stroke-current dark:fill-ink-800" strokeWidth="2" />
             <g className="role-badge-lettering">
-                <text className="fill-current font-mono font-bold" fontSize="7.4" textLength="194" lengthAdjust="spacing">
-                    <textPath href={`#${pathId}`}>{`${text.toUpperCase()} • `.repeat(2)}</textPath>
+                <text className="fill-current font-mono font-medium" fontSize={fontSize} textLength={circumference.toFixed(1)} lengthAdjust="spacing">
+                    <textPath href={`#${pathId}`}>{unit.repeat(2)}</textPath>
                 </text>
             </g>
             <circle cx="42" cy="42" r="4" className="fill-mark dark:fill-mark-light" />
