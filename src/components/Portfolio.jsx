@@ -1,74 +1,34 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence, useReducedMotion } from "framer-motion";
+import { motion, useScroll, useSpring, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
     ArrowRight,
     FileDown,
     Mail,
     Linkedin,
     MapPin,
-    ExternalLink,
     Github,
     Phone,
     Calendar,
     GraduationCap,
     BadgeCheck,
     BookOpen,
-    Youtube,
-    Globe,
     Heart,
     Sun,
     Moon,
-    MousePointerClick,
+    Menu,
     ArrowUpRight,
     Play,
     Video,
     Newspaper,
+    Bot,
+    UserRound,
+    UsersRound,
 } from "lucide-react";
 import contentData from "../data/content.json";
+import ContactForm from "./ContactForm";
 import InteractiveBackground from "./InteractiveBackground";
-
 import { optimizeImage } from "../utils/cloudinaryHelper";
-
-// ... (existing imports)
-
-import SEO from "./SEO";
-
-// ... (existing code)
-
-// ... (existing code)
-
-// ... (imports remain) ...
-
-// ... (existing code) ...
-
-
-function useInlineStyles() {
-    useLayoutEffect(() => {
-        if (document.getElementById("ne-inline-css")) return;
-        const el = document.createElement("style");
-        el.id = "ne-inline-css";
-        // FIX: Added Google Font @import here for more reliable loading.
-        el.textContent = `
-@keyframes hue-cycle { from { filter: hue-rotate(0deg) } to { filter: hue-rotate(360deg) } }
-.hue-cta:hover { animation: hue-cycle 6s linear infinite; will-change: filter; }
-@keyframes typing { from { width: 0 } to { width: 100% } }
-@keyframes caret-blink { 0%,49% { border-color: transparent } 50%,100% { border-color: currentColor } }
-.typing-item { display:inline-block; white-space:nowrap; overflow:hidden; border-right:2px solid currentColor; animation-fill-mode:forwards; }
-.glass { backdrop-filter: saturate(140%) blur(16px); background: color-mix(in oklab, white 80%, transparent); }
-:root.dark .glass { background: color-mix(in oklab, black 70%, transparent); }
-@keyframes gradientShift {0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-@keyframes paintFlow {0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-@keyframes blob { 0% { transform: translate(0px, 0px) scale(1); } 33% { transform: translate(30px, -50px) scale(1.1); } 66% { transform: translate(-20px, 20px) scale(0.9); } 100% { transform: translate(0px, 0px) scale(1); } }
-.animate-blob { animation: blob 7s infinite; }
-.animation-delay-2000 { animation-delay: 2s; }
-.animation-delay-4000 { animation-delay: 4s; }
-@keyframes marquee-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-@keyframes heartbeat { 0%,100% { transform: scale(1); } 14% { transform: scale(1.3); } 28% { transform: scale(1); } 42% { transform: scale(1.2); } 56% { transform: scale(1); } }
-`;
-        document.head.appendChild(el);
-    }, []);
-}
 
 /* ----------------------------------------------------------------------------
    Theme (dark/light)
@@ -78,7 +38,9 @@ function useTheme() {
         try {
             const saved = localStorage.getItem("theme");
             if (saved) return saved;
-        } catch { }
+        } catch {
+            // Use the system preference when storage is unavailable.
+        }
         if (typeof window !== "undefined" && window.matchMedia?.("(prefers-color-scheme: dark)").matches) return "dark";
         return "light";
     });
@@ -88,7 +50,15 @@ function useTheme() {
         root.classList.toggle("dark", theme === "dark");
         document.body.classList.toggle("dark", theme === "dark");
         root.dataset.theme = theme;
-        try { localStorage.setItem("theme", theme); } catch { }
+        const chromeColor = theme === "dark" ? "#1b1a17" : "#fdfbf4";
+        document.querySelectorAll('meta[name="theme-color"]').forEach((element) => {
+            element.content = chromeColor;
+        });
+        try {
+            localStorage.setItem("theme", theme);
+        } catch {
+            // The theme still applies for this visit.
+        }
     }, [theme]);
 
     useEffect(() => {
@@ -110,6 +80,39 @@ function useTheme() {
     return { theme, setTheme };
 }
 
+/* ------------------------------- Medium feed --------------------------------- */
+function useMediumPosts(feedUrl, limit = 3) {
+    const [posts, setPosts] = useState([]);
+
+    useEffect(() => {
+        let cancelled = false;
+        const url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`;
+        fetch(url)
+            .then((res) => res.json())
+            .then((data) => {
+                if (cancelled || data.status !== "ok" || !Array.isArray(data.items)) return;
+                const mapped = data.items.slice(0, limit).map((item) => {
+                    const images = (item.content ?? "").matchAll(/<img\b[^>]*\ssrc=["']([^"']+)["']/gi);
+                    const thumbnail = [item.thumbnail, ...Array.from(images, ([, src]) => src)]
+                        .find((src) => src && !src.includes("/_/stat"));
+                    return {
+                        kind: "Article",
+                        title: item.title,
+                        href: item.link,
+                        meta: "Medium | Article",
+                        featured: true,
+                        thumbnail: thumbnail ?? "",
+                    };
+                });
+                setPosts(mapped);
+            })
+            .catch(() => { /* feed unavailable, fall back to curated list */ });
+        return () => { cancelled = true; };
+    }, [feedUrl, limit]);
+
+    return posts;
+}
+
 /* ----------------------------------- Utils ---------------------------------- */
 function getYouTubeId(url) {
     try {
@@ -122,135 +125,16 @@ function getYouTubeId(url) {
     }
 }
 
-/* --------------------------- Animation Utilities ---------------------------- */
-
-// Hook for 3D tilt effect on cards
-function useTilt(ref) {
-    const x = useMotionValue(0);
-    const y = useMotionValue(0);
-    const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [5, -5]), { stiffness: 300, damping: 30 });
-    const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-5, 5]), { stiffness: 300, damping: 30 });
-    const rectRef = useRef(null);
-
-    const handleMouseEnter = () => {
-        if (ref.current) {
-            rectRef.current = ref.current.getBoundingClientRect();
-        }
-    };
-
-    const handleMouseMove = (e) => {
-        if (!rectRef.current) return;
-        const rect = rectRef.current;
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        x.set((e.clientX - centerX) / (rect.width / 2));
-        y.set((e.clientY - centerY) / (rect.height / 2));
-    };
-
-    const handleMouseLeave = () => {
-        x.set(0);
-        y.set(0);
-        rectRef.current = null;
-    };
-
-    return { rotateX, rotateY, handleMouseEnter, handleMouseMove, handleMouseLeave };
-}
-
-// Magnetic button component
-function MagneticButton({ children, href, onClick, className = "" }) {
-    const ref = useRef(null);
-    const x = useMotionValue(0);
-    const y = useMotionValue(0);
-    const springX = useSpring(x, { stiffness: 150, damping: 15 });
-    const springY = useSpring(y, { stiffness: 150, damping: 15 });
-    const rectRef = useRef(null);
-
-    const handleMouseEnter = () => {
-        if (ref.current) {
-            rectRef.current = ref.current.getBoundingClientRect();
-        }
-    };
-
-    const handleMouseMove = (e) => {
-        if (!rectRef.current) return;
-        const rect = rectRef.current;
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        const distanceX = e.clientX - centerX;
-        const distanceY = e.clientY - centerY;
-        const distance = Math.sqrt(distanceX ** 2 + distanceY ** 2);
-
-        if (distance < 100) {
-            x.set(distanceX * 0.3);
-            y.set(distanceY * 0.3);
-        }
-    };
-
-    const handleMouseLeave = () => {
-        x.set(0);
-        y.set(0);
-        rectRef.current = null;
-    };
-
-    const Component = href ? motion.a : motion.button;
-    const props = href ? { href } : { onClick };
-
-    return (
-        <Component
-            ref={ref}
-            {...props}
-            className={className}
-            style={{ x: springX, y: springY }}
-            onMouseEnter={handleMouseEnter}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-        >
-            {children}
-        </Component>
-    );
-}
-
-// Scroll progress indicator
-function ScrollProgress() {
-    const { scrollYProgress } = useScroll();
-    const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
-
-    return (
-        <motion.div
-            className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-cyan-500 to-purple-500 origin-left z-[100]"
-            style={{ scaleX }}
-        />
-    );
-}
-
-// Animation variants for stagger effects
 const containerVariants = {
     hidden: { opacity: 0 },
-    visible: {
-        opacity: 1,
-        transition: {
-            staggerChildren: 0.1,
-            delayChildren: 0.1,
-        },
-    },
+    visible: { opacity: 1, transition: { staggerChildren: 0.06, delayChildren: 0.1 } },
 };
-
 const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-        opacity: 1,
-        y: 0,
-        transition: {
-            type: "spring",
-            stiffness: 100,
-            damping: 12,
-        },
-    },
+    hidden: { opacity: 0, y: 14 },
+    visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 120, damping: 14 } },
 };
 
-/* ----------------------------- Emoji Captcha ------------------------------ */
+/* ------------------------------- Emoji Captcha ------------------------------ */
 function EmojiCaptcha({ phone }) {
     const [revealed, setRevealed] = useState(false);
     const [open, setOpen] = useState(false);
@@ -258,11 +142,11 @@ function EmojiCaptcha({ phone }) {
     const [wrong, setWrong] = useState(null);
 
     const puzzles = [
-        { grid: ["🐱","🐱","🐱","🐱","🐶","🐱","🐱","🐱","🐱"], answer: 4, hint: "Find the odd one out" },
-        { grid: ["🍎","🍎","🍊","🍎","🍎","🍎","🍎","🍎","🍎"], answer: 2, hint: "One of these isn't like the others" },
-        { grid: ["🌙","🌙","🌙","🌙","🌙","🌙","☀️","🌙","🌙"], answer: 6, hint: "Spot the different one" },
-        { grid: ["🐸","🐸","🐸","🐢","🐸","🐸","🐸","🐸","🐸"], answer: 3, hint: "Which one doesn't belong?" },
-        { grid: ["🔵","🔵","🔵","🔵","🔵","🔴","🔵","🔵","🔵"], answer: 5, hint: "Find the imposter" },
+        { grid: ["🐱", "🐱", "🐱", "🐱", "🐶", "🐱", "🐱", "🐱", "🐱"], answer: 4, hint: "Find the odd one out" },
+        { grid: ["🍎", "🍎", "🍊", "🍎", "🍎", "🍎", "🍎", "🍎", "🍎"], answer: 2, hint: "One of these isn't like the others" },
+        { grid: ["🌙", "🌙", "🌙", "🌙", "🌙", "🌙", "☀️", "🌙", "🌙"], answer: 6, hint: "Spot the different one" },
+        { grid: ["🐸", "🐸", "🐸", "🐢", "🐸", "🐸", "🐸", "🐸", "🐸"], answer: 3, hint: "Which one doesn't belong?" },
+        { grid: ["🔵", "🔵", "🔵", "🔵", "🔵", "🔴", "🔵", "🔵", "🔵"], answer: 5, hint: "Find the imposter" },
     ];
 
     const handleOpen = () => {
@@ -286,7 +170,7 @@ function EmojiCaptcha({ phone }) {
     return (
         <>
             <span
-                className={`inline-flex items-center gap-2 ${!revealed ? "cursor-pointer hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors" : ""}`}
+                className={`inline-flex items-center gap-2 ${!revealed ? "cursor-pointer hover:text-mark dark:hover:text-mark-light transition-colors" : ""}`}
                 onClick={handleOpen}
                 role={!revealed ? "button" : undefined}
                 tabIndex={!revealed ? 0 : undefined}
@@ -298,7 +182,7 @@ function EmojiCaptcha({ phone }) {
                 ) : (
                     <span className="flex items-center gap-1">
                         +91 ••••••••••
-                        <span className="text-[10px] ml-1 px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 font-medium">tap to reveal</span>
+                        <span className="font-mono text-[10px] ml-1 px-1.5 py-0.5 rounded-sm border border-ink-900/20 dark:border-paper-50/20 text-ink-700 dark:text-paper-200">tap to verify</span>
                     </span>
                 )}
             </span>
@@ -307,36 +191,35 @@ function EmojiCaptcha({ phone }) {
                 <AnimatePresence>
                     {open && puzzle && (
                         <motion.div
-                            className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40 backdrop-blur-sm"
+                            className="fixed inset-0 z-[200] flex items-center justify-center bg-ink-900/50 backdrop-blur-sm"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setOpen(false)}
                         >
                             <motion.div
-                                className="relative bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-2xl p-6 w-[280px]"
-                                initial={{ scale: 0.9, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                exit={{ scale: 0.9, opacity: 0 }}
+                                className="relative bg-paper-50 dark:bg-ink-800 rounded-sm border-2 border-ink-900 dark:border-paper-100 shadow-[6px_6px_0_0_rgba(27,26,23,0.25)] p-6 w-[280px]"
+                                initial={{ scale: 0.92, opacity: 0, rotate: -1 }}
+                                animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                                exit={{ scale: 0.92, opacity: 0 }}
                                 transition={{ type: "spring", stiffness: 400, damping: 25 }}
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 <div className="text-center mb-4">
-                                    <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">Quick human check</div>
-                                    <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">{puzzle.hint}</div>
+                                    <div className="font-mono text-[10px] uppercase tracking-widest text-mark">Human Verification</div>
+                                    <div className="text-xs text-ink-700/80 dark:text-paper-200/80 mt-1">{puzzle.hint}</div>
                                 </div>
                                 <div className="grid grid-cols-3 gap-2">
                                     {puzzle.grid.map((emoji, i) => (
                                         <motion.button
                                             key={i}
                                             onClick={() => handlePick(i)}
-                                            className={`text-2xl p-3 rounded-xl border transition-all ${
-                                                wrong === i
-                                                    ? "border-red-400 bg-red-50 dark:bg-red-900/30"
-                                                    : "border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
-                                            }`}
-                                            whileHover={{ scale: 1.1 }}
-                                            whileTap={{ scale: 0.9 }}
+                                            className={`text-2xl p-3 rounded-sm border transition-all ${wrong === i
+                                                ? "border-red-500 bg-red-500/10"
+                                                : "border-ink-900/15 dark:border-paper-50/15 bg-paper-100 dark:bg-ink-700 hover:border-mark"
+                                                }`}
+                                            whileHover={{ scale: 1.08 }}
+                                            whileTap={{ scale: 0.92 }}
                                             animate={wrong === i ? { x: [0, -4, 4, -4, 4, 0] } : {}}
                                             transition={wrong === i ? { duration: 0.4 } : { type: "spring", stiffness: 400, damping: 17 }}
                                         >
@@ -344,7 +227,7 @@ function EmojiCaptcha({ phone }) {
                                         </motion.button>
                                     ))}
                                 </div>
-                                <div className="text-center mt-3 text-[10px] text-zinc-400">This keeps bots away from my number</div>
+                                <div className="text-center mt-3 font-mono text-[10px] text-ink-700/50 dark:text-paper-200/50">no bots past this checkpoint</div>
                             </motion.div>
                         </motion.div>
                     )}
@@ -355,297 +238,450 @@ function EmojiCaptcha({ phone }) {
     );
 }
 
-function Chip({ children }) {
+/* --------------------------------- Doc Tag ---------------------------------- */
+function Tag({ children }) {
     return (
-        <motion.span
-            className="inline-flex items-center rounded-full border border-zinc-300/60 dark:border-zinc-700/60 px-3 py-1 text-xs font-medium text-zinc-700 dark:text-zinc-200 backdrop-blur-sm bg-white/50 dark:bg-white/5"
-            whileHover={{ scale: 1.05, borderColor: "rgba(16, 185, 129, 0.4)" }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
-        >
+        <span className="inline-flex items-center rounded-sm border border-ink-900/20 dark:border-paper-50/20 px-2.5 py-1 font-mono text-[11px] text-ink-800 dark:text-paper-100 bg-paper-50/70 dark:bg-ink-900/40">
             {children}
-        </motion.span>
+        </span>
     );
 }
 
+/* ------------------------------ Section header ------------------------------ */
 function Section({ id, title, eyebrow, children }) {
     return (
-        <section id={id} className="relative scroll-mt-28 w-full px-4 sm:px-6 py-24 sm:py-28 mx-auto">
-            <div className="mx-auto max-w-6xl">
-                {eyebrow && (
-                    <div className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400">{eyebrow}</div>
-                )}
-                <h2 className="mb-8 text-3xl sm:text-4xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">{title}</h2>
+        <section id={id} className="relative scroll-mt-28 w-full px-4 sm:px-6 py-20 sm:py-24 mx-auto">
+            <div className="mx-auto max-w-5xl">
+                <div className="relative flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-dashed border-ink-900/25 dark:border-paper-50/20 pb-4 mb-10">
+                    <h2 className="text-2xl sm:text-3xl font-display font-semibold tracking-tight text-ink-900 dark:text-paper-50">{title}</h2>
+                    <motion.span
+                        aria-hidden="true"
+                        className="portfolio-section-mark absolute -bottom-px left-0 h-0.5 w-12 origin-left bg-mark dark:bg-mark-light"
+                        initial={{ scaleX: 0 }}
+                        whileInView={{ scaleX: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.34, ease: "easeOut" }}
+                    />
+                    {eyebrow && (
+                        <div className="shrink-0 font-mono text-[11px] uppercase tracking-[0.15em] text-mark dark:text-mark-light">{eyebrow}</div>
+                    )}
+                </div>
                 <div className="space-y-6">{children}</div>
             </div>
         </section>
     );
 }
 
-function Card({ children, className = "", tilt = false }) {
-    const ref = useRef(null);
-    const { rotateX, rotateY, handleMouseEnter, handleMouseMove, handleMouseLeave } = useTilt(ref);
-    const shouldReduceMotion = useReducedMotion();
-
-    if (tilt && !shouldReduceMotion) {
-        return (
-            <motion.div
-                ref={ref}
-                className={`relative h-full flex flex-col overflow-hidden rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_10px_40px_rgba(0,0,0,0.10)] transition-shadow ${className}`}
-                style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-                onMouseEnter={handleMouseEnter}
-                onMouseMove={handleMouseMove}
-                onMouseLeave={handleMouseLeave}
-                whileHover={{ scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            >
-                <div className="absolute inset-px rounded-2xl bg-gradient-to-br from-white/50 via-transparent to-transparent dark:from-white/5 pointer-events-none" />
-                {children}
-            </motion.div>
-        );
-    }
-
+/* ---------------------------------- Card ------------------------------------ */
+function Card({ children, className = "", tabLabel }) {
     return (
-        <div className={`relative h-full flex flex-col overflow-hidden rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_10px_40px_rgba(0,0,0,0.10)] transition-shadow ${className}`}>
-            <div className="absolute inset-px rounded-2xl bg-gradient-to-br from-white/50 via-transparent to-transparent dark:from-white/5 pointer-events-none" />
+        <div
+            className={`portfolio-card relative rounded-sm border border-ink-900/15 dark:border-paper-50/15 bg-paper-50/80 dark:bg-ink-800/70 backdrop-blur-sm shadow-[3px_3px_0_0_rgba(27,26,23,0.10)] dark:shadow-[3px_3px_0_0_rgba(0,0,0,0.5)] motion-safe:transition duration-200 motion-safe:hover:-translate-y-0.5 hover:shadow-[5px_5px_0_0_rgba(27,26,23,0.16)] dark:hover:shadow-[5px_5px_0_0_rgba(0,0,0,0.6)] ${className}`}
+        >
+            {tabLabel && (
+                <span className="absolute -top-3 left-5 bg-paper-50 dark:bg-ink-900 border border-ink-900/20 dark:border-paper-50/20 rounded-sm px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest text-ink-700 dark:text-paper-200">
+                    {tabLabel}
+                </span>
+            )}
             {children}
         </div>
     );
 }
 
-/* ------------------------------ Animated Logo ------------------------------- */
-function LogoNE() {
+/* -------------------------------- Stamp button ------------------------------- */
+function StampButton({ children, href, onClick, variant = "solid", className = "" }) {
+    const base = "inline-flex items-center gap-2 rounded-sm px-5 py-3 text-sm font-medium border-2 border-ink-900 dark:border-paper-50 motion-safe:transition motion-safe:hover:translate-x-[2px] motion-safe:hover:translate-y-[2px]";
+    const solid = "bg-mark text-paper-50 shadow-[3px_3px_0_0_rgba(27,26,23,0.9)] dark:shadow-[3px_3px_0_0_rgba(247,242,230,0.9)] hover:shadow-[1px_1px_0_0_rgba(27,26,23,0.9)] dark:hover:shadow-[1px_1px_0_0_rgba(247,242,230,0.9)]";
+    const outline = "bg-transparent text-ink-900 dark:text-paper-50 shadow-[3px_3px_0_0_rgba(27,26,23,0.25)] dark:shadow-[3px_3px_0_0_rgba(247,242,230,0.25)] hover:bg-ink-900 hover:text-paper-50 dark:hover:bg-paper-50 dark:hover:text-ink-900 hover:shadow-[1px_1px_0_0_rgba(27,26,23,0.25)]";
+    const Component = href ? motion.a : motion.button;
+    const props = href ? { href, target: href.startsWith("http") ? "_blank" : undefined, rel: href.startsWith("http") ? "noreferrer" : undefined } : { onClick };
+    return (
+        <Component {...props} className={`${base} ${variant === "solid" ? solid : outline} ${className}`} whileTap={{ scale: 0.97 }}>
+            {children}
+        </Component>
+    );
+}
+
+/* ------------------------------ Scroll progress ------------------------------ */
+function ScrollProgress() {
     const { scrollYProgress } = useScroll();
-    const pos = useTransform(scrollYProgress, [0, 1], ["0%", "120%"]);
+    const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+    return <motion.div aria-hidden="true" className="pointer-events-none fixed top-0 left-0 right-0 h-[3px] bg-mark origin-left z-[100]" style={{ scaleX }} />;
+}
+
+/* ------------------------------- Doc mark / logo ------------------------------ */
+const DOC_MARK_ANIMATIONS = ["stamp", "swivel", "sweep"];
+
+function DocMarkLink({ children, className, onClick }) {
+    const [animation, setAnimation] = useState(-1);
+    const play = () => setAnimation((index) => (index + 1) % DOC_MARK_ANIMATIONS.length);
+
     return (
-        <motion.span
-            className="text-lg font-semibold tracking-tight bg-clip-text text-transparent select-none"
-            style={{ backgroundImage: "linear-gradient(90deg, #10b981, #22d3ee, #a78bfa, #10b981)", backgroundSize: "200% 100%", backgroundPosition: pos }}
+        <a
+            href="#top"
+            aria-label={children ? undefined : "NE, back to top"}
+            className={className}
+            data-mark-motion={DOC_MARK_ANIMATIONS[animation]}
+            onClick={onClick}
+            onPointerEnter={(event) => { if (event.pointerType === "mouse" || event.pointerType === "pen") play(); }}
+            onFocus={(event) => { if (event.currentTarget.matches(":focus-visible")) play(); }}
         >
-            NE.
-        </motion.span>
-    );
-}
-
-/* --------------------------- Hero Rotating Word ----------------------------- */
-function TypingWord({ word }) {
-    const [shown, setShown] = useState("");
-    const [done, setDone] = useState(false);
-    useEffect(() => {
-        let i = 0; const letters = word.split(""); setShown(""); setDone(false);
-        const id = setInterval(() => { i += 1; setShown(letters.slice(0, i).join("")); if (i >= letters.length) { clearInterval(id); setDone(true); } }, 250);
-        return () => clearInterval(id);
-    }, [word]);
-    return (
-        <span className="relative">
-            <span className="font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-400 dark:from-emerald-400 dark:to-cyan-300">{shown}</span>
-            <span className={`ml-[1px] inline-block w-[2px] h-[1em] align-text-bottom bg-emerald-500 ${done ? "animate-pulse" : ""}`} />
-        </span>
-    );
-}
-
-function ClickWord({ word }) {
-    const ref = useRef(null);
-    const cursorX = useMotionValue(0);
-    const cursorY = useMotionValue(0);
-    const springX = useSpring(cursorX, { stiffness: 120, damping: 15 });
-    const springY = useSpring(cursorY, { stiffness: 120, damping: 15 });
-
-    useEffect(() => {
-        const move = () => {
-            if (!ref.current) return;
-            const rect = ref.current.getBoundingClientRect();
-            cursorX.set(Math.random() * (rect.width - 16));
-            cursorY.set(Math.random() * (rect.height - 16));
-        };
-        move();
-        const id = setInterval(move, 900);
-        return () => clearInterval(id);
-    }, [cursorX, cursorY]);
-
-    return (
-        <motion.span initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1.08, opacity: 1 }} transition={{ type: "spring", stiffness: 400, damping: 18 }} className="relative inline-flex items-center">
-            <span ref={ref} className="relative">
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-400 dark:from-emerald-400 dark:to-cyan-300">{word}</span>
-                <motion.span
-                    className="absolute top-0 left-0 text-emerald-500 pointer-events-none"
-                    style={{ x: springX, y: springY }}
-                >
-                    <MousePointerClick className="h-5 w-5" />
-                </motion.span>
+            <span aria-hidden="true" className="doc-mark pointer-events-none relative isolate inline-flex shrink-0 rotate-[-2deg] select-none">
+                <span className="doc-mark-face relative overflow-hidden rounded-sm border-2 border-ink-900 bg-mark px-1.5 py-0.5 font-mono text-sm font-bold tracking-tight text-paper-50 dark:border-paper-50">NE</span>
             </span>
-            <span className="pointer-events-none absolute -inset-2 rounded-full border border-emerald-400/30" />
-        </motion.span>
+            {children}
+        </a>
     );
 }
 
-function PaintedWord({ word }) {
-    useLayoutEffect(() => {
-        const id = "painted-gradient-anim";
-        if (!document.getElementById(id)) {
-            const style = document.createElement("style");
-            style.id = id; style.textContent = `@keyframes paintFlow {0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}`;
-            document.head.appendChild(style);
-        }
-    }, []);
+function SpinningBadge({ text }) {
+    const pathId = useId();
+    if (!text) return null;
+
     return (
-        <span className="relative inline-block">
-            <span className="bg-clip-text text-transparent [background-size:300%_300%] animate-[paintFlow_5s_ease_infinite]" style={{ backgroundImage: "linear-gradient(115deg, #f59e0b, #ef4444, #ec4899, #8b5cf6, #06b6d4, #10b981, #f59e0b)" }}>{word}</span>
-            <span aria-hidden className="block h-[6px] mt-[-6px] rounded-full opacity-70" style={{ background: "linear-gradient(90deg, #f59e0b, #ef4444, #ec4899, #8b5cf6, #06b6d4, #10b981)", filter: "blur(1px)" }} />
-        </span>
+        <svg
+            aria-hidden="true"
+            viewBox="0 0 84 84"
+            className="pointer-events-none absolute -top-10 right-3 z-10 size-16 text-ink-900 dark:text-paper-50 lg:-right-4 lg:-top-14 lg:size-[84px]"
+        >
+            <defs>
+                <path id={pathId} d="M11 42a31 31 0 1 1 62 0a31 31 0 1 1-62 0" />
+            </defs>
+            <circle cx="42" cy="42" r="40" className="fill-paper-50 stroke-current dark:fill-ink-800" strokeWidth="2" />
+            <g className="role-badge-lettering">
+                <text className="fill-current font-mono font-bold" fontSize="7.4" textLength="194" lengthAdjust="spacing">
+                    <textPath href={`#${pathId}`}>{`${text.toUpperCase()} • `.repeat(2)}</textPath>
+                </text>
+            </g>
+            <circle cx="42" cy="42" r="4" className="fill-mark dark:fill-mark-light" />
+        </svg>
     );
 }
 
-function PixelWord({ word }) {
-    const [glitch, setGlitch] = useState(false);
+/* --------------------------- Hero headline reveal ---------------------------- */
+const HEADLINE_HOLD_MS = 4000;
+const HEADLINE_ENTER = { duration: 0.6, ease: [0.22, 1, 0.36, 1] };
+const HEADLINE_EXIT = { duration: 0.36, ease: [0.55, 0, 0.75, 0.5] };
+const FIRST_HEADLINE_FRAME = { index: 0, phase: "hold" };
 
-    useLayoutEffect(() => {
-        const id = "pixel-font-link";
-        if (!document.getElementById(id)) {
-            const link = document.createElement("link");
-            link.id = id;
-            link.rel = "stylesheet";
-            link.href = "https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&family=Dancing+Script:wght@400;700&display=swap";
-            document.head.appendChild(link);
-        }
-        const styleId = "pixel-word-anim";
-        if (!document.getElementById(styleId)) {
-            const style = document.createElement("style");
-            style.id = styleId;
-            style.textContent = `
-@keyframes pixelScanline { 0% { top: -2px; } 100% { top: 100%; } }
-@keyframes pixelFlicker { 0%,100% { opacity:1 } 4% { opacity:0.7 } 8% { opacity:1 } 42% { opacity:0.8 } 44% { opacity:1 } }
-`;
-            document.head.appendChild(style);
-        }
-    }, []);
+function headlineSentence(line, connector, prefix) {
+    return `${line.object} ${connector} ${line.reader} ${prefix} ${line.verb}.`;
+}
+
+function ReaderWord({ reader, type, animateIcon = false }) {
+    const Icon = type === "ai" ? Bot : type === "team" ? UsersRound : UserRound;
+    const burstRef = useRef(null);
 
     useEffect(() => {
-        setGlitch(true);
-        const id = setTimeout(() => setGlitch(false), 500);
-        return () => clearTimeout(id);
-    }, [word]);
+        const burst = burstRef.current;
+        if (!animateIcon || !burst?.animate) return;
+
+        // Give each burst its own window so the randomized timings cannot overlap.
+        const animations = [220, 1310, 2400].map((start) => {
+            const delay = start + Math.random() * 350;
+            const duration = 520 + Math.random() * 170;
+            const angle = Math.random() * 24 - 12;
+            const scale = 1.04 + Math.random() * 0.12;
+
+            return burst.animate([
+                { opacity: 0, transform: `rotate(${angle - 6}deg) scale(0.65)` },
+                { opacity: 1, transform: `rotate(${angle}deg) scale(${scale})`, offset: 0.35 },
+                { opacity: 0, transform: `rotate(${angle + 6}deg) scale(${scale + 0.07})` },
+            ], { delay, duration, easing: "ease-out" });
+        });
+
+        return () => animations.forEach((animation) => animation.cancel());
+    }, [animateIcon]);
 
     return (
-        <span className="relative inline-block">
-            <span
-                className="text-emerald-500 dark:text-emerald-400"
-                style={{
-                    fontFamily: '"Pixelify Sans", sans-serif',
-                    letterSpacing: "0.02em",
-                    textShadow: "0 0 8px rgba(16,185,129,0.5), 0 0 20px rgba(16,185,129,0.2)",
-                    animation: glitch ? "pixelFlicker 0.15s steps(1) infinite" : "none",
-                }}
+        <span className="text-mark dark:text-mark-light">
+            <Icon
+                className={`mr-[0.22em] inline-block size-[0.65em] overflow-visible align-[0.03em]${animateIcon ? " headline-reader-icon" : ""}`}
+                aria-hidden="true"
             >
-                {word.toLowerCase()}
+                {animateIcon && (
+                    <g ref={burstRef} className="origin-center" opacity="0" strokeWidth="2">
+                        <path d="M-1 11h-4M1 5l-4-3M7 1l-2-4M17 1l2-4M23 5l4-3M25 11h4" />
+                    </g>
+                )}
+            </Icon>
+            {reader}
+        </span>
+    );
+}
+
+function HeroHeadline({ connector, prefix, strike, lines }) {
+    const [shouldReduceMotion, setShouldReduceMotion] = useState(
+        () => window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    );
+    const [frame, setFrame] = useState(FIRST_HEADLINE_FRAME);
+    const headlineRef = useRef(null);
+
+    useEffect(() => {
+        const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+        const onChange = ({ matches }) => {
+            setShouldReduceMotion(matches);
+            setFrame(FIRST_HEADLINE_FRAME);
+        };
+        preference.addEventListener("change", onChange);
+        return () => preference.removeEventListener("change", onChange);
+    }, []);
+
+    useEffect(() => {
+        if (shouldReduceMotion || frame.phase !== "hold" || lines.length < 2) return;
+
+        const headline = headlineRef.current;
+        let hovered = headline.matches(":hover");
+        let timer;
+        let startedAt;
+        let remaining = HEADLINE_HOLD_MS;
+
+        const updateTimer = () => {
+            if (document.hidden || hovered) {
+                if (timer === undefined) return;
+                clearTimeout(timer);
+                timer = undefined;
+                remaining = Math.max(0, remaining - (performance.now() - startedAt));
+            } else if (timer === undefined) {
+                startedAt = performance.now();
+                timer = setTimeout(() => setFrame({ ...frame, phase: "exit" }), remaining);
+            }
+        };
+        const onEnter = () => {
+            hovered = true;
+            updateTimer();
+        };
+        const onLeave = () => {
+            hovered = false;
+            updateTimer();
+        };
+        document.addEventListener("visibilitychange", updateTimer);
+        headline.addEventListener("mouseenter", onEnter);
+        headline.addEventListener("mouseleave", onLeave);
+        updateTimer();
+
+        return () => {
+            clearTimeout(timer);
+            document.removeEventListener("visibilitychange", updateTimer);
+            headline.removeEventListener("mouseenter", onEnter);
+            headline.removeEventListener("mouseleave", onLeave);
+        };
+    }, [frame, lines.length, shouldReduceMotion]);
+
+    const firstLine = lines[0];
+    if (!firstLine) return null;
+
+    const line = lines[frame.index] ?? firstLine;
+    const isExiting = frame.phase === "exit";
+    const motionProps = {
+        initial: frame.phase === "enter"
+            ? { opacity: 0, y: 12, clipPath: "inset(80% -10% -18% -10%)" }
+            : false,
+        animate: isExiting
+            ? { opacity: 0, y: -8, clipPath: "inset(-18% -10% 80% -10%)" }
+            : { opacity: 1, y: 0, clipPath: "inset(-18% -10% -18% -10%)" },
+        transition: shouldReduceMotion ? { duration: 0 } : isExiting ? HEADLINE_EXIT : HEADLINE_ENTER,
+    };
+    const onAnimationComplete = () => {
+        if (frame.phase === "hold") return;
+        const nextFrame = frame.phase === "exit"
+            ? { index: (frame.index + 1) % lines.length, phase: "enter" }
+            : { ...frame, phase: "hold" };
+        setFrame((current) => current === frame ? nextFrame : current);
+    };
+    const rotatingWordClass = "col-start-1 row-start-1 min-w-0 break-words";
+    const verbClass = `${rotatingWordClass} font-semibold italic text-mark dark:text-mark-light`;
+
+    // Reserve space with invisible copies and align the visible phrase just above the fixed second row.
+    return (
+        <h1
+            ref={headlineRef}
+            className="text-left font-display text-[clamp(1.25rem,6.5vw,4.6rem)] font-medium leading-[1.15] tracking-tight text-ink-900 dark:text-paper-50 sm:text-[clamp(1.65rem,7vw,4.6rem)] lg:text-[2.625rem]"
+            aria-label={headlineSentence(firstLine, connector, prefix)}
+        >
+            <span className="flex flex-wrap items-end gap-x-[0.25em]" aria-hidden="true">
+                <span className="grid max-w-full items-end">
+                    {lines.map((entry, index) => (
+                        <span key={index} className={`invisible ${rotatingWordClass}`}>{entry.object}</span>
+                    ))}
+                    <motion.span
+                        key={`object-${frame.index}`}
+                        className={rotatingWordClass}
+                        {...motionProps}
+                        onAnimationComplete={onAnimationComplete}
+                    >
+                        {line.object}
+                    </motion.span>
+                </span>
+                <span className="grid max-w-full grid-cols-[auto_minmax(0,1fr)] items-end gap-x-[0.25em]">
+                    <span>{connector}</span>
+                    <span className="grid items-end">
+                        {lines.map((entry, index) => (
+                            <span key={index} className={`invisible ${rotatingWordClass}`}>
+                                <ReaderWord reader={entry.reader} type={entry.type} />
+                            </span>
+                        ))}
+                        <motion.span key={`reader-${frame.index}`} className={rotatingWordClass} {...motionProps}>
+                            <ReaderWord reader={line.reader} type={line.type} animateIcon={!shouldReduceMotion && frame.phase === "hold"} />
+                        </motion.span>
+                    </span>
+                </span>
             </span>
-            {glitch && (
-                <span
-                    aria-hidden
-                    className="absolute left-0 right-0 h-[2px] bg-emerald-400/30 pointer-events-none"
-                    style={{ animation: "pixelScanline 0.4s linear infinite" }}
-                />
-            )}
-        </span>
+            <span className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-[0.25em]" aria-hidden="true">
+                <span className="whitespace-nowrap">
+                    {prefix} <s className="text-ink-900/75 decoration-mark/75 decoration-2 dark:text-paper-50/75 dark:decoration-mark-light/75">{strike}</s>
+                </span>
+                <span className="grid">
+                    {lines.map((entry, index) => (
+                        <span key={index} className={`invisible ${verbClass}`}>{entry.verb}.</span>
+                    ))}
+                    <motion.span key={`verb-${frame.index}`} className={verbClass} {...motionProps}>
+                        {line.verb}.
+                    </motion.span>
+                </span>
+            </span>
+        </h1>
     );
 }
 
-function RotatingWord({ items = ["Pixel", "Word", "Click"] }) {
-    const [idx, setIdx] = useState(0);
-    useEffect(() => { const id = setInterval(() => setIdx((i) => (i + 1) % items.length), 5000); return () => clearInterval(id); }, [items.length]);
-    const active = items[idx];
-    return (
-        <span className="inline-block align-baseline">
-            <motion.span key={active} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
-                {active === "Pixel" ? <PixelWord word="Pixel" /> : active === "Word" ? <TypingWord word="Word" /> : active === "Click" ? <ClickWord word="Click" /> : <PaintedWord word={active} />}
-            </motion.span>
-        </span>
-    );
-}
+/* ------------------------------- Floating header ------------------------------ */
+const PORTFOLIO_NAV_ITEMS = [
+    { id: "latest", label: "Published" },
+    { id: "work", label: "Experience" },
+    { id: "projects", label: "Projects" },
+    { id: "clients", label: "Clients" },
+    { id: "skills", label: "Skills" },
+    { id: "about", label: "About" },
+    { id: "community", label: "Community" },
+    { id: "writing", label: "Writing" },
+    { id: "contact", label: "Contact" },
+];
 
-/* ------------------------------ Floating Navbar ----------------------------- */
-function Header({ theme, setTheme }) {
+function Header({ theme, setTheme, hasWriting }) {
     const shouldReduceMotion = useReducedMotion();
+    const mobileMenu = useRef(null);
+    const [activeSection, setActiveSection] = useState(null);
+    const closeMobileMenu = () => { mobileMenu.current.open = false; };
+    const navItems = PORTFOLIO_NAV_ITEMS.filter(({ id }) => id !== "writing" || hasWriting);
+
+    useEffect(() => {
+        const sections = PORTFOLIO_NAV_ITEMS
+            .map(({ id }) => document.getElementById(id))
+            .filter(Boolean)
+            .reverse();
+        const lastSection = sections[0];
+        if (!lastSection) return;
+
+        let frameId = null;
+        const update = () => {
+            frameId = null;
+            // Allow for small layout shifts while a smooth anchor scroll is in progress.
+            const readingLine = parseFloat(getComputedStyle(lastSection).scrollMarginTop) + 24;
+            const atBottom = window.scrollY > 0 &&
+                window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
+            const current = atBottom
+                ? lastSection
+                : sections.find((section) => section.getBoundingClientRect().top <= readingLine);
+            setActiveSection(current?.id ?? null);
+        };
+        const schedule = () => {
+            if (frameId === null) frameId = window.requestAnimationFrame(update);
+        };
+        const resizeObserver = new ResizeObserver(schedule);
+        resizeObserver.observe(lastSection.closest("main"));
+        window.addEventListener("scroll", schedule, { passive: true });
+        window.addEventListener("resize", schedule);
+        schedule();
+
+        return () => {
+            if (frameId !== null) window.cancelAnimationFrame(frameId);
+            resizeObserver.disconnect();
+            window.removeEventListener("scroll", schedule);
+            window.removeEventListener("resize", schedule);
+        };
+    }, [hasWriting]);
 
     return (
-        <header className="fixed top-2 z-50 w-full px-2 sm:px-4">
-            <div className="mx-auto w-[95vw] md:w-[85vw] rounded-full border border-zinc-200/60 dark:border-zinc-800/60 bg-white/70 dark:bg-black/40 backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition">
-                <div className="flex items-center justify-between px-4 sm:px-6 py-2.5">
-                    <a href="#top" className="min-w-0"><LogoNE /></a>
-                    <nav className="hidden md:flex items-center gap-6 text-sm text-zinc-700 dark:text-zinc-300">
-                        {[{id:"latest",label:"Published"},{id:"work",label:"Experience"},{id:"projects",label:"Projects"},{id:"clients",label:"Clients"},{id:"skills",label:"Skills"},{id:"about",label:"About"},{id:"community",label:"Community"},{id:"contact",label:"Contact"}].map(({id, label}) => (
-                            <a key={id} href={`#${id}`} className="relative hover:text-zinc-900 dark:hover:text-white after:content-[''] after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-0 hover:after:w-full after:rounded-full after:transition-all after:duration-300 after:bg-[linear-gradient(90deg,#10b981,#22d3ee,#a78bfa)]">
+        <header className="fixed top-0 z-50 w-full px-3 sm:px-5 pt-3">
+            <div className="mx-auto max-w-6xl rounded-sm border border-ink-900/15 dark:border-paper-50/15 bg-paper-50/90 dark:bg-ink-900/85 backdrop-blur-xl shadow-[0_2px_0_0_rgba(27,26,23,0.08)]">
+                <div className="flex items-center justify-between gap-4 px-4 sm:px-5 py-2.5">
+                    <DocMarkLink className="inline-flex shrink-0" />
+                    <nav aria-label="Portfolio sections" className="hidden lg:flex items-center gap-4 xl:gap-5 font-mono text-[11px] uppercase tracking-widest text-ink-700 dark:text-paper-200">
+                        {navItems.map(({ id, label }) => (
+                            <a key={id} href={`#${id}`} aria-current={activeSection === id ? "location" : undefined} className="portfolio-nav-link relative py-1 hover:text-mark dark:hover:text-mark-light transition-colors">
                                 {label}
                             </a>
                         ))}
                     </nav>
                     <div className="flex items-center gap-2">
-                        <MagneticButton
-                            href="#contact"
-                            className="hue-cta inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-white shadow transition bg-[linear-gradient(90deg,#10b981,#22d3ee,#a78bfa,#10b981)] hover:scale-[1.02] active:scale-[0.98]"
+                        <StampButton href="#contact" className="!px-4 !py-2 !text-xs hidden sm:inline-flex">
+                            <Mail className="h-3.5 w-3.5" /> Let's talk
+                        </StampButton>
+                        <details
+                            ref={mobileMenu}
+                            className="relative lg:hidden"
+                            onKeyDown={(event) => {
+                                if (event.key !== "Escape") return;
+                                closeMobileMenu();
+                                mobileMenu.current.querySelector("summary").focus();
+                            }}
                         >
-                            <Mail className="h-4 w-4" />
-                            Let's talk
-                            <ArrowRight className="h-4 w-4" />
-                        </MagneticButton>
-                        <div className="relative">
-                            <motion.button
-                                aria-label="Toggle dark mode"
-                                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                                className="ml-1 rounded-full p-2 hover:bg-black/5 dark:hover:bg-white/10"
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.9 }}
-                            >
-                                <AnimatePresence mode="wait">
-                                    {theme === "dark" ? (
-                                        <motion.div
-                                            key="sun"
-                                            initial={shouldReduceMotion ? {} : { rotate: -90, scale: 0 }}
-                                            animate={{ rotate: 0, scale: 1 }}
-                                            exit={shouldReduceMotion ? {} : { rotate: 90, scale: 0 }}
-                                            transition={{ duration: 0.2 }}
-                                        >
-                                            <Sun className="h-5 w-5" />
-                                        </motion.div>
-                                    ) : (
-                                        <motion.div
-                                            key="moon"
-                                            initial={shouldReduceMotion ? {} : { rotate: 90, scale: 0 }}
-                                            animate={{ rotate: 0, scale: 1 }}
-                                            exit={shouldReduceMotion ? {} : { rotate: -90, scale: 0 }}
-                                            transition={{ duration: 0.2 }}
-                                        >
-                                            <Moon className="h-5 w-5" />
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </motion.button>
-                        </div>
+                            <summary aria-label="Sections" className="list-none cursor-pointer rounded-sm border border-ink-900/15 p-2 dark:border-paper-50/15 [&::-webkit-details-marker]:hidden">
+                                <Menu className="h-4 w-4" aria-hidden="true" />
+                            </summary>
+                            <nav aria-label="Portfolio sections" className="absolute right-0 mt-2 grid max-h-[calc(100dvh-5rem)] w-44 gap-1 overflow-y-auto rounded-sm border border-ink-900/15 bg-paper-50 p-2 shadow-lg dark:border-paper-50/15 dark:bg-ink-900">
+                                <DocMarkLink onClick={closeMobileMenu} className="flex items-center gap-2 border-b border-dashed border-ink-900/20 px-2 py-2 text-sm hover:text-mark dark:border-paper-50/20 dark:hover:text-mark-light">
+                                    Back to top
+                                </DocMarkLink>
+                                {navItems.map(({ id, label }) => (
+                                    <a key={id} href={`#${id}`} aria-current={activeSection === id ? "location" : undefined} onClick={closeMobileMenu} className="portfolio-nav-link relative px-2 py-2 text-sm hover:text-mark dark:hover:text-mark-light">
+                                        {label}
+                                    </a>
+                                ))}
+                            </nav>
+                        </details>
+                        <motion.button
+                            aria-label="Toggle dark mode"
+                            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                            className="rounded-sm p-2 border border-ink-900/15 dark:border-paper-50/15 hover:border-mark"
+                            whileTap={shouldReduceMotion ? undefined : { scale: 0.9 }}
+                        >
+                            <AnimatePresence mode="wait">
+                                {theme === "dark" ? (
+                                    <motion.div key="sun" initial={shouldReduceMotion ? {} : { rotate: -90, scale: 0 }} animate={{ rotate: 0, scale: 1 }} exit={shouldReduceMotion ? {} : { rotate: 90, scale: 0 }} transition={{ duration: 0.2 }}>
+                                        <Sun className="h-4 w-4 text-paper-50" />
+                                    </motion.div>
+                                ) : (
+                                    <motion.div key="moon" initial={shouldReduceMotion ? {} : { rotate: 90, scale: 0 }} animate={{ rotate: 0, scale: 1 }} exit={shouldReduceMotion ? {} : { rotate: -90, scale: 0 }} transition={{ duration: 0.2 }}>
+                                        <Moon className="h-4 w-4 text-ink-900" />
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </motion.button>
                     </div>
                 </div>
             </div>
         </header>
     );
 }
+
 /* --------------------------------- Layout ---------------------------------- */
 export default function Portfolio() {
-    useInlineStyles();
-    useTypeform();
     const { theme, setTheme } = useTheme();
+    const mediumProfile = contentData.SOCIALS.medium || "https://nijanthanelangovan.medium.com";
+    const mediumPosts = useMediumPosts(`${mediumProfile.replace(/\/$/, "")}/feed`, 6);
+    const latestPost = mediumPosts[0];
 
     useLayoutEffect(() => {
-        // FIX: Removed the dynamic font <link> creation from here as it's now handled in useInlineStyles.
         document.documentElement.style.overflowX = "clip";
         document.body.style.overflowX = "clip";
-
         const setMeta = (name, value) => {
             let el = document.querySelector(`meta[name="${name}"]`);
             if (!el) { el = document.createElement("meta"); el.setAttribute("name", name); document.head.appendChild(el); }
             el.setAttribute("content", value);
         };
-        setMeta("x-build-version", "v1");
+        setMeta("x-build-version", "v2");
         setMeta("x-build-time", new Date().toISOString());
-
     }, []);
 
     const PROFILE_V = contentData.PROFILE;
@@ -659,263 +695,155 @@ export default function Portfolio() {
     const CERTS_V = contentData.CERTS;
     const SKILLS_V = contentData.SKILLS;
     const COMMUNITY_V = contentData.COMMUNITY;
-    const NOW_V = contentData.NOW || {
-        title: "Senior Tech Writer Associate",
-        company: "Google Operations Center",
-        link: "#work",
-        bullets: [
-            "Help Center articles & internal docs for Google Ads",
-            "AI-assisted chatbot scripts & flows",
-            "Cross-functional launch communications"
-        ]
-    };
-
-    const HERO_V = contentData.HERO || { words: ["Design", "Word", "Click"] };
-    const UI_V = contentData.UI || {
-        hero: { line1: "Creating Strategic", line2_prefix: "Impact, One", line3: "at a time." },
-        latest: { eyebrow: "Fresh", title: "Latest Published Work" },
-        work: { eyebrow: "Experience", title: "Selected Work" },
-        projects: { eyebrow: "Case Studies", title: "Projects & Impact" },
-        clients: { eyebrow: "Trusted by", "title": "Clients & Collaborations" },
-        skills: { eyebrow: "Toolbox", title: "Skills & Superpowers" },
-        about: { eyebrow: "Story", title: "About Nijanthan" },
-        community: { eyebrow: "Shoutout", title: "Community & Causes" },
-        contact: { eyebrow: "Say hello", title: "Let’s build something clear & beautiful" },
-        footer: "Built with care."
-    };
-
-    // Construct Schema.org structured data (Person + WebSite)
-    const personSchema = {
-        "@context": "https://schema.org",
-        "@graph": [
-            {
-                "@type": "Person",
-                "@id": "https://njthnelvgn.com/#person",
-                "name": PROFILE_V.name,
-                "givenName": "Nijanthan",
-                "familyName": "Elangovan",
-                "jobTitle": PROFILE_V.roles[0],
-                "description": PROFILE_V.summary,
-                "url": "https://njthnelvgn.com",
-                "image": "https://res.cloudinary.com/nijanthan/image/upload/f_auto,q_auto/v1765621694/all-devices-white_fi2jmy.png",
-                "email": PROFILE_V.email,
-                "telephone": PROFILE_V.phone,
-                "address": {
-                    "@type": "PostalAddress",
-                    "addressLocality": "Hyderabad",
-                    "addressCountry": "IN"
-                },
-                "sameAs": [
-                    SOCIALS_V.linkedin,
-                    SOCIALS_V.github
-                ].filter(Boolean),
-                "knowsAbout": SKILLS_V,
-                "worksFor": {
-                    "@type": "Organization",
-                    "name": "Google Operations Center",
-                    "url": "https://about.google/"
-                },
-                "alumniOf": EDUCATION_V.map(e => ({
-                    "@type": "EducationalOrganization",
-                    "name": e.school
-                })),
-                "hasCredential": CERTS_V.map(c => ({
-                    "@type": "EducationalOccupationalCredential",
-                    "name": c.name,
-                    "credentialCategory": "certificate",
-                    "recognizedBy": { "@type": "Organization", "name": c.issuer }
-                }))
-            },
-            {
-                "@type": "WebSite",
-                "@id": "https://njthnelvgn.com/#website",
-                "url": "https://njthnelvgn.com",
-                "name": `${PROFILE_V.name} | ${PROFILE_V.roles[0]}`,
-                "description": PROFILE_V.summary,
-                "publisher": { "@id": "https://njthnelvgn.com/#person" }
-            },
-            {
-                "@type": "ProfilePage",
-                "@id": "https://njthnelvgn.com/#profilepage",
-                "url": "https://njthnelvgn.com",
-                "name": `${PROFILE_V.name} | Portfolio`,
-                "mainEntity": { "@id": "https://njthnelvgn.com/#person" }
-            }
-        ]
-    };
+    const NOW_V = contentData.NOW;
+    const HERO_V = contentData.HERO;
+    const UI_V = contentData.UI;
 
     return (
-        <div className="min-h-screen w-full overflow-x-clip bg-transparent text-zinc-900 dark:text-zinc-50 antialiased" style={{ fontFamily: '"Host Grotesk", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial' }}>
-            <SEO
-                title={`${PROFILE_V.name} | ${PROFILE_V.roles[0]}`}
-                description={PROFILE_V.summary}
-                canonical="https://njthnelvgn.com"
-                openGraph={{
-                    type: 'website',
-                    image: 'https://res.cloudinary.com/nijanthan/image/upload/f_auto,q_auto/v1765621694/all-devices-white_fi2jmy.png',
-                    title: `${PROFILE_V.name} | ${PROFILE_V.roles[0]}`,
-                    description: PROFILE_V.summary,
-                    siteName: 'Nijanthan Elangovan'
-                }}
-                schema={personSchema}
-            />
+        <div className="portfolio isolate min-h-screen w-full overflow-x-clip bg-transparent text-ink-900 dark:text-paper-100 antialiased font-sans">
             <ScrollProgress />
             <InteractiveBackground />
-            <Header theme={theme} setTheme={setTheme} />
-            <main id="top" className="pt-20">
-                <section className="w-full px-4 sm:px-6 pt-16 pb-12 sm:pb-16">
-                    <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            <Header theme={theme} setTheme={setTheme} hasWriting={mediumPosts.length > 0} />
+
+            <main id="top" className="pt-24">
+                {/* Hero */}
+                <section className="w-full px-4 sm:px-6 pt-20 sm:pt-28 pb-12 sm:pb-16">
+                    <div className="mx-auto max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
                         <div className="lg:col-span-7 min-w-0">
-                            {/* FIX: Restructured h1 with <span>s and "block" class to force three lines */}
-                            <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: "easeOut" }} className="text-4xl sm:text-6xl font-semibold tracking-tight leading-[1.05] text-zinc-900 dark:text-zinc-50">
-                                <span className="block">{UI_V.hero.line1}</span>
-                                <span className="block">{UI_V.hero.line2_prefix} <RotatingWord items={HERO_V.words} /></span>
-                                <span className="block">{UI_V.hero.line3}</span>
-                            </motion.h1>
-                            <p className="mt-6 max-w-2xl text-zinc-700 dark:text-zinc-300">{PROFILE_V.summary}</p>
+                            <HeroHeadline connector={UI_V.hero.connector} prefix={UI_V.hero.prefix} strike={HERO_V.strike} lines={HERO_V.lines} />
+                            <p className="mt-4 max-w-xl text-ink-700 dark:text-paper-200 leading-relaxed">{PROFILE_V.summary}</p>
                             <div className="mt-8 flex flex-wrap items-center gap-3">
-                                <MagneticButton
-                                    href="#contact"
-                                    className="hue-cta inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-medium text-white shadow transition [background-size:300%_300%] animate-[gradientShift_6s_ease_infinite] bg-[linear-gradient(90deg,#10b981,#22d3ee,#a78bfa,#10b981)] hover:scale-[1.02] active:scale-[0.98]"
-                                >
-                                    <Mail className="h-4 w-4" /> Contact me <ArrowRight className="h-4 w-4" />
-                                </MagneticButton>
+                                <StampButton href="#contact"><Mail className="h-4 w-4" /> Contact me <ArrowRight className="h-4 w-4" /></StampButton>
                                 {LINKS_V.resume !== "#" && (
-                                    <motion.a
-                                        href={LINKS_V.resume}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="inline-flex items-center gap-2 rounded-full border border-zinc-300/70 dark:border-zinc-700/70 px-5 py-3 text-sm font-medium text-zinc-900 dark:text-zinc-50 hover:bg-zinc-900/5 dark:hover:bg-white/10"
-                                        whileHover={{ scale: 1.05, borderColor: "rgba(16, 185, 129, 0.5)" }}
-                                        whileTap={{ scale: 0.95 }}
-                                    >
-                                        <FileDown className="h-4 w-4" /> Resume
-                                    </motion.a>
+                                    <StampButton href={LINKS_V.resume} variant="outline"><FileDown className="h-4 w-4" /> Resume</StampButton>
                                 )}
-                                <motion.a
-                                    href={SOCIALS_V.linkedin}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="inline-flex items-center gap-2 rounded-full border border-zinc-300/70 dark:border-zinc-700/70 px-5 py-3 text-sm font-medium text-zinc-900 dark:text-zinc-50 hover:bg-zinc-900/5 dark:hover:bg-white/10"
-                                    whileHover={{ scale: 1.05, borderColor: "rgba(16, 185, 129, 0.5)" }}
-                                    whileTap={{ scale: 0.95 }}
-                                >
-                                    <Linkedin className="h-4 w-4" /> LinkedIn
-                                </motion.a>
+                                <StampButton href={SOCIALS_V.linkedin} variant="outline"><Linkedin className="h-4 w-4" /> LinkedIn</StampButton>
+                                {SOCIALS_V.github && (
+                                    <StampButton href={SOCIALS_V.github} variant="outline"><Github className="h-4 w-4" /> GitHub</StampButton>
+                                )}
                             </div>
-                            <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-zinc-600 dark:text-zinc-400">
+                            <div className="mt-7 flex flex-wrap items-center gap-3 text-sm text-ink-700 dark:text-paper-300">
                                 <span className="inline-flex items-center gap-2"><MapPin className="h-4 w-4" /> {PROFILE_V.location}</span>
-                                <span className="inline-flex items-center gap-2"><Calendar className="h-4 w-4" /> 5+ years experience</span>
-                                <Chip>{PROFILE_V.availability}</Chip>
+                                <span className="inline-flex items-center gap-2"><Calendar className="h-4 w-4" /> 5+ years</span>
+                                <Tag>{PROFILE_V.availability}</Tag>
+                                {PROFILE_V.roles.slice(1).map((r) => <Tag key={r}>{r}</Tag>)}
                             </div>
                         </div>
-                        {/* Spotlight card with pulsing dot BEFORE "Now" */}
+
                         <div className="lg:col-span-5 min-w-0">
-                            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: "spring", stiffness: 400, damping: 20 }}>
-                                <Card>
-                                    <div className="relative p-6 sm:p-8">
-                                        <div className="mb-4 text-xs uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
-                                            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                                            Now
+                            <Card tabLabel="Current Role">
+                                <SpinningBadge text={PROFILE_V.badge} />
+                                <div className="relative p-6 sm:p-8">
+                                    <h3 className="text-xl sm:text-2xl font-display font-semibold text-ink-900 dark:text-paper-50">{NOW_V.title}</h3>
+                                    <p className="mt-1 text-ink-700 dark:text-paper-300 italic">{NOW_V.company}</p>
+                                    <ul className="mt-4 space-y-2 text-sm text-ink-800 dark:text-paper-200">
+                                        {NOW_V.bullets.map((bullet, i) => (
+                                            <li key={i} className="flex gap-2"><span className="font-mono text-mark">›</span>{bullet}</li>
+                                        ))}
+                                    </ul>
+                                    <a href={NOW_V.link} className="mt-6 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-mark dark:text-mark-light hover:underline">
+                                        See full experience <ArrowRight className="h-3.5 w-3.5" />
+                                    </a>
+                                </div>
+                            </Card>
+                            {latestPost && (
+                                <Card className="mt-6" tabLabel="Latest Writing">
+                                    <a href={latestPost.href} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-4 p-5 sm:p-6">
+                                        {latestPost.thumbnail && (
+                                            <div className="aspect-[4/3] w-20 shrink-0 overflow-hidden rounded-sm border border-ink-900/15 bg-paper-100 dark:border-paper-50/15 dark:bg-ink-700 sm:w-28">
+                                                <img
+                                                    src={optimizeImage(latestPost.thumbnail, 224)}
+                                                    alt=""
+                                                    width="112"
+                                                    height="84"
+                                                    decoding="async"
+                                                    className="h-full w-full object-cover motion-safe:transition motion-safe:group-hover:scale-105"
+                                                />
+                                            </div>
+                                        )}
+                                        <div className="min-w-0">
+                                            <h3 className="font-display font-semibold leading-snug text-ink-900 transition-colors group-hover:text-mark dark:text-paper-50 dark:group-hover:text-mark-light">{latestPost.title}</h3>
+                                            <span className="mt-2 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-mark dark:text-mark-light">
+                                                Read on Medium <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
+                                            </span>
                                         </div>
-                                        <h3 className="text-xl sm:text-2xl font-semibold">{NOW_V.title}</h3>
-                                        <p className="mt-1 text-zinc-600 dark:text-zinc-400">{NOW_V.company}</p>
-                                        <ul className="mt-4 space-y-2 text-sm text-zinc-700 dark:text-zinc-300 list-disc list-inside">
-                                            {NOW_V.bullets.map((bullet, i) => (
-                                                <li key={i}>{bullet}</li>
-                                            ))}
-                                        </ul>
-                                        <a href={NOW_V.link} className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-emerald-700 dark:text-emerald-400 hover:underline">See experience <ArrowRight className="h-4 w-4" /></a>
-                                    </div>
+                                    </a>
                                 </Card>
-                            </motion.div>
+                            )}
                         </div>
                     </div>
                 </section>
 
-                {/* Latest Published Work */}
+                {/* Latest */}
                 <Section id="latest" eyebrow={UI_V.latest.eyebrow} title={UI_V.latest.title}>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(0,1fr)]">
-                        {LATEST_V.filter(item => item.featured !== false).map((item, i) => {
+                        {LATEST_V.filter((item) => item.featured !== false).map((item) => {
                             const yt = item.kind === "Video" ? getYouTubeId(item.href) : null;
                             return (
-                                <Card key={item.title}>
+                                <Card key={item.href}>
                                     <a href={item.href} target="_blank" rel="noopener noreferrer" className="block h-full group">
-                                        <div className="relative aspect-video w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
+                                        <div className="relative aspect-video w-full overflow-hidden bg-paper-100 dark:bg-ink-700 border-b border-dashed border-ink-900/20 dark:border-paper-50/15">
                                             {yt ? (
-                                                <img
-                                                    src={`https://img.youtube.com/vi/${yt}/hqdefault.jpg`}
-                                                    alt={item.title}
-                                                    loading="lazy"
-                                                    decoding="async"
-                                                    width="480"
-                                                    height="360"
-                                                    className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                                                />
+                                                <img src={`https://img.youtube.com/vi/${yt}/hqdefault.jpg`} alt={item.title} loading="lazy" decoding="async" width="480" height="360" className="h-full w-full object-cover motion-safe:transition duration-500 motion-safe:group-hover:scale-105" />
                                             ) : item.thumbnail ? (
                                                 <img
                                                     src={optimizeImage(item.thumbnail)}
-                                                    srcSet={`
-                                                        ${optimizeImage(item.thumbnail, 400)} 400w,
-                                                        ${optimizeImage(item.thumbnail, 800)} 800w,
-                                                        ${optimizeImage(item.thumbnail, 1200)} 1200w
-                                                    `}
+                                                    srcSet={`${optimizeImage(item.thumbnail, 400)} 400w, ${optimizeImage(item.thumbnail, 800)} 800w, ${optimizeImage(item.thumbnail, 1200)} 1200w`}
                                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                                     alt={item.title}
                                                     loading="lazy"
                                                     decoding="async"
-                                                    className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                                                    className="h-full w-full object-cover motion-safe:transition duration-500 motion-safe:group-hover:scale-105"
                                                 />
                                             ) : (
-                                                <div className="flex h-full items-center justify-center text-zinc-400"><ArrowUpRight className="h-8 w-8 opacity-50" /></div>
+                                                <div className="flex h-full items-center justify-center text-ink-700/40 dark:text-paper-200/30"><ArrowUpRight className="h-8 w-8" /></div>
                                             )}
-                                            {item.kind === "Video" && <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/10 transition"><div className="rounded-full bg-white/90 p-3 shadow-lg backdrop-blur-sm"><Play className="h-5 w-5 fill-black text-black ml-0.5" /></div></div>}
+                                            {item.kind === "Video" && (
+                                                <div className="absolute inset-0 flex items-center justify-center bg-ink-900/20 group-hover:bg-ink-900/10 transition">
+                                                    <div className="rounded-sm bg-paper-50/95 p-3 border-2 border-ink-900"><Play className="h-5 w-5 fill-ink-900 text-ink-900 ml-0.5" /></div>
+                                                </div>
+                                            )}
                                         </div>
                                         <div className="p-6">
                                             <div className="flex items-center justify-between gap-4">
-                                                <div className="flex items-center gap-2 text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                                                <div className="flex items-center gap-2 font-mono text-[11px] text-ink-700 dark:text-paper-300 uppercase tracking-wider">
                                                     {item.kind === "Video" ? <Video className="h-3 w-3" /> : <Newspaper className="h-3 w-3" />}
                                                     {item.meta}
                                                 </div>
-                                                <ArrowUpRight className="h-4 w-4 text-zinc-400 transition group-hover:text-emerald-500 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                                                <ArrowUpRight className="h-4 w-4 text-ink-700/40 dark:text-paper-200/40 transition group-hover:text-mark" />
                                             </div>
-                                            <h3 className="mt-3 text-lg font-semibold leading-tight text-zinc-900 dark:text-zinc-50 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition">{item.title}</h3>
+                                            <h3 className="mt-3 text-lg font-display font-semibold leading-tight text-ink-900 dark:text-paper-50 group-hover:text-mark dark:group-hover:text-mark-light transition">{item.title}</h3>
                                         </div>
                                     </a>
                                 </Card>
                             );
                         })}
                     </div>
-                    {/* Scrollable Non-Featured Items */}
-                    {LATEST_V.filter(item => item.featured === false).length > 0 && (
-                        <div className="mt-6 flex gap-4 overflow-x-auto pb-4 snap-x">
-                            {LATEST_V.filter(item => item.featured === false).map((item, i) => (
-                                <a key={i} href={item.href} target="_blank" rel="noopener noreferrer" className="snap-start shrink-0 w-64 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4 hover:border-emerald-500/50 transition group">
-                                    <div className="flex items-start justify-between gap-2">
-                                        <h4 className="font-medium text-sm text-zinc-900 dark:text-zinc-100 line-clamp-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">{item.title}</h4>
-                                        <ArrowUpRight className="h-3 w-3 text-zinc-400 shrink-0" />
-                                    </div>
-                                    <div className="mt-2 text-xs text-zinc-500">{item.meta}</div>
-                                </a>
-                            ))}
-                        </div>
-                    )}
                 </Section>
-                {/* Work Experience */}
+
+                {/* Work / revision history */}
                 <Section id="work" eyebrow={UI_V.work.eyebrow} title={UI_V.work.title}>
-                    <div className="grid grid-cols-1 gap-6">
+                    <div className="relative pl-6 sm:pl-8 border-l border-dashed border-ink-900/25 dark:border-paper-50/20 space-y-6">
                         {EXPERIENCE_V.map((job, i) => (
-                            <motion.div key={job.company + job.title} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-20%" }} transition={{ duration: 0.5, delay: i * 0.04 }} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                                <Card className="h-full">
+                            <motion.div
+                                key={job.company + job.title}
+                                className="relative"
+                                initial={{ opacity: 0, y: 12 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, margin: "-15%" }}
+                                transition={{ duration: 0.4, delay: i * 0.05 }}
+                            >
+                                <span className="absolute -left-[29px] sm:-left-[37px] top-7 h-2.5 w-2.5 rounded-sm bg-mark border border-ink-900 dark:border-paper-50" />
+                                <Card>
                                     <div className="p-6 sm:p-8">
                                         <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2">
-                                            <h3 className="text-xl font-semibold">{job.title}</h3>
-                                            <div className="text-sm text-zinc-600 dark:text-zinc-400">{job.range}</div>
+                                            <h3 className="text-xl font-display font-semibold text-ink-900 dark:text-paper-50">{job.title}</h3>
+                                            <div className="font-mono text-xs text-ink-700 dark:text-paper-300">{job.range}</div>
                                         </div>
-                                        <div className="mt-1 text-zinc-700 dark:text-zinc-300">{job.company}</div>
-                                        <ul className="mt-4 grid gap-2 text-sm text-zinc-700 dark:text-zinc-300 list-disc list-inside">
+                                        <div className="mt-1 text-ink-700 dark:text-paper-300 italic">{job.company}</div>
+                                        <ul className="mt-4 grid gap-2 text-sm text-ink-800 dark:text-paper-200">
                                             {job.bullets.map((b) => (
-                                                <li key={b} className="transition-colors hover:text-zinc-900 dark:hover:text-zinc-100">{b}</li>
+                                                <li key={b} className="flex gap-2"><span className="font-mono text-mark shrink-0">›</span><span>{b}</span></li>
                                             ))}
                                         </ul>
                                     </div>
@@ -924,180 +852,202 @@ export default function Portfolio() {
                         ))}
                     </div>
                 </Section>
-                {/* Projects */}
+
+                {/* Projects / case files */}
                 <Section id="projects" eyebrow={UI_V.projects.eyebrow} title={UI_V.projects.title}>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 auto-rows-[minmax(0,1fr)]">
-                        {PROJECTS_V.filter(p => p.featured !== false).map((p, i) => (
-                            <motion.div key={p.title} className="h-full" initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-20%" }} transition={{ duration: 0.5, delay: i * 0.06 }} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                                <Card>
-                                    <div className={`block h-full p-6 sm:p-8 ${p.href && p.href !== '#' ? 'cursor-pointer' : ''}`} onClick={() => { if (p.href && p.href !== '#') window.open(p.href, '_blank', 'noopener,noreferrer'); }}>
-                                        <div className="flex items-start justify-between gap-4">
-                                            <div className="flex flex-wrap gap-2">
-                                                {p.meta.map((m) => (
-                                                    <span key={m} className="inline-flex items-center rounded-full bg-zinc-100 dark:bg-zinc-800 px-2.5 py-0.5 text-xs font-medium text-zinc-600 dark:text-zinc-400">{m}</span>
-                                                ))}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8 auto-rows-[minmax(0,1fr)]">
+                        {PROJECTS_V.filter((p) => p.featured !== false).map((p, i) => {
+                            const isLinked = p.href && p.href !== "#";
+                            const ProjectContent = isLinked ? "a" : "div";
+                            const link = isLinked ? { href: p.href, target: "_blank", rel: "noopener noreferrer" } : undefined;
+                            return (
+                                <motion.div
+                                    key={p.title}
+                                    className="h-full"
+                                    initial={{ opacity: 0, y: 16 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, margin: "-15%" }}
+                                    transition={{ duration: 0.4, delay: i * 0.06 }}
+                                >
+                                    <Card tabLabel={p.category} className="h-full">
+                                        <ProjectContent {...link} className="block h-full p-6 sm:p-8 pt-7">
+                                            <div className="flex items-start justify-between gap-4">
+                                                <h3 className="text-xl font-display font-semibold text-ink-900 dark:text-paper-50">{p.title}</h3>
+                                                {isLinked && <ArrowUpRight className="h-5 w-5 text-ink-700/40 dark:text-paper-200/40 shrink-0" />}
                                             </div>
-                                            {p.href && p.href !== '#' && <ArrowUpRight className="h-5 w-5 text-zinc-400" />}
-                                        </div>
-                                        <h3 className="mt-4 text-xl font-bold text-zinc-900 dark:text-zinc-50">{p.title}</h3>
-                                        <p className="mt-2 text-zinc-600 dark:text-zinc-400 leading-relaxed">{p.blurb}</p>
-                                        {p.thumbnail && (
-                                            <img
-                                                src={optimizeImage(p.thumbnail)}
-                                                srcSet={`
-                                                    ${optimizeImage(p.thumbnail, 400)} 400w,
-                                                    ${optimizeImage(p.thumbnail, 800)} 800w
-                                                `}
-                                                sizes="(max-width: 768px) 100vw, 50vw"
-                                                alt={p.title}
-                                                className="mt-4 w-full h-48 object-cover rounded-lg"
-                                                loading="lazy"
-                                                decoding="async"
-                                            />
-                                        )}
-                                    </div>
-                                </Card>
-                            </motion.div>
-                        ))}
+                                            <p className="mt-3 text-ink-700 dark:text-paper-300 leading-relaxed text-sm">{p.blurb}</p>
+                                            <div className="mt-4 flex flex-wrap gap-2">
+                                                {p.meta.map((m) => <Tag key={m}>{m}</Tag>)}
+                                            </div>
+                                            {p.thumbnail && (
+                                                <img
+                                                    src={optimizeImage(p.thumbnail)}
+                                                    srcSet={`${optimizeImage(p.thumbnail, 400)} 400w, ${optimizeImage(p.thumbnail, 800)} 800w`}
+                                                    sizes="(max-width: 768px) 100vw, 50vw"
+                                                    alt={p.title}
+                                                    className="mt-4 w-full h-48 object-cover rounded-sm border border-dashed border-ink-900/20 dark:border-paper-50/15"
+                                                    loading="lazy"
+                                                    decoding="async"
+                                                />
+                                            )}
+                                        </ProjectContent>
+                                    </Card>
+                                </motion.div>
+                            );
+                        })}
                     </div>
-                    {/* Scrollable Non-Featured Projects */}
-                    {PROJECTS_V.filter(p => p.featured === false).length > 0 && (
-                        <div className="mt-6 flex gap-4 overflow-x-auto pb-4 snap-x">
-                            {PROJECTS_V.filter(p => p.featured === false).map((p, i) => (
-                                <a key={i} href={p.href || '#'} className="snap-start shrink-0 w-72 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-5 hover:border-emerald-500/50 transition group">
-                                    <div className="flex items-start justify-between gap-2">
-                                        <h4 className="font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">{p.title}</h4>
-                                        {p.href && p.href !== '#' && <ArrowUpRight className="h-4 w-4 text-zinc-400 shrink-0" />}
-                                    </div>
-                                    <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2">{p.blurb}</p>
-                                    <div className="mt-3 flex flex-wrap gap-1">
-                                        {p.meta.slice(0, 2).map(m => <span key={m} className="text-[10px] bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded text-zinc-500">{m}</span>)}
-                                    </div>
-                                </a>
-                            ))}
-                        </div>
-                    )}
                 </Section>
-                {/* Clients */}
+
+                {/* Clients / credits */}
                 <Section id="clients" eyebrow={UI_V.clients.eyebrow} title={UI_V.clients.title}>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[minmax(0,1fr)]">
-                        {CLIENTS_V.filter(c => c.featured !== false).map((c) => (
-                            <motion.div key={c.name} className="h-full" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                                <Card>
-                                    <a href={c.href} target="_blank" rel="noopener noreferrer" className="block p-6 sm:p-8 h-full">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <div className="h-10 w-10 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-lg font-bold text-zinc-400">{c.name[0]}</div>
-                                            <ArrowUpRight className="h-4 w-4 text-zinc-400" />
-                                        </div>
-                                        <h3 className="font-semibold text-zinc-900 dark:text-zinc-50">{c.name}</h3>
-                                        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{c.blurb}</p>
-                                    </a>
-                                </Card>
-                            </motion.div>
+                        {CLIENTS_V.filter((c) => c.featured !== false).map((c) => (
+                            <Card key={c.name} className="h-full">
+                                <a href={c.href} target="_blank" rel="noopener noreferrer" className="block p-6 h-full group">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div className="h-9 w-9 rounded-sm border border-ink-900/20 dark:border-paper-50/20 flex items-center justify-center font-mono text-sm font-bold text-ink-700 dark:text-paper-200">{c.name[0]}</div>
+                                        <ArrowUpRight className="h-4 w-4 text-ink-700/40 dark:text-paper-200/40 group-hover:text-mark" />
+                                    </div>
+                                    <h3 className="font-display font-semibold text-ink-900 dark:text-paper-50">{c.name}</h3>
+                                    <p className="mt-1 text-sm text-ink-700 dark:text-paper-300">{c.blurb}</p>
+                                </a>
+                            </Card>
                         ))}
                     </div>
-                    {/* Scrollable Non-Featured Clients */}
-                    {CLIENTS_V.filter(c => c.featured === false).length > 0 && (
-                        <div className="mt-6 flex gap-4 overflow-x-auto pb-4 snap-x">
-                            {CLIENTS_V.filter(c => c.featured === false).map((c, i) => (
-                                <a key={i} href={c.href} target="_blank" rel="noopener noreferrer" className="snap-start shrink-0 w-60 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4 hover:border-emerald-500/50 transition">
-                                    <div className="flex items-center gap-3">
-                                        <div className="h-8 w-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-sm font-bold text-zinc-400 shrink-0">{c.name[0]}</div>
-                                        <div>
-                                            <h4 className="font-medium text-sm text-zinc-900 dark:text-zinc-100">{c.name}</h4>
-                                            <p className="text-xs text-zinc-500 truncate w-32">{c.blurb}</p>
-                                        </div>
-                                    </div>
-                                </a>
-                            ))}
-                        </div>
-                    )}
                 </Section>
-                {/* Skills */}
+
+                {/* Skills / spec sheet */}
                 <Section id="skills" eyebrow={UI_V.skills.eyebrow} title={UI_V.skills.title}>
                     <Card>
-                        <motion.div
-                            className="p-6 sm:p-8"
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true, margin: "-10%" }}
-                            variants={containerVariants}
-                        >
-                            <div className="flex flex-wrap gap-2">
-                                {SKILLS_V.map((s, i) => (
-                                    <motion.div key={s} variants={itemVariants}>
-                                        <Chip>{s}</Chip>
-                                    </motion.div>
-                                ))}
-                            </div>
+                        <motion.div className="divide-y divide-dashed divide-ink-900/15 dark:divide-paper-50/15" initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-10%" }} variants={containerVariants}>
+                            {SKILLS_V.map((group) => (
+                                <motion.div key={group.category} variants={itemVariants} className="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-6">
+                                    <div className="sm:w-48 shrink-0 font-mono text-[11px] uppercase tracking-widest text-mark dark:text-mark-light">{group.category}</div>
+                                    <div className="flex flex-wrap gap-2">
+                                        {group.items.map((s) => <Tag key={s}>{s}</Tag>)}
+                                    </div>
+                                </motion.div>
+                            ))}
                         </motion.div>
                     </Card>
                 </Section>
-                {/* About */}
+
+                {/* About / appendix */}
                 <Section id="about" eyebrow={UI_V.about.eyebrow} title={UI_V.about.title}>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(0,1fr)]">
-                        <Card><div className="p-6 sm:p-8"><div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400"><GraduationCap className="h-4 w-4" /> Education</div><ul className="mt-4 space-y-3 text-sm">{EDUCATION_V.map((e) => (<li key={e.school} className="text-zinc-800 dark:text-zinc-200"><div className="font-medium">{e.school}</div><div className="text-zinc-600 dark:text-zinc-400">{e.degree}</div><div className="text-zinc-500 dark:text-zinc-500">{e.year}</div></li>))}</ul></div></Card>
-                        <Card><div className="p-6 sm:p-8"><div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400"><BadgeCheck className="h-4 w-4" /> Certification</div><ul className="mt-4 space-y-3 text-sm">{CERTS_V.map((c) => (<li key={c.name} className="text-zinc-800 dark:text-zinc-200"><div className="font-medium">{c.name}</div><div className="text-zinc-600 dark:text-zinc-400">{c.issuer}</div></li>))}</ul></div></Card>
-                        <Card><div className="p-6 sm:p-8"><div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400"><BookOpen className="h-4 w-4" /> Focus</div><p className="mt-4 text-sm text-zinc-700 dark:text-zinc-300">I write documentation that works on the first read. Whether it’s a Help Center article or an internal SOP, the goal is always clarity — if the reader has to re-read something, the writing needs work. I also do web development and UI design, which helps me understand the products I’m documenting, not just the words around them.</p></div></Card>
+                        <Card>
+                            <div className="p-6 sm:p-8">
+                                <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-ink-700 dark:text-paper-300"><GraduationCap className="h-4 w-4" /> Education</div>
+                                <ul className="mt-4 space-y-3 text-sm">
+                                    {EDUCATION_V.map((e) => (
+                                        <li key={e.school} className="text-ink-800 dark:text-paper-200">
+                                            <div className="font-medium font-display">{e.school}</div>
+                                            <div className="text-ink-700 dark:text-paper-300">{e.degree}</div>
+                                            <div className="font-mono text-xs text-ink-700/60 dark:text-paper-300/60">{e.year}</div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </Card>
+                        <Card>
+                            <div className="p-6 sm:p-8">
+                                <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-ink-700 dark:text-paper-300"><BadgeCheck className="h-4 w-4" /> Certification</div>
+                                <ul className="mt-4 space-y-3 text-sm">
+                                    {CERTS_V.map((c) => (
+                                        <li key={c.name} className="text-ink-800 dark:text-paper-200">
+                                            <div className="font-medium font-display">{c.name}</div>
+                                            <div className="text-ink-700 dark:text-paper-300">{c.issuer}</div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </Card>
+                        <Card>
+                            <div className="p-6 sm:p-8">
+                                <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-ink-700 dark:text-paper-300"><BookOpen className="h-4 w-4" /> Focus</div>
+                                <p className="mt-4 text-sm text-ink-700 dark:text-paper-300 leading-relaxed">
+                                    My background in web development and UI design helps me trace where users get stuck and decide whether they need a clearer article, a better screenshot, or a fix in the interface.
+                                </p>
+                            </div>
+                        </Card>
                     </div>
                 </Section>
-                {/* Community */}
+
+                {/* Community / footnote */}
                 <Section id="community" eyebrow={UI_V.community.eyebrow} title={UI_V.community.title}>
                     <Card>
-                        <a href={COMMUNITY_V.href} target="_blank" rel="noopener noreferrer" className="block">
+                        <a href={COMMUNITY_V.href} target="_blank" rel="noopener noreferrer" className="block border-l-4 border-mark">
                             <div className="p-6 sm:p-8 flex items-start gap-4">
-                                <div className="mt-1"><Heart className="h-5 w-5 text-rose-500" style={{ animation: "heartbeat 1.5s ease-in-out infinite" }} /></div>
+                                <Heart className="h-5 w-5 text-mark shrink-0 mt-1" />
                                 <div>
-                                    <h3 className="text-lg font-semibold">{COMMUNITY_V.name}</h3>
-                                    <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">{COMMUNITY_V.note}</p>
+                                    <h3 className="text-lg font-display font-semibold text-ink-900 dark:text-paper-50">{COMMUNITY_V.name}</h3>
+                                    <p className="mt-2 text-sm text-ink-700 dark:text-paper-300">{COMMUNITY_V.note}</p>
                                 </div>
                             </div>
                         </a>
                     </Card>
                 </Section>
-                {/* Contact */}
+
+                {/* Writing (Medium, fetched live) */}
+                {mediumPosts.length > 0 && (
+                    <Section id="writing" eyebrow={UI_V.writing.eyebrow} title={UI_V.writing.title}>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(0,1fr)]">
+                            {mediumPosts.map((post) => (
+                                <Card key={post.href}>
+                                    <a href={post.href} target="_blank" rel="noopener noreferrer" className="block h-full group">
+                                        {post.thumbnail && (
+                                            <div className="relative aspect-video w-full overflow-hidden bg-paper-100 dark:bg-ink-700 border-b border-dashed border-ink-900/20 dark:border-paper-50/15">
+                                                <img src={post.thumbnail} alt={post.title} loading="lazy" decoding="async" className="h-full w-full object-cover motion-safe:transition duration-500 motion-safe:group-hover:scale-105" />
+                                            </div>
+                                        )}
+                                        <div className="p-6">
+                                            <div className="flex items-center justify-between gap-4">
+                                                <div className="flex items-center gap-2 font-mono text-[11px] text-ink-700 dark:text-paper-300 uppercase tracking-wider">
+                                                    <Newspaper className="h-3 w-3" /> Medium
+                                                </div>
+                                                <ArrowUpRight className="h-4 w-4 text-ink-700/40 dark:text-paper-200/40 transition group-hover:text-mark" />
+                                            </div>
+                                            <h3 className="mt-3 text-lg font-display font-semibold leading-tight text-ink-900 dark:text-paper-50 group-hover:text-mark dark:group-hover:text-mark-light transition">{post.title}</h3>
+                                        </div>
+                                    </a>
+                                </Card>
+                            ))}
+                        </div>
+                    </Section>
+                )}
+
+                {/* Contact / open a ticket */}
                 <Section id="contact" eyebrow={UI_V.contact.eyebrow} title={UI_V.contact.title}>
                     <Card>
-                        <div className="p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                        <div className="p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
                             <div>
-                                <div className="text-sm text-zinc-600 dark:text-zinc-400">Preferred</div>
-                                <a href={`mailto:${PROFILE_V.email}`} className="mt-1 inline-flex items-center gap-2 text-lg font-medium hover:underline"><Mail className="h-5 w-5" /> {PROFILE_V.email}</a>
-                                <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-zinc-600 dark:text-zinc-400">
+                                <a href={`mailto:${PROFILE_V.email}`} className="mt-1 inline-flex items-center gap-2 font-display text-lg font-medium text-ink-900 dark:text-paper-50 hover:text-mark dark:hover:text-mark-light">
+                                    <Mail className="h-5 w-5" /> {PROFILE_V.email}
+                                </a>
+                                <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-ink-700 dark:text-paper-300">
                                     <span className="inline-flex items-center gap-2"><Linkedin className="h-4 w-4" /> <a className="hover:underline" target="_blank" rel="noreferrer" href={SOCIALS_V.linkedin}>LinkedIn</a></span>
                                     <span className="inline-flex items-center gap-2"><MapPin className="h-4 w-4" /> {PROFILE_V.location}</span>
                                     <EmojiCaptcha phone={PROFILE_V.phone} />
                                 </div>
                             </div>
-                            <div className="w-full mt-6 md:mt-0 md:pl-10">
-                                <div data-tf-live="01KCBQD38PG1AR5GWYSF1R69BQ"></div>
+                            <div className="w-full min-w-0 md:pl-10 md:border-l md:border-dashed md:border-ink-900/20 dark:md:border-paper-50/15">
+                                <ContactForm />
                             </div>
                         </div>
                     </Card>
                 </Section>
-                <footer className="w-full relative py-8 border-t border-zinc-200/60 dark:border-zinc-800/60">
-                    <div className="mx-auto max-w-6xl px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-zinc-500 dark:text-zinc-400">
-                        <span>&copy; {new Date().getFullYear()} Nijanthan Elangovan</span>
+
+                <footer className="w-full relative py-8 border-t border-dashed border-ink-900/20 dark:border-paper-50/15">
+                    <div className="mx-auto max-w-5xl px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-ink-700 dark:text-paper-300">
+                        <span>&copy; {new Date().getFullYear()} Nijanthan Elangovan{UI_V.footer ? ` · ${UI_V.footer}` : ""}</span>
                         <div className="flex items-center gap-4">
-                            <a href={`mailto:${PROFILE_V.email}`} className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"><Mail className="h-4 w-4" /></a>
-                            {SOCIALS_V.linkedin && <a href={SOCIALS_V.linkedin} target="_blank" rel="noreferrer" className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"><Linkedin className="h-4 w-4" /></a>}
-                            {SOCIALS_V.github && <a href={SOCIALS_V.github} target="_blank" rel="noreferrer" className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"><Github className="h-4 w-4" /></a>}
+                            <a href={`mailto:${PROFILE_V.email}`} aria-label="Email" className="hover:text-mark dark:hover:text-mark-light transition-colors"><Mail className="h-4 w-4" /></a>
+                            {SOCIALS_V.linkedin && <a href={SOCIALS_V.linkedin} aria-label="LinkedIn" target="_blank" rel="noreferrer" className="hover:text-mark dark:hover:text-mark-light transition-colors"><Linkedin className="h-4 w-4" /></a>}
+                            {SOCIALS_V.github && <a href={SOCIALS_V.github} aria-label="GitHub" target="_blank" rel="noreferrer" className="hover:text-mark dark:hover:text-mark-light transition-colors"><Github className="h-4 w-4" /></a>}
                         </div>
                     </div>
                 </footer>
             </main>
         </div>
     );
-}
-
-// Load Typeform script
-function useTypeform() {
-    useEffect(() => {
-        const script = document.createElement('script');
-        script.src = "//embed.typeform.com/next/embed.js";
-        script.async = true;
-        document.body.appendChild(script);
-        return () => {
-            document.body.removeChild(script);
-        };
-    }, []);
 }

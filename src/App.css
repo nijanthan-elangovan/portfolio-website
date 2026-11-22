@@ -1,1 +1,255 @@
-/* Default Vite styles removed to fix layout alignment */
+.portfolio {
+  --portfolio-accent: #c2410c;
+  --portfolio-selection: #ffd2ad;
+  --scene-paper: #fdfbf4;
+  --scene-grid: rgb(76 56 39 / 0.075);
+  --scene-warm: rgb(213 117 48 / 0.2);
+  --scene-cool: rgb(104 126 112 / 0.16);
+  --scene-spot: rgb(229 147 71 / 0.22);
+}
+
+.dark .portfolio {
+  --portfolio-accent: #ea580c;
+  --portfolio-selection: #f89962;
+  --scene-paper: #1b1a17;
+  --scene-grid: rgb(253 251 244 / 0.08);
+  --scene-warm: rgb(195 76 25 / 0.24);
+  --scene-cool: rgb(84 124 116 / 0.19);
+  --scene-spot: rgb(234 88 12 / 0.2);
+}
+
+.portfolio ::selection {
+  background-color: var(--portfolio-selection);
+  color: #1b1a17;
+}
+
+.portfolio-scene {
+  background: var(--scene-paper);
+  transition: background-color 300ms ease;
+}
+
+.portfolio-scene-wash {
+  position: absolute;
+  inset: -180px 0;
+  background:
+    radial-gradient(ellipse 42rem 34rem at 84% 29%, var(--scene-warm), transparent 100%),
+    radial-gradient(ellipse 40rem 38rem at 6% 72%, var(--scene-cool), transparent 100%);
+}
+
+.portfolio-scene-grid {
+  position: absolute;
+  inset: 0;
+  mask-image: radial-gradient(ellipse at 50% 40%, rgb(0 0 0 / 0.3), black 85%);
+}
+
+.portfolio-scene-lines {
+  --grid-tile: 40px 40px;
+  position: absolute;
+  inset: -40px 0;
+  background-image:
+    linear-gradient(to right, var(--scene-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--scene-grid) 1px, transparent 1px);
+  background-size: var(--grid-tile);
+  background-position: center top;
+}
+
+.portfolio-scene-spotlight {
+  position: absolute;
+  top: -220px;
+  left: -220px;
+  width: 440px;
+  height: 440px;
+  background: radial-gradient(circle, var(--scene-spot), transparent 68%);
+  opacity: 0;
+  transition: opacity 260ms ease;
+}
+
+.portfolio-scene-spotlight[data-visible] {
+  opacity: 1;
+}
+
+.portfolio :where(a[href], button, input, textarea, summary, [tabindex="0"]):focus-visible {
+  outline: 2px solid var(--portfolio-accent);
+  outline-offset: 4px;
+}
+
+.portfolio-nav-link::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background-color: var(--portfolio-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.portfolio-nav-link[aria-current="location"] {
+  color: var(--portfolio-accent);
+}
+
+.portfolio-nav-link:is(:hover, :focus-visible, [aria-current="location"])::after {
+  transform: scaleX(1);
+}
+
+.portfolio-card::after {
+  content: "";
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 11px;
+  height: 11px;
+  border-top: 1px solid var(--portfolio-accent);
+  border-right: 1px solid var(--portfolio-accent);
+  pointer-events: none;
+  opacity: 0;
+}
+
+.portfolio-card:is(:hover, :focus-within)::after {
+  opacity: 0.85;
+}
+
+@media (hover: hover) and (pointer: fine) and (forced-colors: none) {
+  .portfolio {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cpath d='M4 24 7 15 19 3l6 6-12 12-9 3Z' fill='%23fff7e7' stroke='%231b1a17' stroke-width='1.4' stroke-linejoin='round'/%3E%3Cpath d='m16 6 6 6M7 15l6 6M4 24l4-4' fill='none' stroke='%23c2410c' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") 4 24, auto;
+  }
+
+  .portfolio :is(a[href], button:not(:disabled), [role="button"], .cursor-pointer) {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cpath d='M4 24 7 15 19 3l6 6-12 12-9 3Z' fill='%23c2410c' stroke='%23fff7e7' stroke-width='1.4' stroke-linejoin='round'/%3E%3Cpath d='m16 6 6 6M7 15l6 6' fill='none' stroke='%23fff7e7' stroke-width='1.4'/%3E%3C/svg%3E") 4 24, pointer;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html:has(.portfolio) { scroll-behavior: smooth; }
+
+  .role-badge-lettering {
+    transform-origin: center;
+    animation: role-badge-spin 16s linear infinite;
+  }
+
+  .portfolio-scene-wave {
+    position: absolute;
+    inset: 0;
+    mask-image:
+      linear-gradient(to right, black 1px, transparent 1px),
+      linear-gradient(to bottom, black 1px, transparent 1px);
+    mask-size: var(--grid-tile);
+    mask-position: center top;
+    opacity: 0.24;
+  }
+
+  .portfolio-scene-wave::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(155deg, transparent 26%, var(--portfolio-accent) 50%, transparent 74%);
+    animation: portfolio-grid-wave 16s linear -5s infinite;
+  }
+
+  [data-mark-motion="stamp"] .doc-mark-face {
+    animation: doc-mark-stamp 520ms cubic-bezier(0.24, 0.7, 0.25, 1);
+  }
+
+  [data-mark-motion="stamp"] .doc-mark::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 1px solid var(--portfolio-accent);
+    border-radius: 3px;
+    opacity: 0;
+    animation: doc-mark-imprint 430ms 120ms ease-out;
+  }
+
+  [data-mark-motion="swivel"] .doc-mark-face {
+    animation: doc-mark-swivel 660ms cubic-bezier(0.25, 0.75, 0.25, 1);
+  }
+
+  [data-mark-motion="sweep"] .doc-mark-face {
+    animation: doc-mark-lift 600ms ease-in-out;
+  }
+
+  [data-mark-motion="sweep"] .doc-mark-face::after {
+    content: "";
+    position: absolute;
+    inset: -45% 0;
+    background: linear-gradient(90deg, transparent 15%, rgb(253 251 244 / 0.5) 50%, transparent 85%);
+    transform: translateX(-120%) skewX(-22deg);
+    animation: doc-mark-ink-sweep 500ms 70ms ease-out;
+  }
+
+  .portfolio-nav-link::after { transition: transform 200ms ease; }
+  .portfolio-card::after { transition: opacity 180ms ease; }
+
+  .portfolio :is(a[href], button) :is(.lucide-arrow-right, .lucide-arrow-up-right, .lucide-heart) {
+    transition: translate 200ms cubic-bezier(0.2, 0.75, 0.25, 1);
+  }
+
+  .portfolio :is(a[href], button):is(:hover, :focus-visible) .lucide-arrow-right { translate: 3px 0; }
+  .portfolio :is(a[href], button):is(:hover, :focus-visible) .lucide-arrow-up-right { translate: 2px -2px; }
+  .portfolio a:is(:hover, :focus-visible) .lucide-heart { translate: 0 -2px; }
+
+  /* The final two paths in the Lucide bot are its eyes. */
+  .headline-reader-icon.lucide-bot > path:nth-last-of-type(-n + 2) {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: headline-reader-blink 2.8s ease-in-out infinite;
+  }
+
+  .headline-reader-icon:is(.lucide-user-round, .lucide-users-round) > circle {
+    animation: headline-reader-nod 2.8s ease-in-out infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-parallax,
+  .portfolio-section-mark { transform: none !important; }
+  .portfolio-scene-spotlight { display: none; }
+}
+
+@keyframes role-badge-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes portfolio-grid-wave {
+  from { transform: translateY(-70%); opacity: 0; }
+  14%, 86% { opacity: 1; }
+  to { transform: translateY(70%); opacity: 0; }
+}
+
+@keyframes doc-mark-stamp {
+  0%, 100% { transform: none; }
+  23% { transform: translate(-2px, -4px) rotate(-5deg) scale(1.1); }
+  44% { transform: translate(2px, 2px) scale(1.08, 0.86); }
+  71% { transform: translateY(-1px) scale(0.98, 1.05); }
+}
+
+@keyframes doc-mark-imprint {
+  0% { opacity: 0; transform: scale(0.9); }
+  24% { opacity: 0.92; transform: translate(2px, 2px) scale(1.08); }
+  100% { opacity: 0; transform: translate(2px, 2px) scale(1.65); }
+}
+
+@keyframes doc-mark-swivel {
+  0%, 100% { transform: perspective(100px) rotateY(0) rotate(0) translateY(0); }
+  33% { transform: perspective(100px) rotateY(-48deg) rotate(-10deg) translateY(-3px); }
+  64% { transform: perspective(100px) rotateY(21deg) rotate(5deg) translateY(-1px); }
+}
+
+@keyframes doc-mark-lift {
+  0%, 100% { transform: none; }
+  37% { transform: translateY(-3px) rotate(6deg) scale(1.13); }
+  67% { transform: translateY(-1px) rotate(-3deg); }
+}
+
+@keyframes doc-mark-ink-sweep {
+  to { transform: translateX(120%) skewX(-22deg); }
+}
+
+@keyframes headline-reader-blink {
+  0%, 46%, 54%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.1); }
+}
+
+@keyframes headline-reader-nod {
+  0%, 42%, 62%, 100% { transform: translateY(0); }
+  52% { transform: translateY(1.5px); }
+}

@@ -236,14 +236,22 @@ export default function Admin() {
                 {/* Hero Section */}
                 <section className="bg-white dark:bg-zinc-900 rounded-xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-sm">
                     <h2 className="text-lg font-semibold mb-4 pb-2 border-b border-zinc-100 dark:border-zinc-800">Hero Text</h2>
-                    <div>
-                        <label className="block text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-1">Rotating Words (comma separated)</label>
-                        <input
-                            type="text"
-                            value={content.HERO?.words?.join(', ') || ''}
-                            onChange={(e) => handleChange('HERO', 'words', e.target.value.split(',').map(w => w.trim()))}
-                            className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 focus:ring-2 focus:ring-emerald-500 outline-none transition"
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">Each line plays in order as "{'{object}'} that {'{reader}'} actually <s>ignore</s> {'{verb}'}." Choose "human", "team", or "ai" for the reader icon.</p>
+                    <div className="space-y-2 mb-4">
+                        <label className="block text-sm font-medium text-zinc-500 dark:text-zinc-400">Object : Reader : Verb : Type (one line each, played in this order)</label>
+                        <textarea
+                            rows={9}
+                            value={(content.HERO?.lines || []).map(l => `${l.object} : ${l.reader} : ${l.verb} : ${l.type || 'human'}`).join('\n')}
+                            onChange={(e) => handleChange('HERO', 'lines', e.target.value.split('\n').map(line => {
+                                const [object, reader, verb, type] = line.split(':').map(s => s.trim());
+                                return { object: object || '', reader: reader || '', verb: verb || '', type: type || 'human' };
+                            }).filter(l => l.object))}
+                            className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 focus:ring-2 focus:ring-emerald-500 outline-none transition font-mono text-sm"
                         />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Field label="Struck-through word" value={content.HERO?.strike} onChange={(v) => handleChange('HERO', 'strike', v)} />
+                        <Field label="Connector word" value={content.UI?.hero?.connector} onChange={(v) => handleChange('UI', 'hero', { ...content.UI?.hero, connector: v })} />
                     </div>
                 </section>
 
