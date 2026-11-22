@@ -34,6 +34,7 @@ jobs:
         run: npm run build:domain
         env:
           VITE_CONTACT_API_URL: ${{ vars.VITE_CONTACT_API_URL }}
+          VITE_TURNSTILE_SITE_KEY: ${{ vars.VITE_TURNSTILE_SITE_KEY }}
           VITE_CLOUDINARY_CLOUD_NAME: ${{ secrets.VITE_CLOUDINARY_CLOUD_NAME }}
           VITE_CLOUDINARY_API_KEY: ${{ secrets.VITE_CLOUDINARY_API_KEY }}
 

@@ -18,8 +18,9 @@ GitHub Pages serves the portfolio. A Cloudflare Worker handles `https://njthnelv
 1. Use a Mailtrap Live Sending token for the transactional stream. Set `MAILTRAP_FROM_EMAIL` to an address on your verified sending domain. [Mailtrap API setup](https://docs.mailtrap.io/email-api-smtp/setup/api-integration)
 2. Run `npx wrangler deploy` with access to the Cloudflare zone. Configure `MAILTRAP_API_TOKEN` and `MAILTRAP_FROM_EMAIL` as Worker secrets using the Cloudflare dashboard or `npx wrangler secret put <NAME>`. [Cloudflare Worker secrets](https://developers.cloudflare.com/workers/configuration/secrets/)
 3. Leave `VITE_CONTACT_API_URL` blank for the custom-domain build. For a frontend served from another origin, set it to the full Worker URL and add that frontend origin to the Worker’s `CONTACT_ALLOWED_ORIGINS` variable.
+4. Configure a Managed Turnstile widget for the frontend hostname. Set its public key as the GitHub Actions repository variable `VITE_TURNSTILE_SITE_KEY` and store its secret as the Worker secret `TURNSTILE_SECRET_KEY`. The Worker checks the token, hostname, and contact action before sending mail. [Turnstile setup](https://developers.cloudflare.com/turnstile/get-started/)
 
-For local development, copy [.env.example](./.env.example) to `.env.local`, fill in the Mailtrap settings, leave `VITE_CONTACT_API_URL` blank, and run `npm run dev`. An `OPTIONS` request with an allowed `Origin` header can check the endpoint without sending email.
+For local development, copy [.env.example](./.env.example) to `.env.local`, fill in the Mailtrap settings and keys for a separate Turnstile widget configured for the local hostname, leave `VITE_CONTACT_API_URL` blank, and run `npm run dev`. An `OPTIONS` request with an allowed `Origin` header can check the endpoint without sending email.
 
 ## Search and crawler discovery
 

@@ -23,6 +23,47 @@
   color: #1b1a17;
 }
 
+.contact-postcard::before,
+.contact-postcard::after {
+  display: block;
+  height: 6px;
+  content: "";
+  background: repeating-linear-gradient(
+    135deg,
+    #a84236 0 14px,
+    transparent 14px 25px,
+    #426987 25px 39px,
+    transparent 39px 50px
+  );
+}
+
+.contact-postcard-stamp {
+  display: grid;
+  width: 62px;
+  height: 72px;
+  place-items: center;
+  border: 2px dashed currentColor;
+  outline: 1px solid currentColor;
+  outline-offset: -7px;
+  transform: rotate(6deg);
+}
+
+.contact-postcard-message {
+  --postcard-rule: rgb(27 26 23 / 0.16);
+  line-height: 2rem;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0 calc(2rem - 1px),
+    var(--postcard-rule) calc(2rem - 1px) 2rem
+  );
+  background-origin: content-box;
+  background-attachment: local;
+}
+
+.dark .contact-postcard-message {
+  --postcard-rule: rgb(253 251 244 / 0.18);
+}
+
 .portfolio-scene {
   background: var(--scene-paper);
   transition: background-color 300ms ease;

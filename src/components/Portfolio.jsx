@@ -1018,19 +1018,25 @@ export default function Portfolio() {
 
                 {/* Contact / open a ticket */}
                 <Section id="contact" eyebrow={UI_V.contact.eyebrow} title={UI_V.contact.title}>
-                    <Card>
-                        <div className="p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
-                            <div>
-                                <a href={`mailto:${PROFILE_V.email}`} className="mt-1 inline-flex items-center gap-2 font-display text-lg font-medium text-ink-900 dark:text-paper-50 hover:text-mark dark:hover:text-mark-light">
-                                    <Mail className="h-5 w-5" /> {PROFILE_V.email}
-                                </a>
-                                <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-ink-700 dark:text-paper-300">
+                    <Card className="contact-postcard overflow-hidden">
+                        <div className="grid gap-6 p-5 sm:p-8 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] md:gap-8">
+                            <div className="flex min-w-0 flex-col gap-5">
+                                <div aria-hidden="true" className="contact-postcard-stamp self-end text-mark dark:text-mark-light">
+                                    <Mail className="size-7" />
+                                </div>
+                                <div className="border-b border-ink-900/20 pb-3 dark:border-paper-50/20">
+                                    <p className="text-sm font-medium text-ink-700 dark:text-paper-300">To</p>
+                                    <a href={`mailto:${PROFILE_V.email}`} className="mt-1 inline-block break-all font-display text-lg font-medium text-ink-900 hover:text-mark dark:text-paper-50 dark:hover:text-mark-light">
+                                        {PROFILE_V.email}
+                                    </a>
+                                </div>
+                                <div className="flex flex-wrap items-center gap-3 text-sm text-ink-700 dark:text-paper-300">
                                     <span className="inline-flex items-center gap-2"><Linkedin className="h-4 w-4" /> <a className="hover:underline" target="_blank" rel="noreferrer" href={SOCIALS_V.linkedin}>LinkedIn</a></span>
                                     <span className="inline-flex items-center gap-2"><MapPin className="h-4 w-4" /> {PROFILE_V.location}</span>
                                     <EmojiCaptcha phone={PROFILE_V.phone} />
                                 </div>
                             </div>
-                            <div className="w-full min-w-0 md:pl-10 md:border-l md:border-dashed md:border-ink-900/20 dark:md:border-paper-50/15">
+                            <div className="min-w-0 border-t border-dashed border-ink-900/25 pt-6 dark:border-paper-50/20 md:border-l md:border-t-0 md:pl-8 md:pt-0">
                                 <ContactForm />
                             </div>
                         </div>

@@ -1,9 +1,25 @@
 const RECIPIENT = "nijanthan.work@gmail.com";
 const MAILTRAP_SEND_URL = "https://send.api.mailtrap.io/api/send";
+const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 const BODY_LIMIT = 32 * 1024;
 const WINDOW_MS = 10 * 60 * 1000;
 const EMAIL_PATTERN = /^[^\s@<>,;:()[\]"\\]+@[a-z0-9.-]+\.[a-z0-9-]+$/i;
 const SEND_ERROR = "Your message couldn’t be sent. Please try again or email me directly.";
+const CAPTCHA_ERROR = "Complete the security check and try again.";
+
+async function verifyTurnstile(secret, token, hostname, ip) {
+    const payload = { secret, response: token };
+    if (ip) payload.remoteip = ip;
+    const response = await fetch(TURNSTILE_VERIFY_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(5000),
+    });
+    if (!response.ok) throw new Error("Turnstile Siteverify request failed");
+    const result = await response.json();
+    return result.success === true && result.hostname === hostname && result.action === "contact";
+}
 
 async function readBody(request) {
     const reader = request.body?.getReader();
@@ -85,9 +101,20 @@ export function createContactHandler() {
 
         const token = env.MAILTRAP_API_TOKEN?.trim();
         const sender = env.MAILTRAP_FROM_EMAIL?.trim();
-        if (!token || !EMAIL_PATTERN.test(sender ?? "")) {
-            console.error("Contact Mailtrap configuration is incomplete");
+        const turnstileSecret = env.TURNSTILE_SECRET_KEY?.trim();
+        if (!token || !EMAIL_PATTERN.test(sender ?? "") || !turnstileSecret) {
+            console.error("Contact Mailtrap or Turnstile configuration is incomplete");
             return reply(503, { error: SEND_ERROR });
+        }
+        const captcha = typeof data?.captcha === "string" ? data.captcha.trim() : "";
+        if (!captcha || captcha.length > 2048) return reply(400, { error: CAPTCHA_ERROR });
+        try {
+            if (!await verifyTurnstile(turnstileSecret, captcha, new URL(origin).hostname, ip)) {
+                return reply(400, { error: CAPTCHA_ERROR });
+            }
+        } catch (error) {
+            console.error("Contact Turnstile verification failed:", error.name);
+            return reply(503, { error: "The security check is temporarily unavailable. Please try again." });
         }
 
         const now = Date.now();

@@ -1,18 +1,86 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Send } from "lucide-react";
 
 const endpoint = import.meta.env.VITE_CONTACT_API_URL?.trim() || "/api/contact";
+const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY?.trim();
 const fallback = "Your message couldn’t be sent. Please try again or email me directly.";
-const fieldClass = "w-full rounded-sm border border-ink-900/25 bg-paper-50 px-3 py-2 text-base text-ink-900 dark:border-paper-50/25 dark:bg-ink-900 dark:text-paper-50";
+const fieldClass = "w-full border-0 border-b border-ink-900/30 bg-transparent px-0 py-2 text-base text-ink-900 focus:border-mark focus:outline-none focus:ring-0 dark:border-paper-50/30 dark:text-paper-50 dark:focus:border-mark-light";
+let turnstileScript;
+
+function loadTurnstile() {
+    if (window.turnstile) return Promise.resolve(window.turnstile);
+    if (!turnstileScript) {
+        turnstileScript = new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+            script.async = true;
+            script.onload = () => {
+                if (window.turnstile) resolve(window.turnstile);
+                else reject(new Error("Turnstile API unavailable"));
+            };
+            script.onerror = () => {
+                script.remove();
+                reject(new Error("Unable to load Turnstile"));
+            };
+            document.head.append(script);
+        }).catch((error) => {
+            turnstileScript = undefined;
+            throw error;
+        });
+    }
+    return turnstileScript;
+}
 
 export default function ContactForm() {
     const submitting = useRef(false);
+    const challengeElement = useRef(null);
+    const widgetId = useRef(null);
     const [status, setStatus] = useState({ state: "idle", message: "" });
+    const [captcha, setCaptcha] = useState("");
+    const [challengeError, setChallengeError] = useState(false);
+    const [challengeAttempt, setChallengeAttempt] = useState(0);
     const isSending = status.state === "sending";
+
+    useEffect(() => {
+        if (!siteKey) return;
+        let active = true;
+        let widget;
+        loadTurnstile().then((turnstile) => {
+            if (!active) return;
+            widget = turnstile.render(challengeElement.current, {
+                sitekey: siteKey,
+                action: "contact",
+                size: "flexible",
+                appearance: "interaction-only",
+                "response-field": false,
+                callback: (token) => {
+                    if (!active) return;
+                    setCaptcha(token);
+                    setChallengeError(false);
+                },
+                "expired-callback": () => {
+                    if (active) setCaptcha("");
+                },
+                "error-callback": () => {
+                    if (!active) return;
+                    setCaptcha("");
+                    setChallengeError(true);
+                },
+            });
+            widgetId.current = widget;
+        }).catch(() => {
+            if (active) setChallengeError(true);
+        });
+        return () => {
+            active = false;
+            if (widget != null) window.turnstile.remove(widget);
+            widgetId.current = null;
+        };
+    }, [challengeAttempt]);
 
     const submit = async (event) => {
         event.preventDefault();
-        if (submitting.current) return;
+        if (submitting.current || !captcha) return;
 
         const form = event.currentTarget;
         const data = Object.fromEntries(new FormData(form));
@@ -23,7 +91,7 @@ export default function ContactForm() {
             const response = await fetch(endpoint, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
+                body: JSON.stringify({ ...data, captcha }),
                 signal: AbortSignal.timeout(25000),
             });
             const result = await response.json().catch(() => null);
@@ -37,12 +105,14 @@ export default function ContactForm() {
             setStatus({ state: "error", message: fallback });
         } finally {
             submitting.current = false;
+            setCaptcha("");
+            if (widgetId.current != null) window.turnstile.reset(widgetId.current);
         }
     };
 
     return (
         <form aria-label="Contact form" onSubmit={submit}>
-            <fieldset disabled={isSending} className="min-w-0 space-y-4">
+            <fieldset disabled={isSending} className="min-w-0 space-y-5">
                 <div className="grid gap-4 sm:grid-cols-2">
                     <label className="grid min-w-0 gap-1.5 text-sm font-medium">
                         Name
@@ -55,7 +125,7 @@ export default function ContactForm() {
                 </div>
                 <label className="grid gap-1.5 text-sm font-medium">
                     Message
-                    <textarea className={`${fieldClass} min-h-28 resize-y`} name="message" rows={4} maxLength={3000} required />
+                    <textarea className={`${fieldClass} contact-postcard-message min-h-32 resize-y`} name="message" rows={4} maxLength={3000} required />
                 </label>
                 <div hidden>
                     <label>
@@ -63,7 +133,24 @@ export default function ContactForm() {
                         <input name="website" tabIndex={-1} autoComplete="off" />
                     </label>
                 </div>
-                <button type="submit" className="inline-flex items-center gap-2 rounded-sm border-2 border-ink-900 bg-mark px-4 py-2.5 text-sm font-medium text-paper-50 shadow-[2px_2px_0_0_rgba(27,26,23,0.35)] hover:enabled:shadow-none disabled:cursor-wait disabled:opacity-70 dark:border-paper-50 dark:shadow-[2px_2px_0_0_rgba(247,242,230,0.35)] motion-safe:transition">
+                {siteKey && (
+                    <div>
+                        <div ref={challengeElement} />
+                        {challengeError && (
+                            <p role="alert" className="text-sm">
+                                The security check couldn’t load.{" "}
+                                <button type="button" className="underline underline-offset-4" onClick={() => {
+                                    setCaptcha("");
+                                    setChallengeError(false);
+                                    setChallengeAttempt((attempt) => attempt + 1);
+                                }}>Retry</button>
+                            </p>
+                        )}
+                    </div>
+                )}
+                {!siteKey && <p role="status" className="text-sm">The form is unavailable. Please email me directly.</p>}
+                {siteKey && !captcha && !challengeError && !isSending && <p role="status" className="text-sm">Waiting for the security check…</p>}
+                <button type="submit" disabled={!captcha} className="inline-flex items-center gap-2 rounded-sm border-2 border-ink-900 bg-mark px-4 py-2.5 text-sm font-medium text-paper-50 shadow-[2px_2px_0_0_rgba(27,26,23,0.35)] hover:enabled:shadow-none disabled:opacity-60 dark:border-paper-50 dark:shadow-[2px_2px_0_0_rgba(247,242,230,0.35)] motion-safe:transition">
                     <Send className="size-4" aria-hidden="true" />
                     {isSending ? "Sending…" : "Send message"}
                 </button>

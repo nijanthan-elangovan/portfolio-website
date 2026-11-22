@@ -10,7 +10,7 @@ import content from "./src/data/content.json";
 
 export default defineConfig(({ mode }) => {
   const mountContact = (server) => {
-    const env = { ...process.env, ...loadEnv(mode, process.cwd(), ["MAILTRAP_", "CONTACT_"]) };
+    const env = { ...process.env, ...loadEnv(mode, process.cwd(), ["MAILTRAP_", "CONTACT_", "TURNSTILE_"]) };
     const handleContact = createContactHandler();
     server.middlewares.use("/api/contact", async (request, response, next) => {
       try {
