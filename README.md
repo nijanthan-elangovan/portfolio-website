@@ -13,13 +13,13 @@ If you are developing a production application, we recommend using TypeScript wi
 
 ## Contact form
 
-The form sends messages to `nijanthan.work@gmail.com` through Mailtrap SMTP, using the visitor’s address as Reply-To. Netlify publishes the frontend and serves the contact function at `/api/contact`.
+GitHub Pages serves the portfolio. A Cloudflare Worker handles `https://njthnelvgn.com/api/contact` and sends messages to `nijanthan.work@gmail.com` through Mailtrap’s HTTPS API, using the visitor’s address as Reply-To.
 
-1. Use the SMTP credentials from the Mailtrap Live Sending transactional stream. Set `MAILTRAP_FROM_EMAIL` to an address on your verified sending domain. [Mailtrap SMTP setup](https://docs.mailtrap.io/email-live-sending/setup/smtp-integration)
-2. Set the `MAILTRAP_*` variables from [the example](./.env.example) in the linked Netlify project’s environment. Include the Functions scope when available. Push to the production branch to deploy, or trigger a new deploy after updating the variables. [Netlify function environment variables](https://docs.netlify.com/build/functions/environment-variables/)
-3. Leave `VITE_CONTACT_API_URL` blank on Netlify to use the same-origin endpoint. If serving the frontend separately through GitHub Pages, set its `VITE_CONTACT_API_URL` repository variable to the full Netlify function URL and add the Pages origin to `CONTACT_ALLOWED_ORIGINS` on Netlify.
+1. Use a Mailtrap Live Sending token for the transactional stream. Set `MAILTRAP_FROM_EMAIL` to an address on your verified sending domain. [Mailtrap API setup](https://docs.mailtrap.io/email-api-smtp/setup/api-integration)
+2. Run `npx wrangler deploy` with access to the Cloudflare zone. Configure `MAILTRAP_API_TOKEN` and `MAILTRAP_FROM_EMAIL` as Worker secrets using the Cloudflare dashboard or `npx wrangler secret put <NAME>`. [Cloudflare Worker secrets](https://developers.cloudflare.com/workers/configuration/secrets/)
+3. Leave `VITE_CONTACT_API_URL` blank for the custom-domain build. For a frontend served from another origin, set it to the full Worker URL and add that frontend origin to the Worker’s `CONTACT_ALLOWED_ORIGINS` variable.
 
-For local development, copy [.env.example](./.env.example) to `.env.local`, fill in the SMTP settings, leave `VITE_CONTACT_API_URL` blank, and run `npm run dev`. To test without delivering to Gmail, use Mailtrap Sandbox credentials. [Mailtrap Sandbox SMTP setup](https://docs.mailtrap.io/email-sandbox/setup/sandbox-smtp-integration)
+For local development, copy [.env.example](./.env.example) to `.env.local`, fill in the Mailtrap settings, leave `VITE_CONTACT_API_URL` blank, and run `npm run dev`. An `OPTIONS` request with an allowed `Origin` header can check the endpoint without sending email.
 
 ## Search and crawler discovery
 
