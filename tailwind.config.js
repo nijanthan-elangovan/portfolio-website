@@ -25,8 +25,8 @@ export default {
           700: '#36332c',
         },
         mark: {
-          DEFAULT: '#c2410c',
-          light: '#ea580c',
+          DEFAULT: '#146363',
+          light: '#1f8a8a',
         },
       },
     },

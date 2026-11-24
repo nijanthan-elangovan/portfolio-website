@@ -1,18 +1,18 @@
 .portfolio {
-  --portfolio-accent: #c2410c;
-  --portfolio-selection: #ffd2ad;
+  --portfolio-accent: #146363;
+  --portfolio-selection: #b8e0df;
   --scene-paper: #fdfbf4;
   --scene-grid: rgb(76 56 39 / 0.075);
-  --scene-warm: rgb(213 117 48 / 0.2);
+  --scene-warm: rgb(20 99 99 / 0.18);
   --scene-cool: rgb(104 126 112 / 0.16);
 }
 
 .dark .portfolio {
-  --portfolio-accent: #ea580c;
-  --portfolio-selection: #f89962;
+  --portfolio-accent: #1f8a8a;
+  --portfolio-selection: #2d8f8f;
   --scene-paper: #1b1a17;
   --scene-grid: rgb(253 251 244 / 0.08);
-  --scene-warm: rgb(195 76 25 / 0.24);
+  --scene-warm: rgb(31 138 138 / 0.22);
   --scene-cool: rgb(84 124 116 / 0.19);
 }
 
@@ -23,11 +23,11 @@
 
 html:has(.portfolio) {
   scrollbar-width: thin;
-  scrollbar-color: #c2410c #fdfbf4;
+  scrollbar-color: #146363 #fdfbf4;
 }
 
 html.dark:has(.portfolio) {
-  scrollbar-color: #ea580c #1b1a17;
+  scrollbar-color: #1f8a8a #1b1a17;
 }
 
 html:has(.portfolio)::-webkit-scrollbar {
@@ -43,22 +43,22 @@ html.dark:has(.portfolio)::-webkit-scrollbar-track {
 }
 
 html:has(.portfolio)::-webkit-scrollbar-thumb {
-  background-color: #c2410c;
+  background-color: #146363;
   border: 3px solid #fdfbf4;
   border-radius: 999px;
 }
 
 html.dark:has(.portfolio)::-webkit-scrollbar-thumb {
-  background-color: #ea580c;
+  background-color: #1f8a8a;
   border: 3px solid #1b1a17;
 }
 
 html:has(.portfolio)::-webkit-scrollbar-thumb:hover {
-  background-color: #9a3412;
+  background-color: #0a4040;
 }
 
 html.dark:has(.portfolio)::-webkit-scrollbar-thumb:hover {
-  background-color: #c2410c;
+  background-color: #146363;
 }
 
 .contact-postcard::before,
@@ -174,11 +174,11 @@ html.dark:has(.portfolio)::-webkit-scrollbar-thumb:hover {
 
 @media (hover: hover) and (pointer: fine) and (forced-colors: none) {
   .portfolio {
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cpath d='M4 24 7 15 19 3l6 6-12 12-9 3Z' fill='%23fff7e7' stroke='%231b1a17' stroke-width='1.4' stroke-linejoin='round'/%3E%3Cpath d='m16 6 6 6M7 15l6 6M4 24l4-4' fill='none' stroke='%23c2410c' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") 4 24, auto;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cpath d='M4 24 7 15 19 3l6 6-12 12-9 3Z' fill='%23fff7e7' stroke='%231b1a17' stroke-width='1.4' stroke-linejoin='round'/%3E%3Cpath d='m16 6 6 6M7 15l6 6M4 24l4-4' fill='none' stroke='%23146363' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") 4 24, auto;
   }
 
   .portfolio :is(a[href], button:not(:disabled), [role="button"], .cursor-pointer) {
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cpath d='M4 24 7 15 19 3l6 6-12 12-9 3Z' fill='%23c2410c' stroke='%23fff7e7' stroke-width='1.4' stroke-linejoin='round'/%3E%3Cpath d='m16 6 6 6M7 15l6 6' fill='none' stroke='%23fff7e7' stroke-width='1.4'/%3E%3C/svg%3E") 4 24, pointer;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cpath d='M4 24 7 15 19 3l6 6-12 12-9 3Z' fill='%23146363' stroke='%23fff7e7' stroke-width='1.4' stroke-linejoin='round'/%3E%3Cpath d='m16 6 6 6M7 15l6 6' fill='none' stroke='%23fff7e7' stroke-width='1.4'/%3E%3C/svg%3E") 4 24, pointer;
   }
 }
 
@@ -209,21 +209,12 @@ html.dark:has(.portfolio)::-webkit-scrollbar-thumb:hover {
     animation: portfolio-grid-wave 16s linear -5s infinite;
   }
 
-  .doc-mark {
-    animation: doc-mark-idle-spin 42s linear infinite;
-  }
-
   .doc-mark-face::before {
     content: "";
     position: absolute;
     z-index: 0;
-    left: -20%;
-    right: -20%;
-    bottom: -35%;
-    height: 220%;
-    border-radius: 44% 44% 0 0;
+    inset: 0;
     background: var(--portfolio-accent);
-    animation: doc-mark-liquid 42s cubic-bezier(0.65, 0, 0.35, 1) infinite;
   }
 
   [data-mark-motion="stamp"] .doc-mark-face {
@@ -299,20 +290,6 @@ html.dark:has(.portfolio)::-webkit-scrollbar-thumb:hover {
   from { transform: translateY(-70%); opacity: 0; }
   14%, 86% { opacity: 1; }
   to { transform: translateY(70%); opacity: 0; }
-}
-
-@keyframes doc-mark-idle-spin {
-  0%, 62% { transform: rotate(-2deg); }
-  70% { transform: rotate(358deg); animation-timing-function: cubic-bezier(0.3, 0.9, 0.4, 1); }
-  100% { transform: rotate(358deg); }
-}
-
-@keyframes doc-mark-liquid {
-  0%, 55% { transform: translateY(6%); }
-  63% { transform: translateY(58%); }
-  75% { transform: translateY(8%); }
-  82% { transform: translateY(0%); }
-  100% { transform: translateY(6%); }
 }
 
 @keyframes doc-mark-stamp {
