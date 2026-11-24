@@ -124,13 +124,20 @@ function getYouTubeId(url) {
     }
 }
 
+// Shared "unrolled page" reveal: content clips in from the top instead of a generic fade+rise,
+// using the same ease curve as the hero's own line transitions so the motion reads as one system.
+const REVEAL_EASE = [0.22, 1, 0.36, 1];
+const revealTransition = (delay = 0) => ({ duration: 0.5, delay, ease: REVEAL_EASE });
+const REVEAL_HIDDEN = { opacity: 0, y: 10, clipPath: "inset(0 0 100% 0)" };
+const REVEAL_VISIBLE = { opacity: 1, y: 0, clipPath: "inset(0 0 0% 0)" };
+
 const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.06, delayChildren: 0.1 } },
+    hidden: { opacity: 1 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.07, delayChildren: 0.05 } },
 };
 const itemVariants = {
-    hidden: { opacity: 0, y: 14 },
-    visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 120, damping: 14 } },
+    hidden: REVEAL_HIDDEN,
+    visible: { ...REVEAL_VISIBLE, transition: revealTransition() },
 };
 
 /* --------------------------------- Doc Tag ---------------------------------- */
@@ -412,7 +419,7 @@ function HeroHeadline({ connector, prefix, strike, lines }) {
         setFrame((current) => current === frame ? nextFrame : current);
     };
     const rotatingWordClass = "col-start-1 row-start-1 min-w-0 break-words";
-    const verbClass = `${rotatingWordClass} font-semibold italic text-mark dark:text-mark-light`;
+    const verbClass = `${rotatingWordClass} font-semibold text-mark dark:text-mark-light`;
 
     // Reserve space with invisible copies and align the visible phrase just above the fixed second row.
     return (
@@ -754,10 +761,10 @@ export default function Portfolio() {
                             <motion.div
                                 key={job.company + job.title}
                                 className="relative"
-                                initial={{ opacity: 0, y: 12 }}
-                                whileInView={{ opacity: 1, y: 0 }}
+                                initial={REVEAL_HIDDEN}
+                                whileInView={REVEAL_VISIBLE}
                                 viewport={{ once: true, margin: "-15%" }}
-                                transition={{ duration: 0.4, delay: i * 0.05 }}
+                                transition={revealTransition(i * 0.05)}
                             >
                                 <span className="absolute -left-[29px] sm:-left-[37px] top-7 h-2.5 w-2.5 rounded-sm bg-mark border border-ink-900 dark:border-paper-50" />
                                 <Card>
@@ -790,10 +797,10 @@ export default function Portfolio() {
                                 <motion.div
                                     key={p.title}
                                     className="h-full"
-                                    initial={{ opacity: 0, y: 16 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
+                                    initial={REVEAL_HIDDEN}
+                                    whileInView={REVEAL_VISIBLE}
                                     viewport={{ once: true, margin: "-15%" }}
-                                    transition={{ duration: 0.4, delay: i * 0.06 }}
+                                    transition={revealTransition(i * 0.06)}
                                 >
                                     <Card tabLabel={p.category} className="h-full">
                                         <ProjectContent {...link} className="block h-full p-6 sm:p-8 pt-7">
@@ -848,7 +855,7 @@ export default function Portfolio() {
                         <motion.div className="divide-y divide-dashed divide-ink-900/15 dark:divide-paper-50/15" initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-10%" }} variants={containerVariants}>
                             {SKILLS_V.map((group) => (
                                 <motion.div key={group.category} variants={itemVariants} className="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-6">
-                                    <div className="sm:w-48 shrink-0 font-mono text-[11px] uppercase tracking-wide text-mark dark:text-mark-light">{group.category}</div>
+                                    <div className="sm:w-48 shrink-0 font-mono text-[11px] uppercase tracking-wide text-ink-700 dark:text-paper-300">{group.category}</div>
                                     <div className="flex flex-wrap gap-2">
                                         {group.items.map((s) => <Tag key={s}>{s}</Tag>)}
                                     </div>
