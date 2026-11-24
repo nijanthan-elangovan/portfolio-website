@@ -489,7 +489,7 @@ const PORTFOLIO_NAV_ITEMS = [
     { id: "contact", label: "Contact" },
 ];
 
-function Header({ theme, setTheme, hasWriting }) {
+function Header({ theme, setTheme, hasWriting, onLogoClick }) {
     const shouldReduceMotion = useReducedMotion();
     const mobileMenu = useRef(null);
     const [activeSection, setActiveSection] = useState(null);
@@ -537,7 +537,7 @@ function Header({ theme, setTheme, hasWriting }) {
         <header className="fixed top-0 z-50 w-full px-3 sm:px-5 pt-3">
             <div className="mx-auto max-w-6xl rounded-sm border border-ink-900/15 dark:border-paper-50/15 bg-paper-50/90 dark:bg-ink-900/85 backdrop-blur-xl shadow-[0_2px_0_0_rgba(27,26,23,0.08)]">
                 <div className="flex items-center justify-between gap-4 px-4 sm:px-5 py-2.5">
-                    <DocMarkLink className="inline-flex shrink-0" />
+                    <DocMarkLink className="inline-flex shrink-0" onClick={onLogoClick} />
                     <nav aria-label="Portfolio sections" className="hidden lg:flex items-center gap-4 xl:gap-5 font-mono text-[11px] uppercase tracking-wide text-ink-700 dark:text-paper-200">
                         {navItems.map(({ id, label }) => (
                             <a key={id} href={`#${id}`} aria-current={activeSection === id ? "location" : undefined} className="portfolio-nav-link relative py-1 hover:text-mark dark:hover:text-mark-light transition-colors">
@@ -615,6 +615,52 @@ export default function Portfolio() {
         };
         setMeta("x-build-version", "v2");
         setMeta("x-build-time", new Date().toISOString());
+
+        // SEO: title, description, canonical, and a Person JSON-LD built straight from content.json
+        // so it never drifts out of sync with what the page actually says.
+        const { PROFILE, SOCIALS, NOW, EDUCATION, CERTS, SKILLS } = contentData;
+        const siteUrl = "https://njthnelvgn.com/";
+
+        document.title = `${PROFILE.name} — ${PROFILE.roles[0]}`;
+        setMeta("description", PROFILE.summary);
+
+        let canonical = document.querySelector('link[rel="canonical"]');
+        if (!canonical) {
+            canonical = document.createElement("link");
+            canonical.setAttribute("rel", "canonical");
+            document.head.appendChild(canonical);
+        }
+        canonical.setAttribute("href", siteUrl);
+
+        let personSchema = document.getElementById("person-schema");
+        if (!personSchema) {
+            personSchema = document.createElement("script");
+            personSchema.id = "person-schema";
+            personSchema.type = "application/ld+json";
+            document.head.appendChild(personSchema);
+        }
+        personSchema.textContent = JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Person",
+            "@id": `${siteUrl}#person`,
+            name: PROFILE.name,
+            alternateName: PROFILE.roles[1],
+            jobTitle: PROFILE.roles[0],
+            description: PROFILE.summary,
+            url: siteUrl,
+            mainEntityOfPage: siteUrl,
+            email: `mailto:${PROFILE.email}`,
+            address: { "@type": "PostalAddress", addressLocality: PROFILE.location },
+            worksFor: { "@type": "Organization", name: NOW.company },
+            alumniOf: EDUCATION.map((e) => ({ "@type": "CollegeOrUniversity", name: e.school })),
+            hasCredential: CERTS.map((c) => ({
+                "@type": "EducationalOccupationalCredential",
+                credentialCategory: c.name,
+                recognizedBy: { "@type": "Organization", name: c.issuer },
+            })),
+            knowsAbout: SKILLS.flatMap((group) => group.items),
+            sameAs: [SOCIALS.linkedin, SOCIALS.github, SOCIALS.medium, SOCIALS.website].filter(Boolean),
+        });
     }, []);
 
     const PROFILE_V = contentData.PROFILE;
@@ -632,11 +678,26 @@ export default function Portfolio() {
     const HERO_V = contentData.HERO;
     const UI_V = contentData.UI;
 
+    // Easter egg: click the logo three times in quick succession to toggle the
+    // background ink-sketch mode (otherwise invisible, no UI hint).
+    const [inkEnabled, setInkEnabled] = useState(false);
+    const logoClicks = useRef({ count: 0, timer: null });
+    const handleLogoClick = () => {
+        const clicks = logoClicks.current;
+        clicks.count += 1;
+        clearTimeout(clicks.timer);
+        clicks.timer = setTimeout(() => { clicks.count = 0; }, 600);
+        if (clicks.count >= 3) {
+            clicks.count = 0;
+            setInkEnabled((value) => !value);
+        }
+    };
+
     return (
         <div className="portfolio isolate min-h-screen w-full overflow-x-clip bg-transparent text-ink-900 dark:text-paper-100 antialiased font-sans">
             <ScrollProgress />
-            <InteractiveBackground />
-            <Header theme={theme} setTheme={setTheme} hasWriting={mediumPosts.length > 0} />
+            <InteractiveBackground inkEnabled={inkEnabled} />
+            <Header theme={theme} setTheme={setTheme} hasWriting={mediumPosts.length > 0} onLogoClick={handleLogoClick} />
 
             <main id="top" className="pt-24">
                 {/* Hero */}
