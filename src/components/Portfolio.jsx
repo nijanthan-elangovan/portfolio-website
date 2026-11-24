@@ -128,8 +128,10 @@ function getYouTubeId(url) {
 // using the same ease curve as the hero's own line transitions so the motion reads as one system.
 const REVEAL_EASE = [0.22, 1, 0.36, 1];
 const revealTransition = (delay = 0) => ({ duration: 0.5, delay, ease: REVEAL_EASE });
-const REVEAL_HIDDEN = { opacity: 0, y: 10, clipPath: "inset(0 0 100% 0)" };
-const REVEAL_VISIBLE = { opacity: 1, y: 0, clipPath: "inset(0 0 0% 0)" };
+// Padded well past the box on three sides so decorations that intentionally poke outside
+// it (a card's tab label, a timeline dot) never get clipped — only the bottom edge animates.
+const REVEAL_HIDDEN = { opacity: 0, y: 10, clipPath: "inset(-40px -40px 100% -40px)" };
+const REVEAL_VISIBLE = { opacity: 1, y: 0, clipPath: "inset(-40px -40px 0% -40px)" };
 
 const containerVariants = {
     hidden: { opacity: 1 },
